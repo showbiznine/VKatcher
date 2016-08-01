@@ -231,17 +231,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\VKCatcher\VKBackground\VKBackground.csproj">
-      <Project>{48dec106-b7ab-4e2c-91ac-47535be07ad6}</Project>
-      <Name>VKBackground</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\VKCatcher\VKCatcherShared\VKatcherShared.csproj">
-      <Project>{bf539f89-7d44-474e-abd4-c94183775de5}</Project>
-      <Name>VKatcherShared</Name>
-    </ProjectReference>
     <ProjectReference Include="..\VK.WindowsPhone.SDK-XAML\VK.WindowsPhone.SDK-XAML.csproj">
       <Project>{a7e0fc88-a513-4981-8c2a-0106045e695b}</Project>
       <Name>VK.WindowsPhone.SDK-XAML</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\VKatcherShared\VKatcherShared.csproj">
+      <Project>{BF539F89-7D44-474E-ABD4-C94183775DE5}</Project>
+      <Name>VKatcherShared</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
