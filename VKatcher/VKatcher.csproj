@@ -11,7 +11,7 @@
     <AssemblyName>VKatcher</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14383.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.14388.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -239,12 +239,16 @@
       <Project>{bf539f89-7d44-474e-abd4-c94183775de5}</Project>
       <Name>VKatcherShared</Name>
     </ProjectReference>
+    <ProjectReference Include="..\VK.WindowsPhone.SDK-XAML\VK.WindowsPhone.SDK-XAML.csproj">
+      <Project>{a7e0fc88-a513-4981-8c2a-0106045e695b}</Project>
+      <Name>VK.WindowsPhone.SDK-XAML</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.14383.0">
+    <SDKReference Include="WindowsMobile, Version=10.0.14388.0">
       <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
