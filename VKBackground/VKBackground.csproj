@@ -11,7 +11,7 @@
     <AssemblyName>VKBackground</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14383.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.14388.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -117,7 +117,7 @@
       <Project>{a7e0fc88-a513-4981-8c2a-0106045e695b}</Project>
       <Name>VK.WindowsPhone.SDK-XAML</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VKCatcherShared\VKatcherShared.csproj">
+    <ProjectReference Include="..\VKatcherShared\VKatcherShared.csproj">
       <Project>{BF539F89-7D44-474E-ABD4-C94183775DE5}</Project>
       <Name>VKCatcherShared</Name>
     </ProjectReference>
