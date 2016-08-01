@@ -1,0 +1,72 @@
+﻿<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:VKatcher.Views"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:ViewModels="using:VKatcher.ViewModels"
+      x:Name="pageRoot"
+      x:Class="VKatcher.Views.CommunitiesPage"
+      mc:Ignorable="d">
+
+    <Page.DataContext>
+        <ViewModels:CommunitiesPageViewModel />
+    </Page.DataContext>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="168" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="1"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,12,4">
+            <Button x:Name="btnSettings"
+                    Content="&#xE115;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Height="48"
+                    Style="{StaticResource IconButton}"
+                    Width="48"
+                    Command="{Binding GoToSettingsCommand}" />
+            <Button x:Name="btnMyMusic"
+                    Content="&#xE142;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Height="48"
+                    Style="{StaticResource IconButton}" 
+                    Command="{Binding GoToMyMusicCommand}"/>
+            <Button x:Name="btnSearch"
+                    Content="&#xE11A;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Height="48"
+                    Width="48"
+                    Style="{StaticResource IconButton}"
+                    Command="{Binding SearchCommand}" />
+        </StackPanel>
+        <TextBlock x:Name="lblTitle"
+                   HorizontalAlignment="Left"
+                   TextWrapping="Wrap"
+                   Text="MY&#xA;COMMUNITIES"
+                   VerticalAlignment="Bottom"
+                   Margin="12,0,0,12"
+                   FontSize="44"
+                   TextLineBounds="TrimToBaseline"
+                   FontWeight="Black" />
+        <GridView x:Name="gridView"
+                  SelectionMode="None"
+                  Grid.Row="1"
+                  Grid.ColumnSpan="2"
+                  Padding="0,0,0,100"
+                  Margin="-1, 0, -1, 0"
+                  Style="{StaticResource CommunitiesGridStyle}"
+                  ItemsSource="{Binding _results}" 
+                  ItemTemplate="{StaticResource GroupGridDataTemplate}"
+                  SizeChanged="gridView_SizeChanged"/>
+
+    </Grid>
+</Page>
