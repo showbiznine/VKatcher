@@ -38,6 +38,7 @@ namespace VKatcher.ViewModels
         public ObservableCollection<VKAudio> _currentPlaylist;
         private MediaPlayer _mediaPlayer;
         private const string _downloadedDB = "downloaded_files.json";
+        private int _CurrentIndex;
         #endregion
 
         #region Commands
@@ -141,20 +142,21 @@ namespace VKatcher.ViewModels
 
         public async void LoadPosts(int offset, int count)
         {
-            if (_wallPosts == null)
+            if (_wallPosts != null)
             {
-                await DispatcherHelper.RunAsync(async () =>
-                {
-                    _inCall = true;
-                    var temp = await DataService.LoadWallPosts(_currentGroup.id, offset, count);
-                    temp.CollectionChanged += (s, e) =>
-                    {
-                        if (temp.Count > 0)
-                            _wallPosts = temp;
-                    };
-                    _inCall = false;
-                });
+                _wallPosts.Clear(); 
             }
+            await DispatcherHelper.RunAsync(async () =>
+            {
+                _inCall = true;
+                var temp = await DataService.LoadWallPosts(_currentGroup.id, offset, count);
+                temp.CollectionChanged += (s, e) =>
+                {
+                    if (temp.Count > 0)
+                        _wallPosts = temp;
+                };
+                _inCall = false;
+            });
         }
 
         private async void DownloadTrack(VKAudio track)
@@ -169,6 +171,7 @@ namespace VKatcher.ViewModels
         public async void OnSongListItemClick(ItemClickEventArgs e)
         {
             bool containsOffline = false;
+            _CurrentIndex = _wallPosts.IndexOf((VKWallPost)((e.OriginalSource as ListView).DataContext));
             if (e.ClickedItem is VKAttachment)
             {
                 if (_selectedTrack != null)

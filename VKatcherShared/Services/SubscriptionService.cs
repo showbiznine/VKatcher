@@ -72,5 +72,6 @@ namespace VKatcherShared.Services
             File.WriteAllText(subscribedFile.Path, newstr);
             Debug.WriteLine("Wrote to groups database");
         }
+
     }
 }

@@ -106,24 +106,24 @@ namespace VK.WindowsPhone.SDK.API.Model
 
         public long genre_id { get; set; }
 
-        private int m_Progress;
-        public int Progress
+        private int m_dlProgress;
+        public int dlProgress
         {
-            get { return m_Progress; }
+            get { return m_dlProgress; }
             set
             {
-                if (m_Progress == value)
+                if (m_dlProgress == value)
                     return;
-                m_Progress = value;
+                m_dlProgress = value;
                 if (PropertyChanged == null)
                     return;
-                PropertyChanged(this, new PropertyChangedEventArgs("Progress"));
+                PropertyChanged(this, new PropertyChangedEventArgs("dlProgress"));
             }
         }
 
         public async Task<StorageFile> DownloadTrack()
         {
-            var folder = await KnownFolders.MusicLibrary.GetFolderAsync("VKatcher");
+            var folder = await KnownFolders.MusicLibrary.CreateFolderAsync("VKatcher", CreationCollisionOption.OpenIfExists);
             StorageFile sf = await folder.CreateFileAsync(title + "-" + artist + ".mp3", CreationCollisionOption.ReplaceExisting);
 
             var bgd = new BackgroundDownloader();
@@ -137,10 +137,11 @@ namespace VK.WindowsPhone.SDK.API.Model
 
         private void OnDLProgressChanged(DownloadOperation dlOP)
         {
-            Progress = (int)(100 * (dlOP.Progress.BytesReceived / dlOP.Progress.TotalBytesToReceive));
-            if (Progress >= 100)
+            dlProgress = (int)(100 * ((double)dlOP.Progress.BytesReceived / (double)dlOP.Progress.TotalBytesToReceive));
+            if (dlProgress >= 100)
             {
-                Progress = 0;
+                dlProgress = 0;
+                IsOffline = true;
                 Debug.WriteLine("Downloaded " + title + " - " + artist);
             }
         }

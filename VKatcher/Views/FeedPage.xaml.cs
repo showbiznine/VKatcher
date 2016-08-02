@@ -31,7 +31,6 @@ namespace VKatcher.Views
         public FeedPage()
         {
             this.InitializeComponent();
-            _viewModel = DataContext as FeedPageViewModel;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -41,8 +40,8 @@ namespace VKatcher.Views
             {
                 var group = e.Parameter as VKGroup;
                 CheckSubscribed(group);
-                _viewModel._currentGroup = group;
-                _viewModel.LoadPosts(0, 20);
+                App.ViewModelLocator.Feed._currentGroup = group;
+                App.ViewModelLocator.Feed.LoadPosts(0, 20);
             }
         }
 

@@ -61,7 +61,7 @@ namespace VKatcher.ViewModels
             });
         }
 
-        private async void InitializeGroups()
+        public async void InitializeGroups()
         {
             SubscribedGroups = new ObservableCollection<VKGroup>();
             SubscribedGroups = await SubscriptionService.LoadSubscribedGroups();

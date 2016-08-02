@@ -38,6 +38,7 @@ namespace VKBackground
             _deferral = taskInstance.GetDeferral();
             _ARE = new AutoResetEvent(false);
             VKSDK.Initialize("5545387");
+            taskInstance.Canceled += new BackgroundTaskCanceledEventHandler(OnCancelled);
             VKSDK.WakeUpSession();
             var networkInfo = NetworkInformation.GetInternetConnectionProfile();
             if (networkInfo.IsWlanConnectionProfile)
@@ -58,6 +59,34 @@ namespace VKBackground
             await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
             Debug.WriteLine("BG Task complete");
             _deferral.Complete();
+        }
+
+        private void OnCancelled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            string body = "The background task failed because " + reason;
+
+            #region Toast Visual
+            ToastVisual visual = new ToastVisual()
+            {
+                BindingGeneric = new ToastBindingGeneric()
+                {
+                    Children =
+                    {
+                        new AdaptiveText() {Text = body},
+                    },
+                }
+            };
+            #endregion
+
+            ToastContent toastContent = new ToastContent()
+            {
+                Visual = visual,
+                ActivationType = ToastActivationType.Foreground,
+            };
+
+            var toast = new ToastNotification(toastContent.GetXml());
+            toast.NotificationMirroring = NotificationMirroring.Allowed;
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
         private void PopToast()
@@ -100,7 +129,7 @@ namespace VKBackground
             foreach (var group in SubscribedGroups)
             {
                 #region Get Posts
-                group.to_save = group.to_save == null ? 3 : group.to_save;
+                group.to_save = group.to_save == 0 ? 3 : group.to_save;
                 var posts = await VKFacade.LoadWallPostsDIY(group.id, group.to_save, 0);
                 Debug.WriteLine("Loaded posts from " + group.name);
                 foreach (var post in posts)
