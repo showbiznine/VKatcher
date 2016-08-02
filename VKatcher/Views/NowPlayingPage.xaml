@@ -16,7 +16,7 @@
         <Converters:TimespanStringConverter x:Key="TimespanStringConverter" />
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="#FFFFFFFF">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

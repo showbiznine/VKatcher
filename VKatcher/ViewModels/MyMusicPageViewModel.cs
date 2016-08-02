@@ -166,12 +166,12 @@ namespace VKatcher.ViewModels
             }
         }
 
-        private async void LoadMyDownloads()
+        public async void LoadMyDownloads()
         {
             _myDownloads = await FileService.GetDownloads();
         }
 
-        private async void LoadMyTracks()
+        public async void LoadMyTracks()
         {
             if (_mySavedTracks == null)
             {

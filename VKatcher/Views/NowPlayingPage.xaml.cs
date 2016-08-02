@@ -9,6 +9,7 @@ using VKatcher.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -127,8 +128,10 @@ namespace VKatcher.Views
             {
                 if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
                 {
-                    var sb = StatusBar.GetForCurrentView().OccludedRect.Height;
-                    _margin = Frame.ActualHeight - sb - stkTopControls.ActualHeight;
+                    var sb = StatusBar.GetForCurrentView();
+                    var color = (Color)Application.Current.Resources["SystemAltHighColor"];
+                    sb.BackgroundColor = color;
+                    _margin = Frame.ActualHeight - stkTopControls.ActualHeight;
                     stkMain.Margin = new Thickness(0, _margin, 0, 0);
                     listView.Height = _margin;
                     listView.Padding = new Thickness(0, 0, 0, 12);

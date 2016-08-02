@@ -28,8 +28,21 @@ namespace VKatcherShared.Services
                 {
                     foreach (var item in temp)
                     {
-                        dls.Add(item);
+                        StorageFile f = null;
+                        try
+                        {
+                            f = await StorageFile.GetFileFromPathAsync(item.url);
+                        }
+                        catch (Exception)
+                        {
+                            break;
+                        }
+                        if (f != null)
+                        {
+                            dls.Add(item);
+                        }
                     }
+                    WriteDownloads(dls);
                 }
             }
             catch (Exception ex)
