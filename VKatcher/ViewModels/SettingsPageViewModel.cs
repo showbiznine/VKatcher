@@ -7,7 +7,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using VK.WindowsPhone.SDK;
+using VK.WindowsPhone.SDK.API;
 using VK.WindowsPhone.SDK.API.Model;
+using VK.WindowsPhone.SDK.Util;
 using VKatcher.Services;
 using VKatcher.Views;
 using VKatcherShared.Services;
@@ -19,9 +22,12 @@ namespace VKatcher.ViewModels
     public class SettingsPageViewModel : ViewModelBase
     {
         public ObservableCollection<VKGroup> SubscribedGroups { get; set; }
+        public VKUser MyUser { get; set; }
+        public bool IsPlaying { get; set; }
         public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
         public RelayCommand<ItemClickEventArgs> SelectGroup { get; set; }
         public RelayCommand<VKGroup> UnsubscribeCommand { get; set; }
+        public RelayCommand LogOutCommand { get; set; }
 
         public SettingsPageViewModel()
         {
@@ -31,9 +37,32 @@ namespace VKatcher.ViewModels
             }
             else
             {
+                IsPlaying = App.ViewModelLocator.Main._isPlaying;
                 InitializeGroups();
                 InitializeCommands();
+                InitializeUser();
             }
+        }
+
+        private async void InitializeUser()
+        {
+            await Task.Run(() =>
+            {
+                VKRequest.Dispatch<List<VKUser>>(
+                    new VKRequestParameters(
+                        "users.get",
+                        "fields", "photo_200"),
+                    async (res) =>
+                    {
+                        if (res.ResultCode == VKResultCode.Succeeded)
+                        {
+                            await VKExecute.ExecuteOnUIThread(() =>
+                            {
+                                MyUser = res.Data[0];
+                            });
+                        }
+                    });
+            });
         }
 
         private void InitializeCommands()
@@ -58,6 +87,11 @@ namespace VKatcher.ViewModels
                 msg.Commands.Add(new UICommand("No"));
                 msg.DefaultCommandIndex = 1;
                 await msg.ShowAsync();
+            });
+            LogOutCommand = new RelayCommand(() =>
+            {
+                VKSDK.Logout();
+                _navigationService.NavigateTo(typeof(MainPage));
             });
         }
 

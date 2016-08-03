@@ -67,6 +67,14 @@
                   ItemsSource="{Binding _results}" 
                   ItemTemplate="{StaticResource GroupGridDataTemplate}"
                   SizeChanged="gridView_SizeChanged"/>
+        <ProgressRing HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Width="24"
+                      Height="24"
+                      Grid.Row="1"
+                      Grid.ColumnSpan="2" 
+                      IsActive="{Binding _inCall}"
+                      Visibility="{Binding _inCall, Converter={StaticResource BooleanVisibilityConverter}}"/>
 
     </Grid>
 </Page>

@@ -67,7 +67,7 @@ namespace VKatcher.ViewModels
                     null);
                 SetupTimer();
                 _mediaPlayer = BackgroundMediaPlayer.Current;
-                //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
             }
         }
 
@@ -155,10 +155,18 @@ namespace VKatcher.ViewModels
             switch (sender.PlaybackState)
             {
                 case MediaPlaybackState.None:
-                    DispatcherHelper.CheckBeginInvokeOnUI(() =>_isPlaying = false);
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => 
+                    {
+                        _isPlaying = false;
+                        App.ViewModelLocator.Settings.IsPlaying = false;
+                    });
                     break;
                 case MediaPlaybackState.Playing:
-                    DispatcherHelper.CheckBeginInvokeOnUI(() => _isPlaying = true);
+                    DispatcherHelper.CheckBeginInvokeOnUI(() => 
+                    {
+                        _isPlaying = true;
+                        App.ViewModelLocator.Settings.IsPlaying = true;
+                    });
                     break;
                 default:
                     break;

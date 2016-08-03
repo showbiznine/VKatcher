@@ -74,6 +74,10 @@ namespace VKatcher.Views
             #endregion
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             myFrame.Navigated += OnNavigated;
+            VKSDK.AccessTokenReceived += (sender, args) =>
+            {
+                App.ViewModelLocator.Main.Init();
+            };
             btnSmart.Loaded += (s, e) =>
             {
                 btnSmart.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY | ManipulationModes.TranslateRailsX | ManipulationModes.TranslateRailsY; //| ManipulationModes.TranslateInertia;

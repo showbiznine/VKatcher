@@ -23,7 +23,7 @@ namespace VKatcher.ViewModels
         public ObservableCollection<VKGroup> _results { get; set; }
         public string _searchQuery { get; set; }
         public Frame _frame;
-        public bool _inCall = false;
+        public bool _inCall { get; set; }
         public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
         #endregion
 

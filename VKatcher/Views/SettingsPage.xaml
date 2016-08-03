@@ -6,6 +6,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:Converters="using:VKatcher.Converters"
       x:Name="pageRoot"
       x:Class="VKatcher.Views.SettingsPage"
       mc:Ignorable="d"
@@ -407,6 +408,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Converters:PlayingToMarginConverter x:Key="PlayingToMarginConverter" />
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -424,10 +426,10 @@
                    TextLineBounds="TrimToBaseline"
                    Text="SETTINGS"
                    Margin="12,0,0,12" />
-        <Pivot Title=""
-               Grid.Row="1">
+        <Pivot Grid.Row="1">
             <PivotItem x:Name="pvtDownloads"
-                       Header="Downloads">
+                       Header="Downloads"
+                       Style="{StaticResource PivotNoSideBorderStyle}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -560,6 +562,7 @@
                                           VerticalAlignment="Center"
                                           d:LayoutOverrides="Height"
                                           IsOn="True"
+                                          IsEnabled="False"
                                           HorizontalAlignment="Right"
                                           Style="{StaticResource ToggleSwitchLeftLabel}"
                                           OnContent="Light"
@@ -581,6 +584,7 @@
                                           VerticalAlignment="Center"
                                           d:LayoutOverrides="Height"
                                           IsOn="True"
+                                          IsEnabled="False"
                                           HorizontalAlignment="Right"
                                           Style="{StaticResource ToggleSwitchLeftLabel}"
                                           OnContent="On"
@@ -602,6 +606,7 @@
                                           VerticalAlignment="Center"
                                           d:LayoutOverrides="Height"
                                           IsOn="True"
+                                          IsEnabled="False"
                                           HorizontalAlignment="Right"
                                           Style="{StaticResource ToggleSwitchLeftLabel}"
                                           OnContent="On"
@@ -623,6 +628,7 @@
                                           VerticalAlignment="Center"
                                           d:LayoutOverrides="Height"
                                           IsOn="True"
+                                          IsEnabled="False"
                                           HorizontalAlignment="Right"
                                           Style="{StaticResource ToggleSwitchLeftLabel}"
                                           OnContent="On"
@@ -639,21 +645,24 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="150" />
                         <RowDefinition Height="40" />
-                        <RowDefinition Height="277*" />
-                        <RowDefinition Height="50*" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <ListView x:Name="lstStats"
                               Margin="0,0,0,24"
                               Grid.Row="2" />
-                    <Button x:Name="button"
+                    <Button x:Name="btnLogOut"
                             Content="LOG OUT"
-                            VerticalAlignment="Stretch"
+                            VerticalAlignment="Center"
                             Grid.Row="3"
                             HorizontalAlignment="Stretch"
                             Background="#00000000"
                             FontSize="20"
                             FontWeight="Black"
-                            Foreground="#FFD13438" />
+                            Foreground="#FFD13438"
+                            Padding="8,0"
+                            Command="{Binding LogOutCommand}"
+                            Margin="{Binding IsPlaying, Converter={StaticResource PlayingToMarginConverter}}" />
                     <Ellipse x:Name="ellProfile"
                              HorizontalAlignment="Center"
                              Margin="0"
@@ -665,13 +674,13 @@
                              Pivot.SlideInAnimationGroup="1">
                         <Ellipse.Fill>
                             <ImageBrush Stretch="UniformToFill"
-                                        ImageSource="{Binding CurrentUser.photo_200}" />
+                                        ImageSource="{Binding MyUser.photo_200}" />
                         </Ellipse.Fill>
                     </Ellipse>
                     <TextBlock x:Name="textBlock7"
                                HorizontalAlignment="Center"
                                TextWrapping="Wrap"
-                               Text="{Binding CurrentUser.first_name}"
+                               Text="{Binding MyUser.first_name}"
                                VerticalAlignment="Center"
                                Grid.Row="1"
                                FontSize="20"

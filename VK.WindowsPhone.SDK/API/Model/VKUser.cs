@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace VK.WindowsPhone.SDK.API.Model
     /// <summary>
     /// https://vk.com/dev/fields
     /// </summary>
-    public partial class VKUser
+    public partial class VKUser : INotifyPropertyChanged
     {
         public long id
         {
@@ -102,9 +103,7 @@ namespace VK.WindowsPhone.SDK.API.Model
 
         public string home_phone { get; set; }
 
-        public string site { get; set; }
-
-        
+        public string site { get; set; }        
         
         public long university { get; set; }
 
@@ -234,6 +233,9 @@ namespace VK.WindowsPhone.SDK.API.Model
         }
 
         private string _quotes = "";
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public string quotes
         {
             get { return _quotes; }
