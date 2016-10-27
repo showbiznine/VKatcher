@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,18 @@ namespace VK.WindowsPhone.SDK.API.Model
     /// <summary>
     /// https://vk.com/dev/post
     /// </summary>
+
+    public class VKWallPostRoot
+    {
+        public Response response { get; set; }
+
+        public class Response
+        {
+            public int count { get; set; }
+            public ObservableCollection<VKWallPost> items { get; set; }
+        }
+    }
+
     public partial class VKWallPost
     {
         public string post_image { get; set; }
@@ -39,7 +52,7 @@ namespace VK.WindowsPhone.SDK.API.Model
 
         public VKPostSource post_source { get; set; }
 
-        public List<VKAttachment> attachments { get; set; }
+        public ObservableCollection<VKAttachment> attachments { get; set; }
 
         public VKGeo geo { get; set; }
 

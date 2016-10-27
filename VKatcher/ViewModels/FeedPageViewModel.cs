@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using Microsoft.Toolkit.Uwp;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -18,6 +20,7 @@ using VKatcherShared.Messages;
 using VKatcherShared.Services;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -68,14 +71,15 @@ namespace VKatcher.ViewModels
             else
             {
                 InitializeCommands();
+                _wallPosts = new ObservableCollection<VKWallPost>();
                 _mediaPlayer = BackgroundMediaPlayer.Current;
             }
         }
 
         private void InitializeCommands()
         {
-            LoadPostsCommand = new RelayCommand(() => LoadPosts(_offset, 20));
-            RefreshPostsCommand = new RelayCommand(() => LoadPosts(_offset, 10));
+            LoadPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
+            RefreshPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
             DownloadTrackCommand = new RelayCommand<Grid>(grid =>
             {
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
@@ -140,23 +144,30 @@ namespace VKatcher.ViewModels
             });
         }
 
-        public async void LoadPosts(int offset, int count)
+        public async void LoadPosts(int offset, int count, bool clear)
         {
-            if (_wallPosts != null)
+            _inCall = true;
+            try
             {
-                _wallPosts.Clear(); 
-            }
-            await DispatcherHelper.RunAsync(async () =>
-            {
-                _inCall = true;
-                var temp = await DataService.LoadWallPosts(_currentGroup.id, offset, count);
-                temp.CollectionChanged += (s, e) =>
+                if (_wallPosts != null && clear)
                 {
-                    if (temp.Count > 0)
-                        _wallPosts = temp;
-                };
-                _inCall = false;
-            });
+                    _wallPosts.Clear();
+                }
+                var temp = await DataService.LoadWallPosts(_currentGroup.id, offset, count);
+                foreach (var post in temp)
+                {
+                    _wallPosts.Add(post);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                if (ex is HttpRequestException)
+                    await new MessageDialog("Error connecting to VK").ShowAsync();
+                else
+                    await new MessageDialog("Error loading groups").ShowAsync();
+            }
+            _inCall = false;
         }
 
         private async void DownloadTrack(VKAudio track)

@@ -22,7 +22,7 @@ namespace VKatcher.ViewModels
     {
         #region Fields
         public VKAudio _currentTrack { get; set; }
-        public ObservableCollection<VKAudio> _currentPlaylist { get; set; }
+        public ObservableCollection<object> _currentPlaylist { get; set; }
         private MediaPlayer _mediaPlayer { get; set; }
         private DispatcherTimer _timer;
         private bool _sliderPressed;
@@ -55,7 +55,7 @@ namespace VKatcher.ViewModels
             {
                 _mediaPlayer = BackgroundMediaPlayer.Current;
                 _currentTrack = new VKAudio();
-                _currentPlaylist = new ObservableCollection<VKAudio>();
+                _currentPlaylist = new ObservableCollection<object>();
                 InitializeCommands();
                 SetupTimer();
             }

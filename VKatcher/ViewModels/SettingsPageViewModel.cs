@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Practices.ServiceLocation;
+using SpotifyWebAPI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +15,7 @@ using VK.WindowsPhone.SDK.Util;
 using VKatcher.Services;
 using VKatcher.Views;
 using VKatcherShared.Services;
+using VKCatcherShared.Services;
 using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 
@@ -22,21 +24,31 @@ namespace VKatcher.ViewModels
     public class SettingsPageViewModel : ViewModelBase
     {
         public ObservableCollection<VKGroup> SubscribedGroups { get; set; }
+        public ObservableCollection<Playlist> SpotifyPlaylists { get; set; }
         public VKUser MyUser { get; set; }
         public bool IsPlaying { get; set; }
         public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
+        public bool IsSpotifyConnected { get; set; }
+
         public RelayCommand<ItemClickEventArgs> SelectGroup { get; set; }
         public RelayCommand<VKGroup> UnsubscribeCommand { get; set; }
         public RelayCommand LogOutCommand { get; set; }
+        public RelayCommand ConnectSpotifyCommand { get; set; }
 
         public SettingsPageViewModel()
         {
             if (IsInDesignMode)
             {
-
+                SpotifyPlaylists = new ObservableCollection<Playlist>
+                {
+                    new Playlist {Name = "Test 1", Tracks = new Page<PlaylistTrack> { Total = 30} },
+                    new Playlist {Name = "Test 2", Tracks = new Page<PlaylistTrack> { Total = 15} },
+                    new Playlist {Name = "Test 3", Tracks = new Page<PlaylistTrack> { Total = 4} }
+                };
             }
             else
             {
+                SpotifyPlaylists = new ObservableCollection<Playlist>();
                 IsPlaying = App.ViewModelLocator.Main._isPlaying;
                 InitializeGroups();
                 InitializeCommands();
@@ -63,6 +75,15 @@ namespace VKatcher.ViewModels
                         }
                     });
             });
+        }
+
+        private async void LoadSpotifyPlaylists()
+        {
+            var pl = await SpotifyService.GetUserPlaylists();
+            foreach (var playlist in pl)
+            {
+                SpotifyPlaylists.Add(playlist);
+            }
         }
 
         private void InitializeCommands()
@@ -93,6 +114,22 @@ namespace VKatcher.ViewModels
                 VKSDK.Logout();
                 _navigationService.NavigateTo(typeof(MainPage));
             });
+            ConnectSpotifyCommand = new RelayCommand(async () =>
+            {
+                await AuthenticateSpotify();
+                //LoadSpotifyPlaylists();
+            });
+        }
+
+        private async Task AuthenticateSpotify()
+        {
+            var res = await SpotifyService.GetAuthCode();
+            if (res)
+            {
+                LoadSpotifyPlaylists();
+            }
+
+            IsSpotifyConnected = res;
         }
 
         public async void InitializeGroups()

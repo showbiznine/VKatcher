@@ -108,7 +108,10 @@ namespace VKatcher.Views
             base.OnNavigatedTo(e);
             ApplicationSettingsHelper.SaveSettingsValue("appstate", "Active");
             VKSDK.Initialize("5545387");
-            VKSDK.WakeUpSession();
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                VKSDK.WakeUpSession();
+            });
             if (VKSDK.IsLoggedIn)
             {
                 (DataContext as MainViewModel).Init();

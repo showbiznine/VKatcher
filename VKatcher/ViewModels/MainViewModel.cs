@@ -38,10 +38,13 @@ namespace VKatcher.ViewModels
         public ObservableCollection<VKAudio> _currentPlaylist { get; set; }
         public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
         public bool _isPlaying { get; set; }
+        public bool IsMenuOpen { get; set; }
         #endregion
 
         #region Commands
         public RelayCommand GoToNowPlayingCommand { get; set; }
+        public RelayCommand GoToMyMusicCommand { get; set; }
+        public RelayCommand GoToSettingsCommand { get; set; }
         public RelayCommand PlayPauseCommand { get; set; }
         public RelayCommand SkipNextCommand { get; set; }
         public RelayCommand SkipPreviousCommand { get; set; }
@@ -63,7 +66,7 @@ namespace VKatcher.ViewModels
                 InitializeCommands();
                 var task = RegisterBackgroundTask("VKBackground.CheckNewPostsTask",
                     "CheckNewPostsTask",
-                    new TimeTrigger(720, false),
+                    new MaintenanceTrigger(30, false),
                     null);
                 SetupTimer();
                 _mediaPlayer = BackgroundMediaPlayer.Current;
@@ -122,7 +125,7 @@ namespace VKatcher.ViewModels
         {
             _timer.Stop();
             _timer.Tick -= _timer_Tick;
-        } 
+        }
 
         private void _timer_Tick(object sender, object e)
         {
@@ -155,14 +158,14 @@ namespace VKatcher.ViewModels
             switch (sender.PlaybackState)
             {
                 case MediaPlaybackState.None:
-                    DispatcherHelper.CheckBeginInvokeOnUI(() => 
+                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         _isPlaying = false;
                         App.ViewModelLocator.Settings.IsPlaying = false;
                     });
                     break;
                 case MediaPlaybackState.Playing:
-                    DispatcherHelper.CheckBeginInvokeOnUI(() => 
+                    DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         _isPlaying = true;
                         App.ViewModelLocator.Settings.IsPlaying = true;
@@ -177,11 +180,21 @@ namespace VKatcher.ViewModels
         {
             GoToNowPlayingCommand = new RelayCommand(() =>
             {
-                var lst = new List<object>();
-                lst.Add(_currentTrack);
-                lst.Add(_currentPlaylist);
+                var lst = new ObservableCollection<object>(_currentPlaylist);
+                //lst.Add(_currentTrack);
+                //lst.Add(_currentPlaylist);
                 Debug.WriteLine(_currentTrack.photo_url);
-                _navigationService.NavigateTo(typeof(NowPlayingPage), lst);
+                App.ViewModelLocator.NowPlaying._currentPlaylist = lst;
+                App.ViewModelLocator.NowPlaying._currentTrack = _currentTrack;
+                _navigationService.NavigateTo(typeof(NowPlayingPage));
+            });
+            GoToSettingsCommand = new RelayCommand(() =>
+            {
+                _navigationService.NavigateTo(typeof(SettingsPage));
+            });
+            GoToMyMusicCommand = new RelayCommand(() =>
+            {
+                _navigationService.NavigateTo(typeof(MyMusicPage));
             });
             PlayPauseCommand = new RelayCommand(() => PlayPause());
             SkipNextCommand = new RelayCommand(() => MessageService.SendMessageToBackground(new SkipNextMessage()));

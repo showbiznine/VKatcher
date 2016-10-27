@@ -16,30 +16,89 @@
         <Converters:TimespanStringConverter x:Key="TimespanStringConverter" />
     </Page.Resources>
 
-    <Grid Background="#FFFFFFFF">
+    <Grid Background="{StaticResource BG_Gray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid>
-            <Image x:Name="image"
-                   Source="{Binding DataContext._currentTrack.photo_url, ElementName=pageRoot}"
-                   Stretch="UniformToFill" />
-        </Grid>
         <ScrollViewer x:Name="myScrollViewer"
                       Margin="0"
                       Background="{x:Null}"
                       Grid.RowSpan="2"
-                      Padding="0">
+                      Padding="0"
+                      Grid.Row="1">
             <StackPanel x:Name="stkMain"
                         Margin="0"
-                        Visibility="Visible">
-                <StackPanel.Background>
-                    <SolidColorBrush Color="{ThemeResource SystemAltHighColor}" />
-                </StackPanel.Background>
+                        Visibility="Visible"
+                        Background="{StaticResource BG_Gray}">
                 <StackPanel x:Name="stkTopControls"
-                            Padding="12,12,12,0">
-                    <StackPanel VerticalAlignment="Top">
+                            Padding="24,0">
+                    <Grid Visibility="Collapsed">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="lblCurrentTime"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding _trackTime}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,12,0"
+                                   d:LayoutOverrides="Width" />
+                        <TextBlock x:Name="lblDuration"
+                                   TextWrapping="Wrap"
+                                   Text="{Binding _currentTrack.duration, Converter={StaticResource TimespanStringConverter}}"
+                                   Margin="12,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="2"
+                                   HorizontalAlignment="Left" />
+                    </Grid>
+                    <StackPanel x:Name="stkControls"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal"
+                                d:LayoutOverrides="LeftPosition, RightPosition"
+                                Margin="0,24">
+                        <Button x:Name="btnPrev"
+                                Content="&#xE100;"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Height="48"
+                                Width="48"
+                                Background="#00000000"
+                                FontFamily="Segoe MDL2 Assets"
+                                Padding="0"
+                                FontSize="24"
+                                Foreground="White" />
+                        <Grid x:Name="grdPlayPause"
+                              Margin="24,0">
+                            <Ellipse Fill="White"
+                                     Width="96"
+                                     Height="96" />
+                            <Button x:Name="button_Copy"
+                                    Content="&#xE102;"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="#00000000"
+                                    FontFamily="Segoe MDL2 Assets"
+                                    Padding="0"
+                                    FontSize="28"
+                                    d:LayoutOverrides="LeftPosition, RightPosition" />
+                        </Grid>
+                        <Button x:Name="btnNext"
+                                Content="&#xE101;"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Height="48"
+                                Width="48"
+                                Background="#00000000"
+                                FontFamily="Segoe MDL2 Assets"
+                                Padding="0"
+                                FontSize="24"
+                                Foreground="White" />
+                    </StackPanel>
+                    <StackPanel x:Name="stkDetails"
+                                VerticalAlignment="Top"
+                                Visibility="Collapsed">
                         <TextBlock x:Name="textBlock"
                                    TextWrapping="Wrap"
                                    FontSize="30"
@@ -52,85 +111,23 @@
                                    FontWeight="SemiBold"
                                    Text="{Binding DataContext._currentTrack.artist, ElementName=pageRoot}" />
                     </StackPanel>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="lblCurrentTime"
+                    <StackPanel x:Name="stkDetails_Copy"
+                                VerticalAlignment="Top">
+                        <TextBlock x:Name="textBlock1"
                                    TextWrapping="Wrap"
-                                   Text="{Binding _trackTime}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,12,0"
-                                   d:LayoutOverrides="Width" />
-                        <Slider x:Name="slider"
-                                Style="{StaticResource TrackControlSliderStyle}"
-                                Value="{Binding _trackPosition, Mode=TwoWay}"
-                                Maximum="{Binding DataContext._currentTrack.duration, ElementName=pageRoot}"
-                                ThumbToolTipValueConverter="{StaticResource TimespanStringConverter}"
-                                d:LayoutOverrides="TopPosition, BottomPosition"
-                                Grid.Column="1">
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="PointerCaptureLost">
-                                    <Core:InvokeCommandAction Command="{Binding SliderUpCommand}" />
-                                </Core:EventTriggerBehavior>
-                                <Core:EventTriggerBehavior EventName="PointerPressed">
-                                    <Core:InvokeCommandAction Command="{Binding SliderDownCommand}" />
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </Slider>
-                        <TextBlock x:Name="lblDuration"
+                                   FontSize="48"
+                                   FontWeight="Black"
+                                   Text="Title"
+                                   Foreground="White" />
+                        <TextBlock x:Name="textBlock_Copy1"
                                    TextWrapping="Wrap"
-                                   Text="{Binding _currentTrack.duration, Converter={StaticResource TimespanStringConverter}}"
-                                   Margin="12,0,0,0"
-                                   VerticalAlignment="Center"
-                                   Grid.Column="2"
-                                   HorizontalAlignment="Left" />
-                    </Grid>
-                    <StackPanel HorizontalAlignment="Center"
-                                Orientation="Horizontal"
-                                d:LayoutOverrides="LeftPosition, RightPosition"
-                                Margin="0,12">
-                        <Button x:Name="button"
-                                Content="&#xE100;"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Height="48"
-                                Width="48"
-                                Background="#00000000"
-                                FontFamily="Segoe MDL2 Assets"
-                                Padding="0"
-                                FontSize="20" />
-                        <Button x:Name="button_Copy"
-                                Content="&#xE102;"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Height="48"
-                                Width="48"
-                                Margin="24,0"
-                                Background="#00000000"
-                                FontFamily="Segoe MDL2 Assets"
-                                Padding="0"
-                                FontSize="20" />
-                        <Button x:Name="button_Copy1"
-                                Content="&#xE101;"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Height="48"
-                                Width="48"
-                                Background="#00000000"
-                                FontFamily="Segoe MDL2 Assets"
-                                Padding="0"
-                                FontSize="20" />
+                                   FontSize="32"
+                                   Margin="0,4,0,0"
+                                   FontWeight="SemiBold"
+                                   Text="Artist"
+                                   Foreground="White"
+                                   Opacity="0.6" />
                     </StackPanel>
-                    <TextBlock x:Name="textBlock1"
-                               TextWrapping="Wrap"
-                               Text="&#xE76F;"
-                               Margin="0,32,0,0"
-                               FontFamily="Segoe MDL2 Assets"
-                               FontSize="18"
-                               TextAlignment="Center" />
                 </StackPanel>
                 <ListView x:Name="listView"
                           ItemsSource="{Binding DataContext._currentPlaylist, ElementName=pageRoot}"
@@ -140,7 +137,8 @@
                           ItemTemplate="{StaticResource AudioListTemplate}"
                           Background="Transparent"
                           SelectionMode="None"
-                          IsItemClickEnabled="True">
+                          IsItemClickEnabled="True"
+                          Visibility="Collapsed">
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="ItemClick">
                             <Core:InvokeCommandAction Command="{Binding DataContext.PlaySongCommand, ElementName=pageRoot}"
@@ -150,6 +148,55 @@
                 </ListView>
             </StackPanel>
         </ScrollViewer>
+        <Grid>
+            <Image x:Name="image"
+                   Source="{Binding DataContext._currentTrack.photo_url, ElementName=pageRoot}"
+                   Stretch="UniformToFill"
+                   Width="432"
+                   Height="432"
+                   d:IsHidden="True" />
+            <Image x:Name="image_Copy"
+                   Stretch="UniformToFill"
+                   Width="432"
+                   Height="432"
+                   Source="ms-appx:///Assets/Sample Data/Album Art/JucC-gF1BnM.jpg" />
+            <Slider x:Name="slider"
+                    Style="{StaticResource TrackControlSliderStyle}"
+                    Value="{Binding _trackPosition, Mode=TwoWay}"
+                    Maximum="{Binding DataContext._currentTrack.duration, ElementName=pageRoot}"
+                    ThumbToolTipValueConverter="{StaticResource TimespanStringConverter}"
+                    Height="44"
+                    Margin="0,0,0,-22"
+                    VerticalAlignment="Bottom"
+                    Foreground="#FF4E5867">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerCaptureLost">
+                        <Core:InvokeCommandAction Command="{Binding SliderUpCommand}" />
+                    </Core:EventTriggerBehavior>
+                    <Core:EventTriggerBehavior EventName="PointerPressed">
+                        <Core:InvokeCommandAction Command="{Binding SliderDownCommand}" />
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+            </Slider>
+        </Grid>
+        <Grid x:Name="grdTopBar"
+              Height="64"
+              VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="64" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="64" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="btnHamburger"
+                    Content="&#xE700;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    d:LayoutOverrides="Width"
+                    Background="#00000000"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="28"
+                    Foreground="White" />
+        </Grid>
 
     </Grid>
 </Page>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,21 @@ using VK.WindowsPhone.SDK.Util;
 
 namespace VK.WindowsPhone.SDK.API.Model
 {
-   /// <summary>
-   /// https://vk.com/dev/fields_groups
-   /// </summary>
+    /// <summary>
+    /// https://vk.com/dev/fields_groups
+    /// </summary>
+
+    public class VKGroupRoot
+    {
+        public Response response { get; set; }
+
+        public class Response
+        {
+            public int count { get; set; }
+            public ObservableCollection<VKGroup> items { get; set; }
+        }
+    }
+
     public partial class VKGroup : INotifyPropertyChanged
     {
         private bool m_IsSubscribed;

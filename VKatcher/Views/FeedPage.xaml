@@ -51,9 +51,9 @@
         </Storyboard>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="#FF4E5867">
         <Grid.RowDefinitions>
-            <RowDefinition Height="168" />
+            <RowDefinition Height="64" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <ListView x:Name="listView"
@@ -75,15 +75,6 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <TextBlock x:Name="lblGroupName"
-                   HorizontalAlignment="Left"
-                   TextWrapping="Wrap"
-                   Text="{Binding _currentGroup.name}"
-                   VerticalAlignment="Bottom"
-                   Margin="12,0,0,12"
-                   FontSize="22"
-                   FontWeight="Black"
-                   TextLineBounds="TrimToBaseline" />
         <ProgressRing x:Name="prgRing"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"
@@ -132,5 +123,32 @@
                 </Interactivity:Interaction.Behaviors>
             </Button>
         </StackPanel>
+        <Grid x:Name="grdTopBar"
+              Background="#FF4E5867">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="64" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="btnHamburger"
+                    Content="&#xE700;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    d:LayoutOverrides="Width"
+                    Background="#00000000"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="28"
+                    Foreground="White" />
+            <TextBlock x:Name="lblGroupName"
+                       HorizontalAlignment="Left"
+                       TextWrapping="Wrap"
+                       Text="{Binding _currentGroup.name}"
+                       VerticalAlignment="Center"
+                       FontSize="22"
+                       FontWeight="Black"
+                       TextLineBounds="Tight"
+                       Grid.Column="1"
+                       Margin="8,0,0,0"
+                       Foreground="White" />
+        </Grid>
     </Grid>
 </Page>

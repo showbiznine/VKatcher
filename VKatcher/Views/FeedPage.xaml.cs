@@ -36,13 +36,6 @@ namespace VKatcher.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (e.Parameter is VKGroup)
-            {
-                var group = e.Parameter as VKGroup;
-                CheckSubscribed(group);
-                App.ViewModelLocator.Feed._currentGroup = group;
-                App.ViewModelLocator.Feed.LoadPosts(0, 20);
-            }
         }
 
         private async void CheckSubscribed(VKGroup group)

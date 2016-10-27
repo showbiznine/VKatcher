@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="a9eb24d9-5b8d-4bed-9357-3f74af55c319" Publisher="CN=tppet" Version="1.0.0.0" />
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap uap3 mp">
+  <Identity Name="2783ShowbizInc.VKatcher" Publisher="CN=F49E0BBC-ED60-4621-AD64-4F77977D5015" Version="0.8.1.0" />
   <mp:PhoneIdentity PhoneProductId="a9eb24d9-5b8d-4bed-9357-3f74af55c319" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>VKatcher</DisplayName>
-    <PublisherDisplayName>tppet</PublisherDisplayName>
+    <PublisherDisplayName>Tej Palladino Peters</PublisherDisplayName>
     <Logo>Assets\NewStoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -16,7 +16,8 @@
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="VKatcher.App">
       <uap:VisualElements DisplayName="VKatcher" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="VKatcher" BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="VKatcher" Square310x310Logo="Assets\Square310x310Logo.png" Square71x71Logo="Assets\Square71x71Logo.png"></uap:DefaultTile>
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="VKatcher" Square310x310Logo="Assets\Square310x310Logo.png" Square71x71Logo="Assets\Square71x71Logo.png">
+        </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
@@ -41,7 +42,7 @@
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
-    <uap3:Capability Name="backgroundMediaPlayback" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" />
+    <uap3:Capability Name="backgroundMediaPlayback" />
     <uap:Capability Name="musicLibrary" />
   </Capabilities>
 </Package>

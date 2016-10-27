@@ -71,6 +71,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+    
     <Style x:Key="ListViewPlainStretchStyle"
            TargetType="ListViewItem">
         <Setter Property="FontFamily"

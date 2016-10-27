@@ -5212,7 +5212,31 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-        <Frame x:Name="myFrame" />
+        <SplitView x:Name="mySplitView"
+                   Margin="0"
+                   d:LayoutOverrides="Width"
+                   IsPaneOpen="{Binding IsMenuOpen, Mode=TwoWay}">
+            <SplitView.Pane>
+                <Grid>
+                    <Button x:Name="button"
+                            Content="SETTINGS"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Margin="0"
+                            d:LayoutOverrides="Width, LeftPosition, RightPosition"
+                            Command="{Binding GoToSettingsCommand}" />
+                    <Button x:Name="button_Copy"
+                            Content="MY MUSIC"
+                            VerticalAlignment="Bottom"
+                            HorizontalAlignment="Center"
+                            Margin="0,0,0,309"
+                            Command="{Binding GoToMyMusicCommand}" />
+                </Grid>
+            </SplitView.Pane>
+            <Grid>
+                <Frame x:Name="myFrame" />
+            </Grid>
+        </SplitView>
         <Grid x:Name="grdPlaybackControls"
               Height="100"
               Grid.Row="2"

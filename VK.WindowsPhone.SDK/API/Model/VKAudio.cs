@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -12,10 +13,20 @@ using Windows.Storage;
 
 namespace VK.WindowsPhone.SDK.API.Model
 {
+
+    public class VKAudioRoot
+    {
+        public Response response { get; set; }
+
+        public class Response
+        {
+            public int count { get; set; }
+            public ObservableCollection<VKAudio> items { get; set; }
+        }
+    }
+
     public partial class VKAudio : INotifyPropertyChanged
     {
-
-
         private bool m_IsSaved;
         public bool IsSaved
         {
@@ -132,6 +143,20 @@ namespace VK.WindowsPhone.SDK.API.Model
             CancellationTokenSource cts = new CancellationTokenSource();
 
             await dlOp.StartAsync().AsTask(cts.Token, progress);
+            return sf;
+        }
+
+        public async Task<StorageFile> DownloadTrackB()
+        {
+            var folder = await KnownFolders.MusicLibrary.CreateFolderAsync("VKatcher", CreationCollisionOption.OpenIfExists);
+            StorageFile sf = await folder.CreateFileAsync(title + "-" + artist + ".mp3", CreationCollisionOption.ReplaceExisting);
+
+            var bgd = new BackgroundDownloader();
+            var dlOp = bgd.CreateDownload(new Uri(url), sf);
+            Progress<DownloadOperation> progress = new Progress<DownloadOperation>(OnDLProgressChanged);
+            CancellationTokenSource cts = new CancellationTokenSource();
+
+            await dlOp.StartAsync();
             return sf;
         }
 

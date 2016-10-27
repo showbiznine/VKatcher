@@ -356,7 +356,7 @@ namespace VK.WindowsPhone.SDK
                 Instance.AccessToken = token;
             }
 
-            TrackStats();
+            //TrackStats();
 
             return result;
         }

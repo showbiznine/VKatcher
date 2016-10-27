@@ -42,7 +42,6 @@ namespace VKatcherShared.Services
                             dls.Add(item);
                         }
                     }
-                    WriteDownloads(dls);
                 }
             }
             catch (Exception ex)
@@ -50,7 +49,7 @@ namespace VKatcherShared.Services
                 var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_downloadedDB);
                 Debug.WriteLine(ex.Message);
             }
-
+            WriteDownloads(dls);
             return dls;
         }
 

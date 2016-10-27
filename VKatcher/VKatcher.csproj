@@ -16,7 +16,12 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>VKatcher_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>VKatcher_StoreKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>89B7E9845E307DF3D5BDCBD45A24BDD0B1FE433C</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -90,6 +95,8 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
+    <None Include="VKatcher_StoreKey.pfx" />
+    <None Include="VKatcher_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
@@ -121,6 +128,9 @@
     <Compile Include="Views\FeedPage.xaml.cs">
       <DependentUpon>FeedPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HomePage.xaml.cs">
+      <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -144,7 +154,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="VKatcher_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\logo.svg" />
@@ -153,10 +162,18 @@
     <Content Include="Assets\NewStoreLogo.scale-150.png" />
     <Content Include="Assets\NewStoreLogo.scale-200.png" />
     <Content Include="Assets\NewStoreLogo.scale-400.png" />
+    <Content Include="Assets\Sample Data\Album Art\fnC4WErnoz8.jpg" />
+    <Content Include="Assets\Sample Data\Album Art\JucC-gF1BnM.jpg" />
+    <Content Include="Assets\Sample Data\Album Art\l5w3lNf3Ezk.jpg" />
+    <Content Include="Assets\Sample Data\Album Art\sPN3h-wtoAQ.jpg" />
+    <Content Include="Assets\Sample Data\Album Art\TEJxuxGd-pI.jpg" />
+    <Content Include="Assets\Sample Data\Album Art\Y5uLQ7lwmCI.jpg" />
     <Content Include="Assets\SplashScreen.scale-100.png" />
     <Content Include="Assets\SplashScreen.scale-125.png" />
     <Content Include="Assets\SplashScreen.scale-150.png" />
     <Content Include="Assets\SplashScreen.scale-400.png" />
+    <Content Include="Assets\SpotifyLogos\Spotify_Icon_RGB_White.png" />
+    <Content Include="Assets\SpotifyLogos\Spotify_Logo_RGB_White.png" />
     <Content Include="Assets\Square150x150Logo.scale-100.png" />
     <Content Include="Assets\Square150x150Logo.scale-125.png" />
     <Content Include="Assets\Square150x150Logo.scale-150.png" />
@@ -188,6 +205,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-125.png" />
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -246,6 +264,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\HomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -273,6 +295,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Documents\Coding\SpotifyWebAPI\SpotifyWebAPI.UWP\SpotifyWebAPI.UWP.csproj">
+      <Project>{47d152f3-ffa4-4bab-9754-5ac3f06c3c4a}</Project>
+      <Name>SpotifyWebAPI.UWP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VK.WindowsPhone.SDK-XAML\VK.WindowsPhone.SDK-XAML.csproj">
       <Project>{a7e0fc88-a513-4981-8c2a-0106045e695b}</Project>
       <Name>VK.WindowsPhone.SDK-XAML</Name>

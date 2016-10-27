@@ -18,6 +18,9 @@ namespace VKatcherShared.Services
 {
     public class VKFacade
     {
+        private const string _host = "https://api.vk.com/method/";
+        private const string _apiVersion = "5.53";
+
         public static ObservableCollection<VKWallPost> LoadWallPosts(long groupID, int? postCount, int offset)
         {
             var WallPosts = new ObservableCollection<VKWallPost>();
@@ -199,6 +202,31 @@ namespace VKatcherShared.Services
                     WallPosts.Add(temp3);
                 }
             return WallPosts;
+        }
+
+        public static async Task<ObservableCollection<VKAudio>> SearchAudio(string query)
+        {
+            HttpClient http = new HttpClient();
+            var q = new QueryString()
+            {
+                {"q", query },
+                {"auto_complete", "true" },
+                {"access_token", VKSDK.GetAccessToken().AccessToken },
+                {"v", _apiVersion }
+            };
+            string request = _host + "audio.search?" + q;
+
+            var res = await http.GetAsync(request);
+            var json = await res.Content.ReadAsStringAsync();
+
+            var ReturnedObject = JsonConvert.DeserializeObject<VKAudioRoot>(json);
+            var r = ReturnedObject.response.items;
+            //foreach (var track in r)
+            //{
+            //    track.IsPlaying = CheckPlaying(track);
+            //}
+            //await CheckOffline(r);
+            return r;
         }
     }
 }

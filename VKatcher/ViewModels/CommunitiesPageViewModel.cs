@@ -6,11 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK.API.Model;
 using VKatcher.Services;
 using VKatcher.Views;
+using VKCatcherShared.Services;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -29,6 +32,7 @@ namespace VKatcher.ViewModels
 
         #region Commands
         public RelayCommand SearchCommand { get; set; }
+        public RelayCommand OpenMenuCommand { get; set; }
         public RelayCommand GoToSettingsCommand { get; set; }
         public RelayCommand GoToMyMusicCommand { get; set; }
         public RelayCommand<VKGroup> SelectGroup { get; set; }
@@ -57,31 +61,47 @@ namespace VKatcher.ViewModels
             SearchCommand = new RelayCommand(() => 
             {
                 _navigationService.NavigateTo(typeof(SearchPage));
-            }
-                );
+            });
             GoToSettingsCommand = new RelayCommand(() =>
             {
-                _navigationService.NavigateTo(typeof(SettingsPage));
+                SpotifyService.Authenticate();
+                //_navigationService.NavigateTo(typeof(SettingsPage));
             });
             GoToMyMusicCommand = new RelayCommand(() =>
             {
                 _navigationService.NavigateTo(typeof(MyMusicPage));
             });
+            OpenMenuCommand = new RelayCommand(() =>
+            {
+                App.ViewModelLocator.Main.IsMenuOpen = !App.ViewModelLocator.Main.IsMenuOpen;
+            });
             SelectGroup = new RelayCommand<VKGroup>(group =>
             {
-                _navigationService.NavigateTo(typeof(FeedPage), group);
+                App.ViewModelLocator.Feed._currentGroup = group;
+                App.ViewModelLocator.Feed.LoadPosts(0, 30, true);
+                _navigationService.NavigateTo(typeof(FeedPage));
             });
         }
 
         private async void LoadGroups()
         {
             _inCall = true;
-            _results.Clear();
-            await DispatcherHelper.RunAsync(async () =>
+            try
             {
-                _results = await Services.DataService.LoadMyGroups();
+                _results.Clear();
+                await DispatcherHelper.RunAsync(async () =>
+                {
+                    _results = await DataService.LoadMyGroups();
 
-            });
+                });
+            }
+            catch (Exception ex)
+            {
+                if (ex is HttpRequestException)
+                    await new MessageDialog("Error connecting to VK").ShowAsync();
+                else
+                    await new MessageDialog("Error loading groups").ShowAsync();
+            }
             _inCall = false;
         }
     }

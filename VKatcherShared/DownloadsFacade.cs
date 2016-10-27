@@ -37,7 +37,7 @@ namespace VKatcherShared.Services
         {
             try
             {
-                var temp = await ApplicationData.Current.RoamingFolder.GetFileAsync(_downloadedDB);
+                var temp = await ApplicationData.Current.LocalFolder.GetFileAsync(_downloadedDB);
                 _file = temp;
                 var str = File.ReadAllText(temp.Path);
                 _myDLs = new ObservableCollection<DownloadedTrack>();

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK.API.Model;
@@ -13,6 +14,7 @@ using VKatcher.Services;
 using VKatcher.Views;
 using VKatcherShared.Messages;
 using VKatcherShared.Services;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -134,9 +136,16 @@ namespace VKatcher.ViewModels
             {
                 DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
-                    var att = grid.DataContext as VKAttachment;
-                    att.audio.IsOffline = false;
-                    await FileService.DeleteDownload(att.audio);
+                    var att = grid.DataContext;
+                    if (att is VKAttachment)
+                    {
+                        ((VKAttachment)att).audio.IsOffline = false;
+                        await FileService.DeleteDownload(((VKAttachment)att).audio); 
+                    }
+                    else if (att is VKAudio)
+                    {
+                        await FileService.DeleteDownload((VKAudio)att);
+                    }
                 });
             });
             SongHoldingCommand = new RelayCommand<object>(sender =>
@@ -168,26 +177,42 @@ namespace VKatcher.ViewModels
 
         public async void LoadMyDownloads()
         {
-            _myDownloads = await FileService.GetDownloads();
+            try
+            {
+                _myDownloads = await FileService.GetDownloads();
+            }
+            catch (Exception ex)
+            {
+                if (ex is HttpRequestException)
+                    await new MessageDialog("Error connecting to VK").ShowAsync();
+                else
+                    await new MessageDialog("Error loading groups").ShowAsync();
+            }
         }
 
         public async void LoadMyTracks()
         {
-            if (_mySavedTracks == null)
+            _inCall = true;
+            try
             {
-                await DispatcherHelper.RunAsync(async () =>
+                if (_mySavedTracks == null)
                 {
-                    _inCall = true;
                     _mySavedTracks = new ObservableCollection<VKAudio>();
                     var temp = await DataService.LoadMyAudio();
-                    temp.CollectionChanged += (s, e) =>
+                    foreach (var item in temp)
                     {
-                        if (temp.Count > 0)
-                            _mySavedTracks = temp;
-                    };
-                    _inCall = false;
-                });
+                        _mySavedTracks.Add(item);
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                if (ex is HttpRequestException)
+                    await new MessageDialog("Error connecting to VK").ShowAsync();
+                else
+                    await new MessageDialog("Error loading groups").ShowAsync();
+            }
+            _inCall = false;
         }
     }
 }

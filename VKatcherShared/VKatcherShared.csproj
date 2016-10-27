@@ -127,17 +127,23 @@
     <Compile Include="Messages\UpdatePlaylistMessage.cs" />
     <Compile Include="Models\DIYWallPostModel.cs" />
     <Compile Include="Models\DownloadedTrack.cs" />
+    <Compile Include="Models\Spotify\SpotifyToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DelegateCommand.cs" />
     <Compile Include="Services\Extensions.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\FindChildren.cs" />
     <Compile Include="Services\FindParents.cs" />
+    <Compile Include="Services\SpotifyService.cs" />
     <Compile Include="Services\SubscriptionService.cs" />
     <Compile Include="Services\VKFacade.cs" />
     <EmbeddedResource Include="Properties\VKCatcherShared.rd.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Documents\Coding\SpotifyWebAPI\SpotifyWebAPI.UWP\SpotifyWebAPI.UWP.csproj">
+      <Project>{47d152f3-ffa4-4bab-9754-5ac3f06c3c4a}</Project>
+      <Name>SpotifyWebAPI.UWP</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\VKatcher\VK.WindowsPhone.SDK-XAML\VK.WindowsPhone.SDK-XAML.csproj">
       <Project>{a7e0fc88-a513-4981-8c2a-0106045e695b}</Project>
       <Name>VK.WindowsPhone.SDK-XAML</Name>

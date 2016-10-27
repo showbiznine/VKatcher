@@ -51,15 +51,15 @@ namespace VKatcher.Views
         {
             var vm = DataContext as NowPlayingPageViewModel;
             base.OnNavigatedTo(e);
-            if (e.Parameter is List<object>)
-            {
-                var lst = e.Parameter as List<object>;
-                vm._currentTrack = new VKAudio();
-                vm._currentTrack = lst[0] as VKAudio;
+            //if (e.Parameter is List<object>)
+            //{
+            //    var lst = e.Parameter as List<object>;
+            //    vm._currentTrack = new VKAudio();
+            //    vm._currentTrack = lst[0] as VKAudio;
 
-                vm._currentPlaylist = new ObservableCollection<VKAudio>();
-                vm._currentPlaylist = lst[1] as ObservableCollection<VKAudio>;
-            }
+            //    vm._currentPlaylist = new ObservableCollection<VKAudio>();
+            //    vm._currentPlaylist = lst[1] as ObservableCollection<VKAudio>;
+            //}
         }
 
         private void SetupParalax()

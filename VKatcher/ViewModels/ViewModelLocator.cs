@@ -74,7 +74,6 @@ namespace VKatcher.ViewModels
         public INavigationService CreateNavigationSevice()
         {
             var navigationService = new NavigationService();
-
             return navigationService;
         }
 

@@ -12,69 +12,72 @@
         <ViewModels:CommunitiesPageViewModel />
     </Page.DataContext>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="#FF4E5867">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="168" />
+            <RowDefinition Height="64" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="1"
-                    VerticalAlignment="Bottom"
-                    Margin="0,0,12,4">
-            <Button x:Name="btnSettings"
-                    Content="&#xE115;"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Height="48"
-                    Style="{StaticResource IconButton}"
-                    Width="48"
-                    Command="{Binding GoToSettingsCommand}" />
-            <Button x:Name="btnMyMusic"
-                    Content="&#xE142;"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Height="48"
-                    Style="{StaticResource IconButton}" 
-                    Command="{Binding GoToMyMusicCommand}"/>
-            <Button x:Name="btnSearch"
-                    Content="&#xE11A;"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Height="48"
-                    Width="48"
-                    Style="{StaticResource IconButton}"
-                    Command="{Binding SearchCommand}" />
-        </StackPanel>
-        <TextBlock x:Name="lblTitle"
-                   HorizontalAlignment="Left"
-                   TextWrapping="Wrap"
-                   Text="MY&#xA;COMMUNITIES"
-                   VerticalAlignment="Bottom"
-                   Margin="12,0,0,12"
-                   FontSize="44"
-                   TextLineBounds="TrimToBaseline"
-                   FontWeight="Black" />
         <GridView x:Name="gridView"
                   SelectionMode="None"
                   Grid.Row="1"
                   Grid.ColumnSpan="2"
                   Padding="0,0,0,100"
-                  Margin="-1, 0, -1, 0"
                   Style="{StaticResource CommunitiesGridStyle}"
-                  ItemsSource="{Binding _results}" 
+                  ItemsSource="{Binding _results}"
                   ItemTemplate="{StaticResource GroupGridDataTemplate}"
-                  SizeChanged="gridView_SizeChanged"/>
+                  SizeChanged="gridView_SizeChanged" />
         <ProgressRing HorizontalAlignment="Center"
                       VerticalAlignment="Center"
                       Width="24"
                       Height="24"
                       Grid.Row="1"
-                      Grid.ColumnSpan="2" 
+                      Grid.ColumnSpan="2"
                       IsActive="{Binding _inCall}"
-                      Visibility="{Binding _inCall, Converter={StaticResource BooleanVisibilityConverter}}"/>
+                      Visibility="{Binding _inCall, Converter={StaticResource BooleanVisibilityConverter}}" />
+        <Grid x:Name="grdTopBar"
+              Background="#FF4E5867">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="64" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="64" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="btnHamburger"
+                    Content="&#xE700;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    d:LayoutOverrides="Width"
+                    Background="#00000000"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="28"
+                    Foreground="White"
+                    Command="{Binding OpenMenuCommand}" />
+            <TextBlock x:Name="textBlock"
+                       Margin="8,0,0,0"
+                       TextWrapping="Wrap"
+                       Text="COMMUNITIES"
+                       VerticalAlignment="Center"
+                       d:LayoutOverrides="Width"
+                       HorizontalAlignment="Left"
+                       Grid.Column="1"
+                       FontSize="22"
+                       FontWeight="Black"
+                       TextLineBounds="Tight"
+                       Foreground="White" />
+            <Button x:Name="btnSearch"
+                    Content="&#xE094;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="#00000000"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="28"
+                    Foreground="White"
+                    d:LayoutOverrides="Width"
+                    Grid.Column="2"
+                    Command="{Binding GoToSettingsCommand}" />
+        </Grid>
 
     </Grid>
 </Page>

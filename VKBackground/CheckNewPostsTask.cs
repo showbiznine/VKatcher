@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Toolkit.Uwp;
+using Newtonsoft.Json;
 using NotificationsExtensions;
 using NotificationsExtensions.Toasts;
 using System;
@@ -26,6 +27,7 @@ namespace VKBackground
         BackgroundTaskDeferral _deferral;
         private AutoResetEvent _ARE;
         private ObservableCollection<VKGroup> SubscribedGroups;
+        private ObservableCollection<VKAudio> ToDownload;
         private const string _followedFile = "followed_groups.json";
         private const string _downloadedDB = "downloaded_files.json";
         private int _newTrackCount = 0;
@@ -41,12 +43,13 @@ namespace VKBackground
             taskInstance.Canceled += new BackgroundTaskCanceledEventHandler(OnCancelled);
             VKSDK.WakeUpSession();
             var networkInfo = NetworkInformation.GetInternetConnectionProfile();
+            ToDownload = new ObservableCollection<VKAudio>();
             if (networkInfo.IsWlanConnectionProfile)
             {
                 Debug.WriteLine("WiFi connected");
                 SubscribedGroups = new ObservableCollection<VKGroup>();
                 await CheckSubscribedGroups();
-                //CheckNewPosts();
+                await DownloadPosts();
                 if (_newTrackCount > 0)
                 {
                     PopToast();
@@ -59,6 +62,39 @@ namespace VKBackground
             await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
             Debug.WriteLine("BG Task complete");
             _deferral.Complete();
+        }
+
+        private async Task DownloadPosts()
+        {
+            foreach (var a in ToDownload)
+            {
+                #region Get Existing Downloads
+                var dls = await FileService.GetDownloads();
+                var lst = dls.ToList();
+                #endregion
+                //Check if already downloaded
+                var t = lst.Find(x => x.id == a.id);
+                if (t != null)
+                {
+                    Debug.WriteLine("Download already exists");
+                    break;
+                }
+                //Down't download huge files
+                if (a.duration < 1200)
+                {
+                    //Download the file
+                    var file = await a.DownloadTrackB();
+                    //Increment track count
+                    _newTrackCount++;
+
+                    #region Add track to database
+                    if (file != null)
+                    {
+                        FileService.WriteDownloads(a, file);
+                        #endregion
+                    }
+                }
+            }
         }
 
         private void OnCancelled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
@@ -87,6 +123,7 @@ namespace VKBackground
             var toast = new ToastNotification(toastContent.GetXml());
             toast.NotificationMirroring = NotificationMirroring.Allowed;
             ToastNotificationManager.CreateToastNotifier().Show(toast);
+            _deferral.Complete();
         }
 
         private void PopToast()
@@ -120,59 +157,37 @@ namespace VKBackground
 
         private async Task CheckSubscribedGroups()
         {
-            #region Get Existing Downloads
-            var dls = await FileService.GetDownloads();
-            var lst = dls.ToList();
-            #endregion
             SubscribedGroups = await SubscriptionService.LoadSubscribedGroups();
             Debug.WriteLine("Loaded subscribed groups");
-            foreach (var group in SubscribedGroups)
+            await Task.Run(async () =>
             {
-                #region Get Posts
-                group.to_save = group.to_save == 0 ? 3 : group.to_save;
-                var posts = await VKFacade.LoadWallPostsDIY(group.id, group.to_save, 0);
-                Debug.WriteLine("Loaded posts from " + group.name);
-                foreach (var post in posts)
+                foreach (var group in SubscribedGroups)
                 {
-                    //Check last post in the group
-                    if (post.id != group.last_id)
+                    #region Get Posts
+                    group.to_save = group.to_save == 0 ? 3 : group.to_save;
+                    var posts = await VKFacade.LoadWallPostsDIY(group.id, group.to_save, 0);
+                    Debug.WriteLine("Loaded posts from " + group.name);
+                    foreach (var post in posts)
                     {
-                        group.last_id = posts[0].id;
-                        var attachments = post.attachments;
-                        foreach (var a in attachments)
+                        //Check last post in the group
+                        if (post.id != group.last_id)
                         {
-                            //Check if already downloaded
-                            var t = lst.Find(x => x.id == a.audio.id);
-                            if (t != null)
+                            group.last_id = posts[0].id;
+                            var attachments = post.attachments;
+                            foreach (var att in attachments)
                             {
-                                Debug.WriteLine("Download already exists");
-                                break;
-                            }
-                            //Down't download huge files
-                            if (a.audio.duration < 1200)
-                            {
-                                //Download the file
-                                var file = await a.audio.DownloadTrack();
-                                //Increment track count
-                                _newTrackCount++;
-
-                                #region Add track to database
-                                if (file != null)
-                                {
-                                    FileService.WriteDownloads(a.audio, file);
-                                    #endregion
-                                }
+                                ToDownload.Add(att.audio);
                             }
                         }
+                        else
+                            break;
+                        //Set the last post ID
+                        group.last_id = posts[0].id;
                     }
-                    else
-                        break;
-                    //Set the last post ID
-                    group.last_id = posts[0].id;
+                    Debug.WriteLine("The latest post was ID# " + posts[0].id);
+                    #endregion
                 }
-                Debug.WriteLine("The latest post was ID# " + posts[0].id); 
-                #endregion
-            }
+            });
         }
 
         #region Old
@@ -189,15 +204,18 @@ namespace VKBackground
         {
             foreach (var post in posts)
             {
-                if (post.id != group.last_id)
+                if (post.id != group.last_id && post.is_pinned == 0)
                 {
                     post.id = group.last_id;
                     var attachments = post.attachments;
                     foreach (var a in attachments)
                     {
-                        var file = await a.audio.DownloadTrack();
+                        var folder = await KnownFolders.MusicLibrary.CreateFolderAsync("VKatcher", CreationCollisionOption.OpenIfExists);
+                        StorageFile sf = await folder.CreateFileAsync(a.audio.title + "-" + a.audio.artist + ".mp3", CreationCollisionOption.ReplaceExisting);
+                        await StreamHelper.GetHttpStreamToStorageFileAsync(new Uri(a.audio.url), sf);
+                        //var file = await a.audio.DownloadTrack();
                         _newTrackCount++;
-                        if (file != null)
+                        if (sf != null)
                         {
                             try
                             {
@@ -211,7 +229,7 @@ namespace VKBackground
                                 var d = new DownloadedTrack();
                                 d.artist = a.audio.artist;
                                 d.title = a.audio.title;
-                                d.file_path = file.Path;
+                                d.file_path = sf.Path;
                                 d.duration = a.audio.duration;
 
                                 var tempcol = myDLs;

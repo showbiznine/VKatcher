@@ -16,6 +16,9 @@ using System.Diagnostics;
 using VKatcher.Views;
 using VKatcherShared.Messages;
 using Microsoft.Practices.ServiceLocation;
+using Windows.UI.Xaml.Controls.Primitives;
+using System.Net.Http;
+using Windows.UI.Popups;
 
 namespace VKatcher.ViewModels
 {
@@ -24,7 +27,8 @@ namespace VKatcher.ViewModels
         #region Commands
         public RelayCommand<Visibility> SearchCommand { get; set; }
         public RelayCommand<ItemClickEventArgs> PlaySongCommand { get; set; }
-        public RelayCommand<VKGroup> SelectGroup { get; set; } 
+        public RelayCommand<VKGroup> SelectGroup { get; set; }
+        public RelayCommand<object> SongHoldingCommand { get; private set; }
         #endregion
 
         #region Fields
@@ -35,7 +39,7 @@ namespace VKatcher.ViewModels
         public string _resultsString { get; set; }
         public ObservableCollection<VKGroup> GroupResults { get; set; }
         public ObservableCollection<VKAudio> TrackResults { get; set; }
-        public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } } 
+        public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
         #endregion
 
         public SearchPageViewModel()
@@ -55,20 +59,30 @@ namespace VKatcher.ViewModels
 
         private void InitializeCommands()
         {
-            SearchCommand = new RelayCommand<Visibility>(vis =>
+            SearchCommand = new RelayCommand<Visibility>(async vis =>
             {
-                if (vis == Visibility.Visible &&
-                    !string.IsNullOrWhiteSpace(_searchQuery))
+                try
                 {
-                    DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                    if (vis == Visibility.Visible &&
+                !string.IsNullOrWhiteSpace(_searchQuery))
                     {
-                        GroupResults.Clear();
-                        GroupResults = await DataService.SearchGroups(_searchQuery);
-                        TrackResults.Clear();
-                        TrackResults = await DataService.SearchAudio(_searchQuery);
-                        _resultsString = "\"" + _searchQuery + "\"";
-                    });
-                };
+                        DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                        {
+                            GroupResults.Clear();
+                            GroupResults = await DataService.SearchGroups(_searchQuery);
+                            TrackResults.Clear();
+                            TrackResults = await DataService.SearchAudio(_searchQuery);
+                            _resultsString = "\"" + _searchQuery + "\"";
+                        });
+                    };
+                }
+                catch (Exception ex)
+                {
+                    if (ex is HttpRequestException)
+                        await new MessageDialog("Error connecting to VK").ShowAsync();
+                    else
+                        await new MessageDialog("Error loading groups").ShowAsync();
+                }
             });
             PlaySongCommand = new RelayCommand<ItemClickEventArgs>(e =>
             {
@@ -106,6 +120,14 @@ namespace VKatcher.ViewModels
             SelectGroup = new RelayCommand<VKGroup>(group =>
             {
                 _navigationService.NavigateTo(typeof(FeedPage), group);
+            });
+            SongHoldingCommand = new RelayCommand<object>(sender =>
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    Grid obj = (Grid)sender;
+                    FlyoutBase.ShowAttachedFlyout(obj);
+                });
             });
         }
     }

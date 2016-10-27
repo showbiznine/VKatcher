@@ -11,20 +11,11 @@
       mc:Ignorable="d"
       DataContext="{Binding MyMusic, Source={StaticResource Locator}}">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{StaticResource BG_Gray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="168" />
+            <RowDefinition Height="64" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock x:Name="lblTitle"
-                   HorizontalAlignment="Left"
-                   TextWrapping="Wrap"
-                   Text="MY&#xA;MUSIC"
-                   VerticalAlignment="Bottom"
-                   Margin="12,0,0,12"
-                   FontSize="44"
-                   TextLineBounds="TrimToBaseline"
-                   FontWeight="Black" />
         <Pivot Grid.Row="1"
                ItemContainerStyle="{StaticResource PivotNoSideBorderStyle}">
             <PivotItem x:Name="pviSaved"
@@ -79,5 +70,44 @@
                 </Grid>
             </PivotItem>
         </Pivot>
+        <Grid x:Name="grdTopBar"
+              Background="#FF4E5867">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="64" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="64" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="btnHamburger"
+                    Content="&#xE700;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    d:LayoutOverrides="Width"
+                    Background="#00000000"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="28"
+                    Foreground="White" />
+            <TextBlock x:Name="textBlock"
+                       Margin="8,0,0,0"
+                       TextWrapping="Wrap"
+                       Text="MY MUSIC"
+                       VerticalAlignment="Center"
+                       d:LayoutOverrides="Width"
+                       HorizontalAlignment="Left"
+                       Grid.Column="1"
+                       FontSize="22"
+                       FontWeight="Black"
+                       TextLineBounds="Tight"
+                       Foreground="White" />
+            <Button x:Name="btnSearch"
+                    Content="&#xE094;"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="#00000000"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="28"
+                    Foreground="White"
+                    d:LayoutOverrides="Width"
+                    Grid.Column="2" />
+        </Grid>
     </Grid>
 </Page>
