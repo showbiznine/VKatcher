@@ -4,18 +4,22 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{BF539F89-7D44-474E-ABD4-C94183775DE5}</ProjectGuid>
+    <ProjectGuid>{47D152F3-FFA4-4BAB-9754-5AC3F06C3C4A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VKCatcherShared</RootNamespace>
-    <AssemblyName>VKCatcherShared</AssemblyName>
+    <RootNamespace>SpotifyWebAPI</RootNamespace>
+    <AssemblyName>SpotifyWebAPI.UWP</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14388.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,28 +39,6 @@
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <PlatformTarget>x86</PlatformTarget>
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
-    <Optimize>true</Optimize>
-    <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <PlatformTarget>ARM</PlatformTarget>
@@ -102,58 +84,79 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationSettingsConstants.cs" />
-    <Compile Include="ApplicationSettingsHelper.cs" />
-    <Compile Include="AppState.cs" />
-    <Compile Include="BackgroundTaskState.cs" />
-    <Compile Include="DownloadsFacade.cs" />
-    <Compile Include="EnumHelper.cs" />
-    <Compile Include="JsonHelper.cs" />
-    <Compile Include="Messages\PlayNextMessage.cs" />
-    <Compile Include="Messages\AppResumedMessage.cs" />
-    <Compile Include="Messages\AppSuspendedMessage.cs" />
-    <Compile Include="Messages\BackgroundAudioTaskStartedMessage.cs" />
-    <Compile Include="Messages\MessageService.cs" />
-    <Compile Include="Messages\SkipNextMessage.cs" />
-    <Compile Include="Messages\SkipPreviousMessage.cs" />
-    <Compile Include="Messages\StartPlaybackMessage.cs" />
-    <Compile Include="Messages\AddToPlaylistMessage.cs" />
-    <Compile Include="Messages\TrackChangedMessage.cs" />
-    <Compile Include="Messages\UpdatePlaylistMessage.cs" />
-    <Compile Include="Models\DIYWallPostModel.cs" />
-    <Compile Include="Models\DownloadedTrack.cs" />
-    <Compile Include="Models\Spotify\SpotifyToken.cs" />
+    <Compile Include="Album.cs" />
+    <Compile Include="AlbumType.cs" />
+    <Compile Include="Artist.cs" />
+    <Compile Include="Authentication.cs" />
+    <Compile Include="AuthenticationToken.cs" />
+    <Compile Include="BaseModel.cs" />
+    <Compile Include="Browse.cs" />
+    <Compile Include="ExternalId.cs" />
+    <Compile Include="ExternalUrl.cs" />
+    <Compile Include="Followers.cs" />
+    <Compile Include="HttpHelper.cs" />
+    <Compile Include="Image.cs" />
+    <Compile Include="Page.cs" />
+    <Compile Include="Playlist.cs" />
+    <Compile Include="PlaylistTrack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DelegateCommand.cs" />
-    <Compile Include="Services\Extensions.cs" />
-    <Compile Include="Services\FileService.cs" />
-    <Compile Include="Services\FindChildren.cs" />
-    <Compile Include="Services\FindParents.cs" />
-    <Compile Include="Services\SpotifyService.cs" />
-    <Compile Include="Services\SubscriptionService.cs" />
-    <Compile Include="Services\VKFacade.cs" />
-    <EmbeddedResource Include="Properties\VKCatcherShared.rd.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\VKatcher\VK.WindowsPhone.SDK-XAML\VK.WindowsPhone.SDK-XAML.csproj">
-      <Project>{a7e0fc88-a513-4981-8c2a-0106045e695b}</Project>
-      <Name>VK.WindowsPhone.SDK-XAML</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SpotifyWebAPI.UWP\SpotifyWebAPI.UWP.csproj">
-      <Project>{47d152f3-ffa4-4bab-9754-5ac3f06c3c4a}</Project>
-      <Name>SpotifyWebAPI.UWP</Name>
-    </ProjectReference>
+    <Compile Include="SpotifyModel\accesstoken.cs" />
+    <Compile Include="SpotifyModel\album.cs" />
+    <Compile Include="SpotifyModel\albumarray.cs" />
+    <Compile Include="SpotifyModel\albumsearchresult.cs" />
+    <Compile Include="SpotifyModel\artist.cs" />
+    <Compile Include="SpotifyModel\artistarray.cs" />
+    <Compile Include="SpotifyModel\artistsearchresult.cs" />
+    <Compile Include="SpotifyModel\external_ids.cs" />
+    <Compile Include="SpotifyModel\external_urls.cs" />
+    <Compile Include="SpotifyModel\featuredplaylistssearchresult.cs" />
+    <Compile Include="SpotifyModel\followers.cs" />
+    <Compile Include="SpotifyModel\image.cs" />
+    <Compile Include="SpotifyModel\page.cs" />
+    <Compile Include="SpotifyModel\playlist.cs" />
+    <Compile Include="SpotifyModel\playlistsearchresult.cs" />
+    <Compile Include="SpotifyModel\playlisttrack.cs" />
+    <Compile Include="SpotifyModel\savedtrack.cs" />
+    <Compile Include="SpotifyModel\track.cs" />
+    <Compile Include="SpotifyModel\trackarray.cs" />
+    <Compile Include="SpotifyModel\tracksearchresult.cs" />
+    <Compile Include="SpotifyModel\user.cs" />
+    <Compile Include="Track.cs" />
+    <Compile Include="User.cs" />
+    <Content Include="Properties\SpotifyWebAPI.UWP.rd.xml" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

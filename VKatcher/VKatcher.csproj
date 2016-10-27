@@ -295,7 +295,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Documents\Coding\SpotifyWebAPI\SpotifyWebAPI.UWP\SpotifyWebAPI.UWP.csproj">
+    <ProjectReference Include="..\SpotifyWebAPI.UWP\SpotifyWebAPI.UWP.csproj">
       <Project>{47d152f3-ffa4-4bab-9754-5ac3f06c3c4a}</Project>
       <Name>SpotifyWebAPI.UWP</Name>
     </ProjectReference>

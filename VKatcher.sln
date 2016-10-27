@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
+# Blend for Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VKatcher", "VKatcher\VKatcher.csproj", "{0077790B-B779-414C-86E3-E0436FA55097}"
@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VKBackground", "VKBackgroun
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VKatcherShared", "VKatcherShared\VKatcherShared.csproj", "{BF539F89-7D44-474E-ABD4-C94183775DE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyWebAPI.UWP", "..\..\..\Documents\Coding\SpotifyWebAPI\SpotifyWebAPI.UWP\SpotifyWebAPI.UWP.csproj", "{47D152F3-FFA4-4BAB-9754-5AC3F06C3C4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyWebAPI.UWP", "SpotifyWebAPI.UWP\SpotifyWebAPI.UWP.csproj", "{47D152F3-FFA4-4BAB-9754-5AC3F06C3C4A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
