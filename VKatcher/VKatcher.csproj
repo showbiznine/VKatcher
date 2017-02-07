@@ -11,8 +11,8 @@
     <AssemblyName>VKatcher</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14388.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.10586.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -104,15 +104,20 @@
     </Compile>
     <Compile Include="Behaviors\VisibilityTransitionBehavior.cs" />
     <Compile Include="Controls\Backdrop.cs" />
+    <Compile Include="Controls\SwipeableSplitView.cs" />
     <Compile Include="Converters\AudioOfflineVisibilityConverter.cs" />
     <Compile Include="Converters\AudioTemplateConverter.cs" />
+    <Compile Include="Converters\FollowedStringConverter.cs" />
+    <Compile Include="Converters\TagNameConverter.cs" />
     <Compile Include="Converters\BooleanVisibilityConverter.cs" />
     <Compile Include="Converters\PlayingForegroundConverter.cs" />
     <Compile Include="Converters\PlayingToMarginConverter.cs" />
-    <Compile Include="Converters\SubscribedIconConverter.cs" />
-    <Compile Include="Converters\SubscribedColorConverter .cs" />
+    <Compile Include="Converters\FollowedIconConverter.cs" />
+    <Compile Include="Converters\SubscribedColorConverter.cs" />
     <Compile Include="Converters\SubscribedStringConverter.cs" />
     <Compile Include="Converters\TimespanStringConverter.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Models\VKToken.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\NavigationService.cs" />
@@ -256,6 +261,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\CommunitiesPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -313,11 +322,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-  <ItemGroup>
-    <SDKReference Include="WindowsMobile, Version=10.0.14388.0">
-      <Name>Windows Mobile Extensions for the UWP</Name>
+    <SDKReference Include="WindowsDesktop, Version=10.0.14393.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
+      <Name>Windows Mobile Extensions for the UWP %28WindowsMobile, Version=10.0.14393.0</Name>
+    </SDKReference>
+    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
+      <Name>Windows Mobile Extensions for the UWP %28WindowsMobile, Version=10.0.14393.0%29</Name>
     </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

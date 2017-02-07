@@ -13,6 +13,7 @@ using VK.WindowsPhone.SDK.API;
 using VK.WindowsPhone.SDK.API.Model;
 using VK.WindowsPhone.SDK.Util;
 using VKatcherShared.Models;
+using Windows.Storage;
 
 namespace VKatcherShared.Services
 {
@@ -169,11 +170,11 @@ namespace VKatcherShared.Services
                 { "count", count.ToString() }
             };
             var http = new HttpClient();
-            var tok = VKSDK.GetAccessToken();
+            var tok = GetAccessToken();
             string str = string.Format("https://api.vk.com/method/{0}?{1}&access_token={2}",
                 "wall.get",
                 parameters,
-                tok.AccessToken);
+                tok);
 
             var result = await http.GetAsync(str);
 
@@ -204,6 +205,12 @@ namespace VKatcherShared.Services
             return WallPosts;
         }
 
+        public static string GetAccessToken()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            return localSettings.Values["token"].ToString();
+        }
+
         public static async Task<ObservableCollection<VKAudio>> SearchAudio(string query)
         {
             HttpClient http = new HttpClient();
@@ -211,7 +218,7 @@ namespace VKatcherShared.Services
             {
                 {"q", query },
                 {"auto_complete", "true" },
-                {"access_token", VKSDK.GetAccessToken().AccessToken },
+                {"access_token", GetAccessToken() },
                 {"v", _apiVersion }
             };
             string request = _host + "audio.search?" + q;

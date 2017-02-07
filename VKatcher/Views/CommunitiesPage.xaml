@@ -76,7 +76,7 @@
                     Foreground="White"
                     d:LayoutOverrides="Width"
                     Grid.Column="2"
-                    Command="{Binding GoToSettingsCommand}" />
+                    Command="{Binding SearchCommand}" />
         </Grid>
 
     </Grid>

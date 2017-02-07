@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK;
 using VK.WindowsPhone.SDK.API.Model;
+using VKatcher.Services;
 using VKatcher.ViewModels;
 using VKatcherShared;
 using VKatcherShared.Messages;
@@ -103,7 +104,7 @@ namespace VKatcher.Views
             _sliderTimer.Stop();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             ApplicationSettingsHelper.SaveSettingsValue("appstate", "Active");
@@ -118,7 +119,8 @@ namespace VKatcher.Views
             }
             else
             {
-                VKSDK.Authorize(_scope, false, false);
+                var test = await DataService.GetToken(null, null);
+                //VKSDK.Authorize(_scope, false, false);
             }
         }
 

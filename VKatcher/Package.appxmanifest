@@ -21,15 +21,9 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.CheckNewPostsTask">
+        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.DownloadPostsTask">
           <BackgroundTasks>
             <Task Type="general" />
-            <Task Type="timer" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.BackgroundAudioTask">
-          <BackgroundTasks>
-            <Task Type="audio" />
           </BackgroundTasks>
         </Extension>
         <uap:Extension Category="windows.mediaPlayback">
@@ -37,6 +31,17 @@
             <uap:Codec Name="mp3" />
           </uap:MediaPlayback>
         </uap:Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.BackgroundAudioTask">
+          <BackgroundTasks>
+            <Task Type="audio" />
+          </BackgroundTasks>
+        </Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.CheckNewPostsTask">
+          <BackgroundTasks>
+            <Task Type="general" />
+            <Task Type="timer" />
+          </BackgroundTasks>
+        </Extension>
       </Extensions>
     </Application>
   </Applications>

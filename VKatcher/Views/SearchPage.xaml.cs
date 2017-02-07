@@ -29,12 +29,12 @@ namespace VKatcher.Views
         public SearchPage()
         {
             this.InitializeComponent();
-            autoSuggestBox.Loaded += (s, e) =>
-            {
-                SearchOpen.Begin();
-                _isSearchOpen = true;
-                autoSuggestBox.Focus(FocusState.Programmatic);
-            };
+            //autoSuggestBox.Loaded += (s, e) =>
+            //{
+            //    SearchOpen.Begin();
+            //    _isSearchOpen = true;
+            //    autoSuggestBox.Focus(FocusState.Programmatic);
+            //};
             grdGroups.SizeChanged += grdGroups_SizeChanged;
         }
 
@@ -67,25 +67,25 @@ namespace VKatcher.Views
 
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            if (!_isSearchOpen)
-            {
-                SearchOpen.Begin();
-                _isSearchOpen = true;
-            }
-            else if (!_isResultsOpen)
-            {
-                OpenResults.Begin();
-                _isResultsOpen = true;
-            }
+            //if (!_isSearchOpen)
+            //{
+            //    SearchOpen.Begin();
+            //    _isSearchOpen = true;
+            //}
+            //else if (!_isResultsOpen)
+            //{
+            //    OpenResults.Begin();
+            //    _isResultsOpen = true;
+            //}
         }
 
         private void autoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            if (!_isResultsOpen)
-            {
-                OpenResults.Begin();
-                _isResultsOpen = true;
-            }
+            //if (!_isResultsOpen)
+            //{
+            //    OpenResults.Begin();
+            //    _isResultsOpen = true;
+            //}
         }
     }
 }

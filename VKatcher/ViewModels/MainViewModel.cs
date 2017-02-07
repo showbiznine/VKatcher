@@ -31,9 +31,10 @@ namespace VKatcher.ViewModels
         private MediaPlayer _mediaPlayer;
         private DispatcherTimer _timer;
         private bool _sliderPressed;
+
         public string _trackTime { get; set; }
         public double _trackPosition { get; set; }
-
+        public string _searchQuery { get; set; }
         public VKAudio _currentTrack { get; set; }
         public ObservableCollection<VKAudio> _currentPlaylist { get; set; }
         public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
@@ -48,6 +49,7 @@ namespace VKatcher.ViewModels
         public RelayCommand PlayPauseCommand { get; set; }
         public RelayCommand SkipNextCommand { get; set; }
         public RelayCommand SkipPreviousCommand { get; set; }
+        public RelayCommand SearchCommand { get; set; }
         public RelayCommand<ManipulationCompletedRoutedEventArgs> SmartSwipeCommand { get; set; }
         public RelayCommand SliderDownCommand { get; set; }
         public RelayCommand SliderUpCommand { get; set; }
@@ -64,10 +66,14 @@ namespace VKatcher.ViewModels
                 DispatcherHelper.Initialize();
                 _isPlaying = false;
                 InitializeCommands();
-                var task = RegisterBackgroundTask("VKBackground.CheckNewPostsTask",
+                var checkTask = RegisterBackgroundTask("VKBackground.CheckNewPostsTask",
                     "CheckNewPostsTask",
-                    new MaintenanceTrigger(30, false),
+                    new MaintenanceTrigger(15, false),
                     null);
+                var dlTask = RegisterBackgroundTask("VKBackground.DownloadPostsTask",
+                    "DownloadPostsTask",
+                    new MaintenanceTrigger(15, false),
+    null);
                 SetupTimer();
                 _mediaPlayer = BackgroundMediaPlayer.Current;
                 _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
@@ -187,10 +193,12 @@ namespace VKatcher.ViewModels
                 App.ViewModelLocator.NowPlaying._currentPlaylist = lst;
                 App.ViewModelLocator.NowPlaying._currentTrack = _currentTrack;
                 _navigationService.NavigateTo(typeof(NowPlayingPage));
+                IsMenuOpen = false;
             });
             GoToSettingsCommand = new RelayCommand(() =>
             {
                 _navigationService.NavigateTo(typeof(SettingsPage));
+                IsMenuOpen = false;
             });
             GoToMyMusicCommand = new RelayCommand(() =>
             {
@@ -208,6 +216,13 @@ namespace VKatcher.ViewModels
             {
                 _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(_trackPosition);
                 _sliderPressed = false;
+            });
+            SearchCommand = new RelayCommand(() =>
+            {
+                _navigationService.NavigateTo(typeof(SearchPage));
+                App.ViewModelLocator.Main.IsMenuOpen = false;
+                App.ViewModelLocator.Search._searchQuery = _searchQuery;
+                App.ViewModelLocator.Search.Search();
             });
         }
 

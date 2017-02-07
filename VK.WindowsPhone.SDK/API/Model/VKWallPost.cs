@@ -36,6 +36,8 @@ namespace VK.WindowsPhone.SDK.API.Model
 
         public string text { get; set; }
 
+        public List<VKTag> tags { get; set; }
+
         public long reply_owner_id { get; set; }
 
         public long reply_post_id { get; set; }

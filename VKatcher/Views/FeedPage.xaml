@@ -3,7 +3,7 @@
       xmlns:local="using:VKatcher.Views"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:ViewModels="using:VKatcher.ViewModels"
+      xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
       xmlns:Converters="using:VKatcher.Converters"
       xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
@@ -16,6 +16,8 @@
     <Page.Resources>
         <Converters:SubscribedColorConverter x:Key="SubscribedColorConverter" />
         <Converters:SubscribedStringConverter x:Key="SubscribedStringConverter" />
+        <Converters:FollowedStringConverter x:Key="FollowedStringConverter" />
+        <Converters:FollowedIconConverter x:Key="FollowedIconConverter" />
         <Converters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
         <Storyboard x:Name="ToggleSubscribe">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
@@ -74,6 +76,78 @@
                             Value="0" />
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Header>
+                <toolkit:ScrollHeader Mode="QuickReturn"
+                                      TargetListViewBase="{x:Bind listView}"
+                                      HorizontalContentAlignment="Stretch">
+                    <Grid Width="Auto"
+                          Height="100"
+                          Background="{StaticResource MainBlue}"
+                          Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="btnFollow"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                BorderThickness="0"
+                                Width="Auto"
+                                Background="#0CFFFFFF">
+                            <StackPanel x:Name="stkFollow"
+                                        Orientation="Vertical"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Padding="4"
+                                        Background="Transparent">
+                                <TextBlock x:Name="textBlock"
+                                           TextWrapping="Wrap"
+                                           Text="{Binding _currentGroup.is_member, Converter={StaticResource FollowedIconConverter}}"
+                                           FontFamily="Segoe MDL2 Assets"
+                                           FontSize="36"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,4" />
+                                <TextBlock x:Name="textBlock1"
+                                           TextWrapping="Wrap"
+                                           Text="{Binding _currentGroup.is_member, Converter={StaticResource FollowedStringConverter}}"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,8,0,0"
+                                           FontWeight="SemiBold" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="btnSubscribe"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                BorderThickness="0"
+                                Grid.Column="1"
+                                Width="Auto"
+                                Background="#0CFFFFFF"
+                                Command="{Binding SubscribeCommand}">
+                            <StackPanel x:Name="stkSubscribe"
+                                        Orientation="Vertical"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Padding="4"
+                                        Background="Transparent">
+                                <TextBlock x:Name="textBlock_Copy"
+                                           TextWrapping="Wrap"
+                                           Text="&#xE95A;"
+                                           FontFamily="Segoe MDL2 Assets"
+                                           FontSize="36"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,4" 
+                                           Opacity="{Binding _currentGroup.IsSubscribed,Converter={StaticResource SubscribedColorConverter}}"/>
+                                <TextBlock x:Name="textBlock1_Copy"
+                                           TextWrapping="Wrap"
+                                           Text="{Binding _currentGroup.IsSubscribed, Converter={StaticResource SubscribedStringConverter}}"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,8,0,0"
+                                           FontWeight="SemiBold" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </toolkit:ScrollHeader>
+            </ListView.Header>
         </ListView>
         <ProgressRing x:Name="prgRing"
                       HorizontalAlignment="Center"
@@ -101,7 +175,7 @@
                     <CompositeTransform TranslateY="20" />
                 </TextBlock.RenderTransform>
             </TextBlock>
-            <Button x:Name="btnSubscribe"
+            <Button x:Name="btnSubscribe2"
                     Content="&#xE701;"
                     VerticalAlignment="Top"
                     FontFamily="Segoe MDL2 Assets"
@@ -124,7 +198,7 @@
             </Button>
         </StackPanel>
         <Grid x:Name="grdTopBar"
-              Background="#FF4E5867">
+              Background="{StaticResource MainBlue}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64" />
                 <ColumnDefinition />
@@ -137,7 +211,8 @@
                     Background="#00000000"
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="28"
-                    Foreground="White" />
+                    Foreground="White"
+                    Command="{Binding ToggleMenuCommand, Mode=OneWay}" />
             <TextBlock x:Name="lblGroupName"
                        HorizontalAlignment="Left"
                        TextWrapping="Wrap"

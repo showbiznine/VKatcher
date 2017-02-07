@@ -7,11 +7,11 @@ using Windows.UI.Xaml.Data;
 
 namespace VKatcher.Converters
 {
-    class SubscribedIconConverter : IValueConverter
+    class FollowedIconConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return (bool)value ? "" : "";
+            return (int)value == 1 ? "" : "";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

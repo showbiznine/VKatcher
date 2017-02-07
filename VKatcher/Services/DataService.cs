@@ -6,14 +6,17 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK;
 using VK.WindowsPhone.SDK.API;
 using VK.WindowsPhone.SDK.API.Model;
 using VK.WindowsPhone.SDK.Util;
+using VKatcher.Models;
 using VKatcher.ViewModels;
 using VKatcher.Views;
 using VKatcherShared.Services;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -22,7 +25,9 @@ namespace VKatcher.Services
     public class DataService
     {
         private const string _host = "https://api.vk.com/method/";
-        private const string _apiVersion = "5.53";
+        private const string _authHost = "https://oauth.vk.com/";
+        //private const string _apiVersion = "5.53";
+        private const string _apiVersion = "5.62";
 
         #region VKSDK
         //public static async Task<ObservableCollection<VKGroup>> LoadMyGroups()
@@ -290,6 +295,35 @@ namespace VKatcher.Services
 
         #region Custom
 
+        public static async Task<string> GetToken(string Username, string Password)
+        {
+            HttpClient http = new HttpClient();
+            var q = new QueryString()
+            {
+                {"username", "showbiznine@hotmail.com" },
+                {"password", "hgssucks1" },
+                {"grant_type", "password" },
+                {"scope", "271390" },
+                {"client_id", "3697615" },
+                {"client_secret", "AlVXZFMUqyrnABp8ncuU" },
+            };
+            string request = _authHost + "token?" + q;
+
+            var res = await http.GetAsync(request);
+            var json = await res.Content.ReadAsStringAsync();
+
+            var r = JsonConvert.DeserializeObject<VKToken>(json);
+            VKSDK.SetAccessToken(new VKAccessToken
+            {
+                AccessToken = r.access_token,
+                UserId = r.user_id.ToString(),
+                ExpiresIn = 0
+            }, false);
+             var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["token"] = r.access_token;
+            return r.access_token;
+        }
+
         public static async Task<ObservableCollection<VKGroup>> LoadMyGroups()
         {
             HttpClient http = new HttpClient();
@@ -297,7 +331,7 @@ namespace VKatcher.Services
             {
                 {"extended", "1" },
                 {"count", "100" },
-                {"access_token", GetAccessToken() },
+                {"access_token", await GetAccessToken() },
                 {"v", _apiVersion }
             };
             string request = _host + "groups.get?" + q;
@@ -316,7 +350,7 @@ namespace VKatcher.Services
             {
                 {"q", query },
                 {"type", "group" },
-                {"access_token", GetAccessToken() },
+                {"access_token", await GetAccessToken() },
                 {"v", _apiVersion }
             };
             string request = _host + "groups.search?" + q;
@@ -335,7 +369,7 @@ namespace VKatcher.Services
             {
                 {"q", query },
                 {"auto_complete", "true" },
-                {"access_token", GetAccessToken() },
+                {"access_token", await GetAccessToken() },
                 {"v", _apiVersion }
             };
             string request = _host + "audio.search?" + q;
@@ -353,6 +387,48 @@ namespace VKatcher.Services
             return r;
         }
 
+        public static async Task<ObservableCollection<VKWallPost>> SearchWallByTag(string query, string domain)
+        {
+            var WallPosts = new ObservableCollection<VKWallPost>();
+
+            HttpClient http = new HttpClient();
+            var q = new QueryString()
+            {
+                {"query", "#" + query },
+                {"domain", domain },
+                {"count", "30" },
+                {"access_token", await GetAccessToken() },
+                {"v", _apiVersion }
+            };
+            string request = _host + "wall.search?" + q;
+
+            var res = await http.GetAsync(request);
+            var json = await res.Content.ReadAsStringAsync();
+
+            var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(json);
+            var r = ReturnedObject.response.items;
+            foreach (var wp in r)
+            {
+                var temp = wp;
+                if (temp.attachments != null
+                    && temp.attachments.Count > 0)
+                {
+                    temp = FormatPost(temp);
+                }
+                else if (temp.copy_history != null
+                && temp.copy_history.Count > 0)
+                {
+                    temp = FormatPost(temp.copy_history[0]);
+                }
+                if (temp.attachments != null
+                    && temp.attachments.Count > 0)
+                {
+                    WallPosts.Add(temp);
+                }
+            }
+            return WallPosts;
+        }
+
         public static async Task<ObservableCollection<VKWallPost>> LoadWallPosts(long groupID, int offset, int count)
         {
             var WallPosts = new ObservableCollection<VKWallPost>();
@@ -364,7 +440,7 @@ namespace VKatcher.Services
                 {"extended", "1" },
                 {"offset", offset.ToString() },
                 {"count", count.ToString() },
-                {"access_token", GetAccessToken() },
+                {"access_token", await GetAccessToken() },
                 {"v", _apiVersion }
             };
             string request = _host + "wall.get?" + q;
@@ -403,7 +479,7 @@ namespace VKatcher.Services
             var q = new QueryString()
             {
                 {"count", "100" },
-                {"access_token", GetAccessToken() },
+                {"access_token", await GetAccessToken() },
                 {"v", _apiVersion }
             };
             string request = _host + "audio.get?" + q;
@@ -423,6 +499,12 @@ namespace VKatcher.Services
 
         private static VKWallPost FormatPost(VKWallPost post)
         {
+
+            #region Tags
+            post.tags = new List<VKTag>();
+            post.tags.AddRange(FormatTags(post.text));
+            #endregion
+
             for (int i = post.attachments.Count - 1; i > -1; i--)
             {
                 var attachment = post.attachments[i];
@@ -457,6 +539,10 @@ namespace VKatcher.Services
                         {
                             post.post_image = attachment.photo.photo_75;
                         }
+                        if (attachment.photo.text != null)
+                        {
+                            post.tags.AddRange(FormatTags(attachment.photo.text));
+                        }
                         post.attachments.RemoveAt(i);
                         break;
                     default:
@@ -469,9 +555,32 @@ namespace VKatcher.Services
             return post;
         }
 
-        private static string GetAccessToken()
+        private static List<VKTag> FormatTags(string text)
         {
-            return VKSDK.GetAccessToken().AccessToken;
+            var lst = new List<VKTag>();
+            Regex r = new Regex(@"(#)\w+(@)\w+");
+            foreach (Match m in r.Matches(text))
+            {
+                var tag = m.ToString();
+                var split = tag.Split('@');
+                lst.Add(new VKTag
+                {
+                    tag = split[0].Substring(1),
+                    domain = split[1]
+                });
+            }
+            return lst;
+        }
+
+        private static async Task<string> GetAccessToken()
+        {
+            //return VKSDK.GetAccessToken().AccessToken;
+            var localSettings = ApplicationData.Current.LocalSettings;
+            var tok = localSettings.Values["token"];
+            if (tok == null)
+                return await GetToken(null, null);
+            else
+                return tok.ToString();
         }
 
         private static bool CheckPlaying(VKAudio track)

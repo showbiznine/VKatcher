@@ -45,6 +45,7 @@ namespace VKatcher.ViewModels
         #endregion
 
         #region Commands
+        public RelayCommand ToggleMenuCommand { get; private set; }
         public RelayCommand LoadPostsCommand { get; private set; }
         public RelayCommand RefreshPostsCommand { get; private set; }
         public RelayCommand SubscribeCommand { get; private set; }
@@ -53,6 +54,7 @@ namespace VKatcher.ViewModels
         public RelayCommand<Grid> AddToPlaylistCommand { get; private set; }
         public RelayCommand<Grid> PlayNextCommand { get; private set; }
         public RelayCommand<ItemClickEventArgs> SongListViewItemClickCommand { get; private set; }
+        public RelayCommand<RoutedEventArgs> TagClickCommand { get; private set; }
         public RelayCommand<object> SongHoldingCommand { get; private set; }
         public RelayCommand<object> SongRightTappedCommand { get; private set; }
 
@@ -78,11 +80,12 @@ namespace VKatcher.ViewModels
 
         private void InitializeCommands()
         {
+            ToggleMenuCommand = new RelayCommand(() => App.ViewModelLocator.Main.IsMenuOpen = !App.ViewModelLocator.Main.IsMenuOpen);
             LoadPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
             RefreshPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
             DownloadTrackCommand = new RelayCommand<Grid>(grid =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     var att = grid.DataContext as VKAttachment;
                     DownloadTrack(att.audio);
@@ -90,7 +93,7 @@ namespace VKatcher.ViewModels
             });
             DeleteDownloadCommand = new RelayCommand<Grid>(grid =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     var att = grid.DataContext as VKAttachment;
                     if (att.audio.IsPlaying)
@@ -103,7 +106,7 @@ namespace VKatcher.ViewModels
             });
             AddToPlaylistCommand = new RelayCommand<Grid>(grid =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     var att = grid.DataContext as VKAttachment;
                     App.ViewModelLocator.Main._currentPlaylist.Add(att.audio);
@@ -112,7 +115,7 @@ namespace VKatcher.ViewModels
             });
             PlayNextCommand = new RelayCommand<Grid>(grid =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     var att = grid.DataContext as VKAttachment;
                     var lst = App.ViewModelLocator.Main._currentPlaylist.ToList();
@@ -121,14 +124,22 @@ namespace VKatcher.ViewModels
                     MessageService.SendMessageToBackground(new PlayNextMessage(att.audio));
                 });
             });
-            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(args => OnSongListItemClick(args));
+            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(
+                args =>
+                {
+                    OnSongListItemClick(args);
+                });
+            TagClickCommand = new RelayCommand<RoutedEventArgs>(args =>
+            {
+                OnTagClick(args);
+            });
             SubscribeCommand = new RelayCommand(async () =>
             {
                 var sub = await SubscriptionService.SubscribeToGroup(_currentGroup);
             });
             SongHoldingCommand = new RelayCommand<object>(sender =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Grid obj = (Grid)sender;
                     FlyoutBase.ShowAttachedFlyout(obj);
@@ -136,12 +147,25 @@ namespace VKatcher.ViewModels
             });
             SongRightTappedCommand = new RelayCommand<object>(sender =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Grid obj = (Grid)sender;
                     FlyoutBase.ShowAttachedFlyout(obj);
                 });
             });
+        }
+
+        private async void OnTagClick(RoutedEventArgs args)
+        {
+            var tag = (args.OriginalSource as HyperlinkButton).DataContext as VKTag;
+            _inCall = true;
+            _wallPosts.Clear();
+
+            foreach (var post in await DataService.SearchWallByTag(tag.tag, tag.domain))
+            {
+                _wallPosts.Add(post);
+            }
+            _inCall = false;
         }
 
         public async void LoadPosts(int offset, int count, bool clear)
@@ -153,12 +177,11 @@ namespace VKatcher.ViewModels
                 {
                     _wallPosts.Clear();
                 }
-                var temp = await DataService.LoadWallPosts(_currentGroup.id, offset, count);
-                foreach (var post in temp)
+                foreach (var post in await DataService.LoadWallPosts(_currentGroup.id, offset, count))
                 {
                     _wallPosts.Add(post);
                 }
-
+                
             }
             catch (Exception ex)
             {
@@ -198,7 +221,7 @@ namespace VKatcher.ViewModels
                 _selectedTrack.IsPlaying = true;
                 App.ViewModelLocator.Main._currentTrack = _selectedTrack;
 
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     ListView lst = e.OriginalSource as ListView;
                     _currentPlaylist = new ObservableCollection<VKAudio>();

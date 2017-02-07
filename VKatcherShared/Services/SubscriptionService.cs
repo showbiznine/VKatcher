@@ -19,19 +19,20 @@ namespace VKatcherShared.Services
         public static async Task<ObservableCollection<VKGroup>> LoadSubscribedGroups()
         {
             var groups = new ObservableCollection<VKGroup>();
+            StorageFile file;
             try
             {
-                var file = await ApplicationData.Current.RoamingFolder.GetFileAsync(_filePath);
-                string str = File.ReadAllText(file.Path);
-                groups = JsonConvert.DeserializeObject<ObservableCollection<VKGroup>>(str);
-                if (groups == null)
-                {
-                    groups = new ObservableCollection<VKGroup>();
-                }
+                file = await ApplicationData.Current.LocalFolder.GetFileAsync(_filePath);
             }
             catch (Exception)
             {
-                var file = await ApplicationData.Current.RoamingFolder.CreateFileAsync(_filePath);
+                file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_filePath);
+            }
+            string str = File.ReadAllText(file.Path);
+            groups = JsonConvert.DeserializeObject<ObservableCollection<VKGroup>>(str);
+            if (groups == null)
+            {
+                groups = new ObservableCollection<VKGroup>();
             }
             return groups;
         }
@@ -41,7 +42,7 @@ namespace VKatcherShared.Services
             try
             {
                 var subbedGroups = await LoadSubscribedGroups();
-                var file = await ApplicationData.Current.RoamingFolder.GetFileAsync(_filePath);
+                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(_filePath);
                 if (!group.IsSubscribed)
                 {
                     group.IsSubscribed = true;
@@ -67,7 +68,7 @@ namespace VKatcherShared.Services
 
         public static async Task WriteSubscribedGroups(ObservableCollection<VKGroup> subscribedGroups)
         {
-            var subscribedFile = await ApplicationData.Current.RoamingFolder.GetFileAsync(_filePath);
+            var subscribedFile = await ApplicationData.Current.LocalFolder.GetFileAsync(_filePath);
             string newstr = JsonConvert.SerializeObject(subscribedGroups);
             File.WriteAllText(subscribedFile.Path, newstr);
             Debug.WriteLine("Wrote to groups database");

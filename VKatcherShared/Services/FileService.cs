@@ -1,11 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK.API.Model;
 using Windows.Storage;
@@ -137,5 +135,11 @@ namespace VKatcherShared.Services
                 Debug.WriteLine("Wrote to database");
             }
         }
+
+        //public static async void OneDriveUpload(string url)
+        //{
+        //    var oneDriveClient = new OneDriveClient(null);
+        //    var uploadedItem = await oneDriveClient.Drive.Root.ItemWithPath(url).Content.Request().PutAsync<>
+        //}
     }
 }

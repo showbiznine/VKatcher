@@ -1,7 +1,6 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:VKatcher.Resources"
     xmlns:Controls="using:VKatcher.Controls"
     xmlns:Converters="using:VKatcher.Converters"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
@@ -13,6 +12,7 @@
     <Converters:TimespanStringConverter x:Key="TimespanStringConverter" />
     <Converters:PlayingForegroundConverter x:Key="PlayingForegroundConverter" />
     <Converters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
+    <Converters:TagNameConverter x:Key="TagNameConverter"/>
     <Converters:AudioOfflineVisibilityConverter x:Key="AudioOfflineVisibilityConverter" />
     <Converters:AudioTemplateConverter x:Key="AudioTemplateSelector"
                                        SongListTemplate="{StaticResource SongListTemplate}"
@@ -58,7 +58,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="PostListTemplate">
-        <UserControl>
+        <UserControl Margin="0,0,0,16">
              <Grid>
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="Layout">
@@ -114,12 +114,21 @@
                                 VerticalAlignment="Top"
                                 d:LayoutOverrides="Width, LeftPosition, RightPosition"
                                 Grid.Row="0" />
-                        <Grid x:Name="grdPostDetails"
+                        <StackPanel x:Name="grdPostDetails"
                                 d:LayoutOverrides="Width, Height"
-                                Grid.Row="1">
-                            <TextBlock Text="{Binding text}"
-                                        Margin="12,8,0,8" />
-                        </Grid>
+                                Grid.Row="1"
+                                Margin="12,8,0,8">
+                            <TextBlock Text="{Binding text}"/>
+                            <ItemsControl x:Name="lstTags"
+                                          ItemTemplate="{StaticResource TagTemplate}"
+                                          ItemsSource="{Binding tags}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VariableSizedWrapGrid Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </StackPanel>
                     </Grid>
                     <ListView x:Name="lstSongs"
                             ItemsSource="{Binding attachments}"
@@ -129,12 +138,13 @@
                             Grid.Row="1"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Stretch"
-                              IsItemClickEnabled="True"
-                              SelectionMode="None">
+                            IsItemClickEnabled="True"
+                            SelectionMode="None">
                         <Interactivity:Interaction.Behaviors>
                             <Core:EventTriggerBehavior EventName="ItemClick">
-                                <Core:InvokeCommandAction Command="{Binding DataContext.SongListViewItemClickCommand, ElementName=pageRoot}"
-                                                          CommandParameter="{Binding ClickedItem}" />
+                                <!--<Core:InvokeCommandAction Command="{Binding DataContext.SongListViewItemClickCommand, ElementName=pageRoot}"
+                                                          CommandParameter="{Binding ElementName=lstSongs, Path=ClickedItem}" />-->
+                                <Core:InvokeCommandAction Command="{Binding DataContext.SongListViewItemClickCommand, ElementName=pageRoot}"/>
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
                         <ListView.ItemsPanel>
@@ -167,6 +177,17 @@
         <MenuFlyoutItem x:Name="flyPlayNext"
                         Text="Play next" />
     </MenuFlyout>
+
+    <DataTemplate x:Key="TagTemplate">
+        <HyperlinkButton Content="{Binding Converter={StaticResource TagNameConverter}}"
+                         Margin="0,0,8,0">
+            <Interactivity:Interaction.Behaviors>
+                <Core:EventTriggerBehavior EventName="Click">
+                    <Core:InvokeCommandAction Command="{Binding DataContext.TagClickCommand, ElementName=pageRoot}" />
+                </Core:EventTriggerBehavior>
+            </Interactivity:Interaction.Behaviors>
+        </HyperlinkButton>
+    </DataTemplate>
 
     <DataTemplate x:Key="SongListTemplate">
         <Grid Margin="12,0,12,0"

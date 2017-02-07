@@ -7,11 +7,11 @@ using Windows.UI.Xaml.Data;
 
 namespace VKatcher.Converters
 {
-    class SubscribedStringConverter : IValueConverter
+    class FollowedStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return (bool)value ? "Unsubscribe" : "Subscribe";
+            return (int)value == 1 ? "Unfollow" : "Follow";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

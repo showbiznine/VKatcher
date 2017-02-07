@@ -44,58 +44,50 @@ namespace VKBackground
             VKSDK.WakeUpSession();
             var networkInfo = NetworkInformation.GetInternetConnectionProfile();
             ToDownload = new ObservableCollection<VKAudio>();
-            if (networkInfo.IsWlanConnectionProfile)
-            {
-                Debug.WriteLine("WiFi connected");
-                SubscribedGroups = new ObservableCollection<VKGroup>();
-                await CheckSubscribedGroups();
-                await DownloadPosts();
-                if (_newTrackCount > 0)
-                {
-                    PopToast();
-                }
-            }
-            else
-            {
-                Debug.WriteLine("Not on WiFi...");
-            }
+            SubscribedGroups = new ObservableCollection<VKGroup>();
+            await CheckSubscribedGroups();
+            //await DownloadPosts();
+            //if (_newTrackCount > 0)
+            //{
+            //    PopToast();
+            //}
             await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
             Debug.WriteLine("BG Task complete");
             _deferral.Complete();
         }
 
-        private async Task DownloadPosts()
-        {
-            foreach (var a in ToDownload)
-            {
-                #region Get Existing Downloads
-                var dls = await FileService.GetDownloads();
-                var lst = dls.ToList();
-                #endregion
-                //Check if already downloaded
-                var t = lst.Find(x => x.id == a.id);
-                if (t != null)
-                {
-                    Debug.WriteLine("Download already exists");
-                    break;
-                }
-                //Down't download huge files
-                if (a.duration < 1200)
-                {
-                    //Download the file
-                    var file = await a.DownloadTrackB();
-                    //Increment track count
-                    _newTrackCount++;
+        //private async Task DownloadPosts()
+        //{
+        //    foreach (var a in ToDownload)
+        //    {
+        //        #region Get Existing Downloads
+        //        var dls = await FileService.GetDownloads();
+        //        var lst = dls.ToList();
+        //        #endregion
+        //        //Check if already downloaded
+        //        var t = lst.Find(x => x.id == a.id);
+        //        if (t != null)
+        //        {
+        //            Debug.WriteLine("Download already exists");
+        //            break;
+        //        }
+        //        //Down't download huge files
+        //        if (a.duration < 1200)
+        //        {
+        //            //Download the file
+        //            var file = await a.DownloadTrackB();
+        //            //Increment track count
+        //            _newTrackCount++;
 
-                    #region Add track to database
-                    if (file != null)
-                    {
-                        FileService.WriteDownloads(a, file);
-                        #endregion
-                    }
-                }
-            }
-        }
+        //            #region Add track to database
+        //            if (file != null)
+        //            {
+        //                FileService.WriteDownloads(a, file);
+        //                #endregion
+        //            }
+        //        }
+        //    }
+        //}
 
         private void OnCancelled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
@@ -159,6 +151,16 @@ namespace VKBackground
         {
             SubscribedGroups = await SubscriptionService.LoadSubscribedGroups();
             Debug.WriteLine("Loaded subscribed groups");
+            StorageFile dlFile;
+            try
+            {
+                dlFile = await ApplicationData.Current.LocalFolder.GetFileAsync("DL_List.json");
+            }
+            catch (Exception)
+            {
+                dlFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("DL_List.json");
+            }
+            var dlList = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(File.ReadAllText(dlFile.Path));
             await Task.Run(async () =>
             {
                 foreach (var group in SubscribedGroups)
@@ -176,7 +178,9 @@ namespace VKBackground
                             var attachments = post.attachments;
                             foreach (var att in attachments)
                             {
-                                ToDownload.Add(att.audio);
+                                //Don't download huge files
+                                if (att.audio.duration < 1200)
+                                    ToDownload.Add(att.audio);
                             }
                         }
                         else
@@ -188,6 +192,7 @@ namespace VKBackground
                     #endregion
                 }
             });
+            File.WriteAllText(dlFile.Path, JsonConvert.SerializeObject(ToDownload));
         }
 
         #region Old

@@ -63,17 +63,10 @@ namespace VKatcher.ViewModels
             {
                 try
                 {
-                    if (vis == Visibility.Visible &&
+                    if ( //vis == Visibility.Visible &&
                 !string.IsNullOrWhiteSpace(_searchQuery))
                     {
-                        DispatcherHelper.CheckBeginInvokeOnUI(async () =>
-                        {
-                            GroupResults.Clear();
-                            GroupResults = await DataService.SearchGroups(_searchQuery);
-                            TrackResults.Clear();
-                            TrackResults = await DataService.SearchAudio(_searchQuery);
-                            _resultsString = "\"" + _searchQuery + "\"";
-                        });
+                        Search();
                     };
                 }
                 catch (Exception ex)
@@ -128,6 +121,18 @@ namespace VKatcher.ViewModels
                     Grid obj = (Grid)sender;
                     FlyoutBase.ShowAttachedFlyout(obj);
                 });
+            });
+        }
+
+        public void Search()
+        {
+            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            {
+                GroupResults.Clear();
+                GroupResults = await DataService.SearchGroups(_searchQuery);
+                TrackResults.Clear();
+                TrackResults = await DataService.SearchAudio(_searchQuery);
+                _resultsString = "\"" + _searchQuery + "\"";
             });
         }
     }

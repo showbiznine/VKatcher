@@ -182,6 +182,7 @@
     <Compile Include="..\VK.WindowsPhone.SDK\VKSDK.cs">
       <Link>VKSDK.cs</Link>
     </Compile>
+    <Compile Include="API\Model\VKTag.cs" />
     <Compile Include="Pages\VKCaptchaRequestUserControl.xaml.cs">
       <DependentUpon>VKCaptchaRequestUserControl.xaml</DependentUpon>
     </Compile>
@@ -214,7 +215,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\Packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
