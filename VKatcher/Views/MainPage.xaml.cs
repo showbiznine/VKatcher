@@ -13,6 +13,7 @@ using VKatcher.Services;
 using VKatcher.ViewModels;
 using VKatcherShared;
 using VKatcherShared.Messages;
+using VKatcherShared.Services;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -119,7 +120,16 @@ namespace VKatcher.Views
             }
             else
             {
-                var test = await DataService.GetToken(null, null);
+                var loggedIn = AuthenticationService.CheckLoggedIn("VK", "test");
+                if (loggedIn)
+                    (DataContext as MainViewModel).Init();
+                else
+                {
+                    await AuthenticationService.VKLogin();
+                    (DataContext as MainViewModel).Init();
+                }
+
+                //var test = await AuthenticationService.VKLogin();
                 //VKSDK.Authorize(_scope, false, false);
             }
         }

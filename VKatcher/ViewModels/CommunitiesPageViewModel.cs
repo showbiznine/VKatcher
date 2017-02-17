@@ -3,18 +3,12 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Practices.ServiceLocation;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using VK.WindowsPhone.SDK.API.Model;
 using VKatcher.Services;
 using VKatcher.Views;
-using VKCatcherShared.Services;
 using Windows.UI.Popups;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace VKatcher.ViewModels
@@ -64,7 +58,7 @@ namespace VKatcher.ViewModels
             });
             GoToSettingsCommand = new RelayCommand(() =>
             {
-                SpotifyService.Authenticate();
+                //SpotifyService.Authenticate();
                 //_navigationService.NavigateTo(typeof(SettingsPage));
             });
             GoToMyMusicCommand = new RelayCommand(() =>

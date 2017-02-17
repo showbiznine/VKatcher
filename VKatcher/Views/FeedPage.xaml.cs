@@ -31,6 +31,12 @@ namespace VKatcher.Views
         public FeedPage()
         {
             this.InitializeComponent();
+            lstHeader.Loaded += LstHeader_Loaded;
+        }
+
+        private void LstHeader_Loaded(object sender, RoutedEventArgs e)
+        {
+            lstHeader.Mode = Microsoft.Toolkit.Uwp.UI.Controls.ScrollHeaderMode.QuickReturn;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

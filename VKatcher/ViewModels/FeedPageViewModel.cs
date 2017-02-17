@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Toolkit.Uwp;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -54,7 +55,7 @@ namespace VKatcher.ViewModels
         public RelayCommand<Grid> AddToPlaylistCommand { get; private set; }
         public RelayCommand<Grid> PlayNextCommand { get; private set; }
         public RelayCommand<ItemClickEventArgs> SongListViewItemClickCommand { get; private set; }
-        public RelayCommand<RoutedEventArgs> TagClickCommand { get; private set; }
+        public RelayCommand<LinkClickedEventArgs> TagClickCommand { get; private set; }
         public RelayCommand<object> SongHoldingCommand { get; private set; }
         public RelayCommand<object> SongRightTappedCommand { get; private set; }
 
@@ -129,9 +130,9 @@ namespace VKatcher.ViewModels
                 {
                     OnSongListItemClick(args);
                 });
-            TagClickCommand = new RelayCommand<RoutedEventArgs>(args =>
+            TagClickCommand = new RelayCommand<LinkClickedEventArgs>(args =>
             {
-                OnTagClick(args);
+                OnTagClick(args.Link);
             });
             SubscribeCommand = new RelayCommand(async () =>
             {
@@ -155,13 +156,18 @@ namespace VKatcher.ViewModels
             });
         }
 
-        private async void OnTagClick(RoutedEventArgs args)
+        private async void OnTagClick(string tag)
         {
-            var tag = (args.OriginalSource as HyperlinkButton).DataContext as VKTag;
             _inCall = true;
             _wallPosts.Clear();
-
-            foreach (var post in await DataService.SearchWallByTag(tag.tag, tag.domain))
+            var split = tag.Split('#', '@');
+            List<string> fixedSplit = new List<string>();
+            foreach (var t in split)
+            {
+                if (!string.IsNullOrWhiteSpace(t))
+                    fixedSplit.Add(t);
+            }
+            foreach (var post in await DataService.SearchWallByTag(fixedSplit[0], fixedSplit.Count > 1 ? fixedSplit[1] : _currentGroup.screen_name))
             {
                 _wallPosts.Add(post);
             }

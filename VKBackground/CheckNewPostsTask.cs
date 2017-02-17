@@ -167,7 +167,7 @@ namespace VKBackground
                 {
                     #region Get Posts
                     group.to_save = group.to_save == 0 ? 3 : group.to_save;
-                    var posts = await VKFacade.LoadWallPostsDIY(group.id, group.to_save, 0);
+                    var posts = await VKFacade.LoadWallPosts(group.id, group.to_save, 0);
                     Debug.WriteLine("Loaded posts from " + group.name);
                     foreach (var post in posts)
                     {
@@ -201,7 +201,7 @@ namespace VKBackground
             foreach (var group in SubscribedGroups)
             {
                 group.to_save = group.to_save == null ? 3 : group.to_save;
-                var posts = await VKFacade.LoadWallPostsDIY(group.id, group.to_save, 0);
+                var posts = await VKFacade.LoadWallPosts(group.id, group.to_save, 0);
                 await CheckAttachments(posts, group);
             }
         }

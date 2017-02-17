@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Controls="using:VKatcher.Controls"
     xmlns:Converters="using:VKatcher.Converters"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -118,8 +119,15 @@
                                 d:LayoutOverrides="Width, Height"
                                 Grid.Row="1"
                                 Margin="12,8,0,8">
-                            <TextBlock Text="{Binding text}"/>
-                            <ItemsControl x:Name="lstTags"
+                            <toolkit:MarkdownTextBlock x:Name="mtbPostText" 
+                                                       Text="{Binding text}">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="LinkClicked">
+                                        <Core:InvokeCommandAction Command="{Binding DataContext.TagClickCommand, ElementName=pageRoot}"/>
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </toolkit:MarkdownTextBlock>
+                            <!--<ItemsControl x:Name="lstTags"
                                           ItemTemplate="{StaticResource TagTemplate}"
                                           ItemsSource="{Binding tags}">
                                 <ItemsControl.ItemsPanel>
@@ -127,7 +135,7 @@
                                         <VariableSizedWrapGrid Orientation="Horizontal" />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
-                            </ItemsControl>
+                            </ItemsControl>-->
                         </StackPanel>
                     </Grid>
                     <ListView x:Name="lstSongs"

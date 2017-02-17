@@ -756,6 +756,7 @@
                             HorizontalAlignment="Left"
                             Margin="90,125,0,0"
                             Click="btnLastID_Click" />
+                    <Button x:Name="btnClearToken" Content="Clear Token" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="90,293,0,0" Command="{Binding ClearTokenCommand}"/>
                 </Grid>
             </PivotItem>
         </Pivot>

@@ -77,7 +77,7 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Header>
-                <toolkit:ScrollHeader Mode="QuickReturn"
+                <toolkit:ScrollHeader x:Name="lstHeader" Mode="QuickReturn"
                                       TargetListViewBase="{x:Bind listView}"
                                       HorizontalContentAlignment="Stretch">
                     <Grid Width="Auto"

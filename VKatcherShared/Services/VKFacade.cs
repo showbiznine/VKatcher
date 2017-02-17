@@ -22,92 +22,6 @@ namespace VKatcherShared.Services
         private const string _host = "https://api.vk.com/method/";
         private const string _apiVersion = "5.53";
 
-        public static ObservableCollection<VKWallPost> LoadWallPosts(long groupID, int? postCount, int offset)
-        {
-            var WallPosts = new ObservableCollection<VKWallPost>();
-
-            var param = new VKRequestParameters("wall.get",
-                "owner_id", "-" + groupID.ToString(),
-                "extended", "1",
-                "offset", offset.ToString(),
-                "count", "30");
-
-            VKRequest.Dispatch<VKList<VKWallPost>>(
-               param , async (res) =>
-            {
-                await VKExecute.ExecuteOnUIThread(() =>
-                {
-                    try
-                    {
-                        if (res.ResultCode == VKResultCode.Succeeded)
-                        {
-                            var payload = res.Data.items;
-                            foreach (var post in payload)
-                            {
-                                var temp = post;
-                                if (temp.attachments != null
-                                    && temp.attachments.Count > 0)
-                                {
-                                    temp = FormatPost(temp);
-                                }
-                                else if (temp.copy_history != null
-                                && temp.copy_history.Count > 0)
-                                {
-                                    temp = FormatPost(temp.copy_history[0]);
-                                }
-                                if (temp.attachments != null
-                                    && temp.attachments.Count > 0)
-                                {
-                                    WallPosts.Add(temp);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.Message);
-                    }
-                });
-            });
-
-            return WallPosts;
-        }
-
-        public static ObservableCollection<VKAttachment> LoadAudioPosts()
-        {
-            var MyAudio = new ObservableCollection<VKAttachment>();
-
-            VKRequest.Dispatch<VKList<VKAudio>>(
-                new VKRequestParameters("audio.get",
-                "count", "100"), async (res) =>
-                {
-                    await VKExecute.ExecuteOnUIThread(() =>
-                    {
-                        try
-                        {
-                            if (res.ResultCode == VKResultCode.Succeeded)
-                            {
-                                var payload = res.Data.items;
-                                foreach (var track in payload)
-                                {
-                                    var item = new VKAttachment
-                                    {
-                                        audio = track
-                                    };
-                                    MyAudio.Add(item);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Debug.WriteLine(ex.Message);
-                        }
-                    });
-                });
-
-            return MyAudio;
-        }
-
         private static VKWallPost FormatPost(VKWallPost post)
         {
             for (int i = post.attachments.Count - 1; i > -1; i--)
@@ -159,7 +73,7 @@ namespace VKatcherShared.Services
             return post;
         }
 
-        public static async Task<ObservableCollection<VKWallPost>> LoadWallPostsDIY(long groupID, int? count, int offset)
+        public static async Task<ObservableCollection<VKWallPost>> LoadWallPosts(long groupID, int? count, int offset)
         {
             var WallPosts = new ObservableCollection<VKWallPost>();
             var parameters = new QueryString
@@ -170,7 +84,7 @@ namespace VKatcherShared.Services
                 { "count", count.ToString() }
             };
             var http = new HttpClient();
-            var tok = GetAccessToken();
+            var tok = await AuthenticationService.GetVKAccessToken();
             string str = string.Format("https://api.vk.com/method/{0}?{1}&access_token={2}",
                 "wall.get",
                 parameters,
@@ -205,12 +119,6 @@ namespace VKatcherShared.Services
             return WallPosts;
         }
 
-        public static string GetAccessToken()
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            return localSettings.Values["token"].ToString();
-        }
-
         public static async Task<ObservableCollection<VKAudio>> SearchAudio(string query)
         {
             HttpClient http = new HttpClient();
@@ -218,7 +126,7 @@ namespace VKatcherShared.Services
             {
                 {"q", query },
                 {"auto_complete", "true" },
-                {"access_token", GetAccessToken() },
+                {"access_token", await AuthenticationService.GetVKAccessToken() },
                 {"v", _apiVersion }
             };
             string request = _host + "audio.search?" + q;
