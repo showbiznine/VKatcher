@@ -120,6 +120,14 @@ namespace VKatcher.Views
             }
             else
             {
+                try
+                {
+                    OneDriveService.InitializeAsync();
+                }
+                catch (Exception)
+                {
+                    //throw;
+                }
                 var loggedIn = AuthenticationService.CheckLoggedIn("VK", "test");
                 if (loggedIn)
                     (DataContext as MainViewModel).Init();

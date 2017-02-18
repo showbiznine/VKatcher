@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
-namespace VKCatcher.Services
+namespace VKatcher.Services
 {
     public class FindChildren
     {

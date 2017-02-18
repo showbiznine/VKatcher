@@ -176,5 +176,11 @@ namespace VK.WindowsPhone.SDK.API.Model
             var sf = await StorageFile.GetFileFromPathAsync(url);
             await sf.DeleteAsync();
         }
+
+        public async Task DeleteDownloadedTrack(string Path)
+        {
+            var sf = await StorageFile.GetFileFromPathAsync(Path);
+            await sf.DeleteAsync();
+        }
     }
 }

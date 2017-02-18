@@ -50,7 +50,7 @@ namespace VKatcher.ViewModels
         public RelayCommand LoadPostsCommand { get; private set; }
         public RelayCommand RefreshPostsCommand { get; private set; }
         public RelayCommand SubscribeCommand { get; private set; }
-        public RelayCommand<Grid> DownloadTrackCommand { get; private set; }
+        public RelayCommand<Grid> UploadToOneDriveCommand { get; private set; }
         public RelayCommand<Grid> DeleteDownloadCommand { get; private set; }
         public RelayCommand<Grid> AddToPlaylistCommand { get; private set; }
         public RelayCommand<Grid> PlayNextCommand { get; private set; }
@@ -58,7 +58,6 @@ namespace VKatcher.ViewModels
         public RelayCommand<LinkClickedEventArgs> TagClickCommand { get; private set; }
         public RelayCommand<object> SongHoldingCommand { get; private set; }
         public RelayCommand<object> SongRightTappedCommand { get; private set; }
-
         #endregion
 
         public FeedPageViewModel()
@@ -84,12 +83,20 @@ namespace VKatcher.ViewModels
             ToggleMenuCommand = new RelayCommand(() => App.ViewModelLocator.Main.IsMenuOpen = !App.ViewModelLocator.Main.IsMenuOpen);
             LoadPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
             RefreshPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
-            DownloadTrackCommand = new RelayCommand<Grid>(grid =>
+            UploadToOneDriveCommand = new RelayCommand<Grid>(grid =>
             {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     var att = grid.DataContext as VKAttachment;
                     DownloadTrack(att.audio);
+                });
+            });
+            UploadToOneDriveCommand = new RelayCommand<Grid>(grid =>
+            {
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    var att = grid.DataContext as VKAttachment;
+                    SaveToOneDrive(att.audio);
                 });
             });
             DeleteDownloadCommand = new RelayCommand<Grid>(grid =>
@@ -125,8 +132,7 @@ namespace VKatcher.ViewModels
                     MessageService.SendMessageToBackground(new PlayNextMessage(att.audio));
                 });
             });
-            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(
-                args =>
+            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>( args =>
                 {
                     OnSongListItemClick(args);
                 });
@@ -206,6 +212,13 @@ namespace VKatcher.ViewModels
             {
                 FileService.WriteDownloads(track, file);
             }
+        }
+
+        private async void SaveToOneDrive(VKAudio track)
+        {
+            var file = await track.DownloadTrack();
+            var odFile = await OneDriveService.UploadFile(file, track.title + " - " + track.artist + ".mp3");
+            await track.DeleteDownloadedTrack(file.Path);
         }
 
         public async void OnSongListItemClick(ItemClickEventArgs e)

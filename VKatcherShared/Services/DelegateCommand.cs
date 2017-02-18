@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace VKCatcher.Services
+namespace VKatcher.Services
 {
     public class DelegateCommand<T> : ICommand
     {

@@ -33,6 +33,7 @@ namespace VKatcher.ViewModels
 
         public RelayCommand<ItemClickEventArgs> PlaySongCommand { get; set; }
         public RelayCommand<Grid> DownloadTrackCommand { get; private set; }
+        public RelayCommand<Grid> UploadToOneDriveCommand { get; private set; }
         public RelayCommand<Grid> DeleteDownloadCommand { get; private set; }
         public RelayCommand<object> SongHoldingCommand { get; private set; }
         public RelayCommand<object> SongRightTappedCommand { get; private set; }
@@ -123,6 +124,14 @@ namespace VKatcher.ViewModels
                     MessageService.SendMessageToBackground(new TrackChangedMessage(new Uri(_selectedTrack.url)));
                     MessageService.SendMessageToBackground(new StartPlaybackMessage());
                 }
+            });
+            UploadToOneDriveCommand = new RelayCommand<Grid>(grid =>
+            {
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    var att = grid.DataContext as VKAttachment;
+                    DownloadTrack(att.audio);
+                });
             });
             DownloadTrackCommand = new RelayCommand<Grid>(grid =>
             {

@@ -127,6 +127,8 @@
     <Compile Include="Messages\UpdatePlaylistMessage.cs" />
     <Compile Include="Models\DIYWallPostModel.cs" />
     <Compile Include="Models\DownloadedTrack.cs" />
+    <Compile Include="Models\OneDriveToken.cs" />
+    <Compile Include="Models\OneDriveUploadModel.cs" />
     <Compile Include="Models\Spotify\SpotifyToken.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AuthenticationService.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\FindChildren.cs" />
     <Compile Include="Services\FindParents.cs" />
+    <Compile Include="Services\OneDriveService.cs" />
     <Compile Include="Services\SubscriptionService.cs" />
     <Compile Include="Services\VKFacade.cs" />
     <EmbeddedResource Include="Properties\VKCatcherShared.rd.xml" />

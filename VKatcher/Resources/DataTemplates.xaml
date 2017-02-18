@@ -167,6 +167,10 @@
     </DataTemplate>
 
     <MenuFlyout x:Key="TrackFlyout">
+        <MenuFlyoutItem x:Name="flyOneDrive"
+                        Text="Save to OneDrive"
+                        Command="{Binding DataContext.UploadToOneDriveCommand, ElementName=pageRoot}"
+                        CommandParameter="{Binding ElementName=grdRoot}"/>
         <MenuFlyoutItem x:Name="flyDownload"
                         Text="Download"
                         Command="{Binding DataContext.DownloadTrackCommand, ElementName=pageRoot}"
@@ -204,6 +208,10 @@
               x:Name="grdRoot">
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
+                    <MenuFlyoutItem x:Name="flyOneDrive"
+                        Text="Save to OneDrive"
+                        Command="{Binding DataContext.UploadToOneDriveCommand, ElementName=pageRoot}"
+                        CommandParameter="{Binding ElementName=grdRoot}"/>
                     <MenuFlyoutItem x:Name="flyDownload"
                                     Text="Download"
                                     Command="{Binding DataContext.DownloadTrackCommand, ElementName=pageRoot}"
@@ -290,6 +298,10 @@
               x:Name="grdRoot">
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
+                    <MenuFlyoutItem x:Name="flyOneDrive"
+                        Text="Save to OneDrive"
+                        Command="{Binding DataContext.UploadToOneDriveCommand, ElementName=pageRoot}"
+                        CommandParameter="{Binding ElementName=grdRoot}"/>
                     <MenuFlyoutItem x:Name="flyDownload"
                                     Text="Download"
                                     Command="{Binding DataContext.DownloadTrackCommand, ElementName=pageRoot}"
