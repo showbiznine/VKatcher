@@ -17,7 +17,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="64" />
+            <RowDefinition Height="48" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <GridView x:Name="gridView"
@@ -40,9 +40,8 @@
         <Grid x:Name="grdTopBar"
               Background="#FF4E5867">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="64" />
+                <ColumnDefinition Width="48" />
                 <ColumnDefinition />
-                <ColumnDefinition Width="64" />
             </Grid.ColumnDefinitions>
             <Button x:Name="btnHamburger"
                     Content="&#xE700;"
@@ -51,32 +50,21 @@
                     d:LayoutOverrides="Width"
                     Background="#00000000"
                     FontFamily="Segoe MDL2 Assets"
-                    FontSize="28"
+                    FontSize="20"
                     Foreground="White"
                     Command="{Binding OpenMenuCommand}" />
             <TextBlock x:Name="textBlock"
-                       Margin="8,0,0,0"
+                       Margin="0"
                        TextWrapping="Wrap"
-                       Text="COMMUNITIES"
+                       Text="Communities"
                        VerticalAlignment="Center"
                        d:LayoutOverrides="Width"
                        HorizontalAlignment="Left"
                        Grid.Column="1"
-                       FontSize="22"
-                       FontWeight="Black"
+                       FontSize="20"
+                       FontWeight="Medium"
                        TextLineBounds="Tight"
                        Foreground="White" />
-            <Button x:Name="btnSearch"
-                    Content="&#xE094;"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    Background="#00000000"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="28"
-                    Foreground="White"
-                    d:LayoutOverrides="Width"
-                    Grid.Column="2"
-                    Command="{Binding SearchCommand}" />
         </Grid>
 
     </Grid>

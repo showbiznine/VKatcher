@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK.API.Model;
+using VKatcher.Services;
 using VKatcherShared.Messages;
 using VKatcherShared.Services;
 using Windows.Media.Playback;
@@ -64,8 +65,8 @@ namespace VKatcher.ViewModels
         private void InitializeCommands()
         {
             PlayPauseCommand = new RelayCommand(() => PlayPause());
-            SkipNextCommand = new RelayCommand(() => MessageService.SendMessageToBackground(new SkipNextMessage()));
-            SkipPreviousCommand = new RelayCommand(() => MessageService.SendMessageToBackground(new SkipPreviousMessage()));
+            SkipNextCommand = new RelayCommand(() => PlayerService.CurrentPlaybackList.MoveNext());
+            SkipPreviousCommand = new RelayCommand(() => PlayerService.CurrentPlaybackList.MovePrevious());
             DownloadTrackCommand = new RelayCommand<Grid>(grid =>
             {
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
@@ -81,7 +82,7 @@ namespace VKatcher.ViewModels
                     var att = grid.DataContext as VKAudio;
                     if (att.IsPlaying)
                     {
-                        MessageService.SendMessageToBackground(new SkipNextMessage());
+                        PlayerService.CurrentPlaybackList.MoveNext();
                     }
                     await FileService.DeleteDownload(att);
                     att.IsOffline = false;
@@ -92,19 +93,18 @@ namespace VKatcher.ViewModels
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     var att = grid.DataContext as VKAudio;
-                    App.ViewModelLocator.Main._currentPlaylist.Add(att);
-                    MessageService.SendMessageToBackground(new AddToPlaylistMessage(att));
+                    PlayerService.AddAudioToPlaylist(att);
                 });
             });
             PlayNextCommand = new RelayCommand<Grid>(grid =>
             {
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                    var att = grid.DataContext as VKAudio;
-                    var lst = App.ViewModelLocator.Main._currentPlaylist.ToList();
-                    var i = lst.FindIndex(0, lst.Count, x => x.id == App.ViewModelLocator.Main._currentTrack.id);
-                    App.ViewModelLocator.Main._currentPlaylist.Insert(i + 1, att);
-                    MessageService.SendMessageToBackground(new PlayNextMessage(att));
+                    //var att = grid.DataContext as VKAudio;
+                    //var lst = App.ViewModelLocator.Main._currentPlaylist.ToList();
+                    //var i = lst.FindIndex(0, lst.Count, x => x.id == App.ViewModelLocator.Main._currentTrack.id);
+                    //App.ViewModelLocator.Main._currentPlaylist.Insert(i + 1, att);
+                    //MessageService.SendMessageToBackground(new PlayNextMessage(att));
                 });
             });
             PlaySongCommand = new RelayCommand<ItemClickEventArgs>(args => OnSongListItemClick(args));
@@ -179,8 +179,6 @@ namespace VKatcher.ViewModels
                 {
                     await Task.Delay(500);
                 }
-                MessageService.SendMessageToBackground(new TrackChangedMessage(new Uri(_currentTrack.url)));
-                MessageService.SendMessageToBackground(new StartPlaybackMessage());
             }
         }
 

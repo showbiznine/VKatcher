@@ -16,6 +16,7 @@ using VKatcher.Models;
 using VKatcher.ViewModels;
 using VKatcher.Views;
 using VKatcherShared.Services;
+using VKCatcherShared.Models;
 using Windows.Security.Credentials;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -27,275 +28,11 @@ namespace VKatcher.Services
     {
         private const string _host = "https://api.vk.com/method/";
         private const string _authHost = "https://oauth.vk.com/";
-        //private const string _apiVersion = "5.53";
         private const string _apiVersion = "5.62";
 
-        #region VKSDK
-        //public static async Task<ObservableCollection<VKGroup>> LoadMyGroups()
-        //{
-        //    var MyGroups = new ObservableCollection<VKGroup>();
-        //    await Task.Run(() =>
-        //    {
-        //        VKRequest.Dispatch<VKList<VKGroup>>(new VKRequestParameters("groups.get",
-        //        "extended", "1"),
-        //        async (res) =>
-        //        {
-        //            await VKExecute.ExecuteOnUIThread(() =>
-        //            {
-        //                if (res.ResultCode == VKResultCode.Succeeded)
-        //                {
-        //                    var groupList = res.Data.items;
-        //                    foreach (var group in groupList)
-        //                    {
-        //                        MyGroups.Add(group);
-        //                    }
-        //                }
-        //            });
-        //        });
-        //    });
-        //    return MyGroups;
-        //}
+        #region API Calls
 
-        //public static async Task<ObservableCollection<VKGroup>> SearchGroups(string query)
-        //{
-        //    var MyGroups = new ObservableCollection<VKGroup>();
-        //    await Task.Run(() =>
-        //    {
-        //        VKRequest.Dispatch<VKList<VKGroup>>(new VKRequestParameters("groups.search",
-        //            "q", query,
-        //            "type", "group"),
-        //            async (res) =>
-        //            {
-        //                await VKExecute.ExecuteOnUIThread(() =>
-        //                {
-        //                    if (res.ResultCode == VKResultCode.Succeeded)
-        //                    {
-        //                        var groupList = res.Data.items;
-        //                        foreach (var group in groupList)
-        //                        {
-        //                            MyGroups.Add(group);
-        //                        }
-        //                    }
-        //                });
-        //            });
-        //    });
-        //    return MyGroups;
-        //}
-
-        //public static async Task<ObservableCollection<VKAudio>> SearchAudio(string query)
-        //{
-        //    var MyAudio = new ObservableCollection<VKAudio>();
-        //    var vm = ((Window.Current.Content as Frame).Content as MainPage).DataContext as MainViewModel;
-
-        //    await Task.Run(() =>
-        //    {
-        //        VKRequest.Dispatch<VKList<VKAudio>>(new VKRequestParameters("audio.search",
-        //            "q", query,
-        //            "auto_complete", "true"),
-        //            async (res) =>
-        //            {
-        //                await VKExecute.ExecuteOnUIThread(() =>
-        //                {
-        //                    if (res.ResultCode == VKResultCode.Succeeded)
-        //                    {
-        //                        var tracks = res.Data.items;
-        //                        foreach (var track in tracks)
-        //                        {
-        //                            var t = vm._currentTrack;
-        //                            if (t != null &&
-        //                                track.id == t.id)
-        //                            {
-        //                                track.IsPlaying = true;
-        //                                App.ViewModelLocator.Feed._selectedTrack = track;
-        //                            }
-        //                            else
-        //                                track.IsPlaying = false;
-        //                            MyAudio.Add(track);
-        //                        }
-        //                    }
-        //                });
-        //            });
-        //    });
-        //    return MyAudio;
-        //}
-
-        //public static async Task<ObservableCollection<VKWallPost>> LoadWallPosts(long groupID, int offset, int count)
-        //{
-        //    var WallPosts = new ObservableCollection<VKWallPost>();
-
-        //    var param = new VKRequestParameters("wall.get",
-        //        "owner_id", "-" + groupID.ToString(),
-        //        "extended", "1",
-        //        "offset", offset.ToString(),
-        //        "count", count.ToString());
-        //    VKRequest.Dispatch<VKList<VKWallPost>>(
-        //       param, async (res) =>
-        //       {
-        //           await VKExecute.ExecuteOnUIThread(async () =>
-        //           {
-        //               try
-        //               {
-        //                   if (res.ResultCode == VKResultCode.Succeeded)
-        //                   {
-        //                       var payload = res.Data.items;
-        //                       foreach (var post in payload)
-        //                       {
-        //                           var temp = post;
-        //                           if (temp.attachments != null
-        //                               && temp.attachments.Count > 0)
-        //                           {
-        //                               temp = await FormatPost(temp);
-        //                           }
-        //                           else if (temp.copy_history != null
-        //                           && temp.copy_history.Count > 0)
-        //                           {
-        //                               temp = await FormatPost(temp.copy_history[0]);
-        //                           }
-        //                           if (temp.attachments != null
-        //                               && temp.attachments.Count > 0)
-        //                           {
-        //                               WallPosts.Add(temp);
-        //                           }
-        //                       }
-        //                   }
-        //               }
-        //               catch (Exception ex)
-        //               {
-        //                   Debug.WriteLine(ex.Message);
-        //               }
-        //           });
-        //       });
-
-        //    return WallPosts;
-        //}
-
-        //public static async Task<ObservableCollection<VKAudio>> LoadMyAudio()
-        //{
-        //    var dls = await FileService.GetDownloads();
-        //    var lst = dls.ToList();
-        //    var myAudio = new ObservableCollection<VKAudio>();
-        //    var vm = ((Window.Current.Content as Frame).Content as MainPage).DataContext as MainViewModel;
-        //    await Task.Run(() =>
-        //    {
-        //        VKRequest.Dispatch<VKList<VKAudio>>(
-        //            new VKRequestParameters("audio.get",
-        //            "count", "100"), async (res) =>
-        //            {
-        //                await VKExecute.ExecuteOnUIThread(() =>
-        //                {
-        //                    try
-        //                    {
-        //                        if (res.ResultCode == VKResultCode.Succeeded)
-        //                        {
-        //                            var payload = res.Data.items;
-        //                            foreach (var track in payload)
-        //                            {
-        //                                var item = track;
-        //                                var tr = lst.Find(x => x.id == item.id);
-        //                                if (tr != null)
-        //                                {
-        //                                    item = tr;
-        //                                }
-        //                                item.IsSaved = true;
-        //                                var t = vm._currentTrack;
-        //                                if (t != null &&
-        //                                    item.id == t.id)
-        //                                {
-        //                                    item.IsPlaying = true;
-        //                                    App.ViewModelLocator.Feed._selectedTrack = item;
-        //                                }
-        //                                else
-        //                                    item.IsPlaying = false;
-        //                                myAudio.Add(item);
-        //                            }
-        //                        }
-        //                    }
-        //                    catch (Exception ex)
-        //                    {
-        //                        Debug.WriteLine(ex.Message);
-        //                    }
-        //                });
-        //            });
-        //    });
-        //    return myAudio;
-        //}
-
-        //private static async Task<VKWallPost> FormatPost(VKWallPost post)
-        //{
-        //    var dls = await FileService.GetDownloads();
-        //    var lst = dls.ToList();
-
-        //    var vm = ((Window.Current.Content as Frame).Content as MainPage).DataContext as MainViewModel;
-        //    for (int i = post.attachments.Count - 1; i > -1; i--)
-        //    {
-        //        var attachment = post.attachments[i];
-        //        switch (attachment.type)
-        //        {
-        //            case "audio":
-        //                break;
-        //            #region Photo
-        //            case "photo":
-        //                if (attachment.photo.photo_2560 != null)
-        //                {
-        //                    post.post_image = attachment.photo.photo_2560;
-        //                }
-        //                else if (attachment.photo.photo_1280 != null)
-        //                {
-        //                    post.post_image = attachment.photo.photo_1280;
-        //                }
-        //                else if (attachment.photo.photo_807 != null)
-        //                {
-        //                    post.post_image = attachment.photo.photo_807;
-        //                }
-        //                else if (attachment.photo.photo_604 != null)
-        //                {
-        //                    post.post_image = attachment.photo.photo_604;
-        //                }
-        //                else if (attachment.photo.photo_130 != null)
-        //                {
-        //                    post.post_image = attachment.photo.photo_130;
-        //                }
-        //                else if (attachment.photo.photo_75 != null)
-        //                {
-        //                    post.post_image = attachment.photo.photo_75;
-        //                }
-        //                post.attachments.RemoveAt(i);
-        //                break;
-        //            default:
-        //                post.attachments.RemoveAt(i);
-        //                //Or else remove the attachment
-        //                break;
-        //                #endregion
-        //        }
-        //    }
-        //    foreach (var audio in post.attachments)
-        //    {
-        //        audio.audio.photo_url = post.post_image;
-        //        #region Check if downloaded
-        //        var item = lst.Find(x => x.id == audio.audio.id);
-        //        if (item != null)
-        //        {
-        //            audio.audio = item;
-        //        }
-        //        #endregion
-        //        #region Check if playing
-        //        var playingTrack = vm._currentTrack;
-        //        if (playingTrack != null &&
-        //            audio.audio.id == playingTrack.id)
-        //        {
-        //            audio.audio.IsPlaying = true;
-        //            App.ViewModelLocator.Feed._selectedTrack = audio.audio;
-        //        }
-        //        else
-        //            audio.audio.IsPlaying = false;
-        //        #endregion
-        //    }
-        //    return post;
-        //}
-        #endregion
-
-        #region Custom
-
+        #region Groups
         public static async Task<ObservableCollection<VKGroup>> LoadMyGroups()
         {
             HttpClient http = new HttpClient();
@@ -310,11 +47,61 @@ namespace VKatcher.Services
 
             var res = await http.GetAsync(request);
             var json = await res.Content.ReadAsStringAsync();
-
+            if (json.Contains("error_code"))
+            {
+                await AuthenticationService.VKLogin();
+                return null;
+            }
             var r = JsonConvert.DeserializeObject<VKGroupRoot>(json);
             return r.response.items;
         }
 
+        public static async Task<ObservableCollection<VKWallPost>> LoadWallPosts(long groupID, int offset, int count)
+        {
+            var WallPosts = new ObservableCollection<VKWallPost>();
+
+            HttpClient http = new HttpClient();
+            var q = new QueryString()
+            {
+                {"owner_id", "-" + groupID },
+                {"extended", "1" },
+                {"offset", offset.ToString() },
+                {"count", count.ToString() },
+                {"access_token", await AuthenticationService.GetVKAccessToken() },
+                {"v", _apiVersion }
+            };
+            string request = _host + "wall.get?" + q;
+
+            var res = await http.GetAsync(request);
+            var json = await res.Content.ReadAsStringAsync();
+
+            var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(json);
+            var r = ReturnedObject.response.items;
+            foreach (var wp in r)
+            {
+                var temp = wp;
+                if (temp.attachments != null
+                    && temp.attachments.Count > 0)
+                {
+                    temp = FormatPost(temp);
+                }
+                else if (temp.copy_history != null
+                && temp.copy_history.Count > 0)
+                {
+                    temp = FormatPost(temp.copy_history[0]);
+                }
+                if (temp.attachments != null
+                    && temp.attachments.Count > 0)
+                {
+                    WallPosts.Add(temp);
+                }
+            }
+            await CheckOffline(WallPosts);
+            return WallPosts;
+        }
+        #endregion
+
+        #region Search
         public static async Task<ObservableCollection<VKGroup>> SearchGroups(string query)
         {
             HttpClient http = new HttpClient();
@@ -400,51 +187,9 @@ namespace VKatcher.Services
             }
             return WallPosts;
         }
+        #endregion
 
-        public static async Task<ObservableCollection<VKWallPost>> LoadWallPosts(long groupID, int offset, int count)
-        {
-            var WallPosts = new ObservableCollection<VKWallPost>();
-
-            HttpClient http = new HttpClient();
-            var q = new QueryString()
-            {
-                {"owner_id", "-" + groupID },
-                {"extended", "1" },
-                {"offset", offset.ToString() },
-                {"count", count.ToString() },
-                {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
-            };
-            string request = _host + "wall.get?" + q;
-
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
-
-            var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(json);
-            var r = ReturnedObject.response.items;
-            foreach (var wp in r)
-            {
-                var temp = wp;
-                if (temp.attachments != null
-                    && temp.attachments.Count > 0)
-                {
-                    temp = FormatPost(temp);
-                }
-                else if (temp.copy_history != null
-                && temp.copy_history.Count > 0)
-                {
-                    temp = FormatPost(temp.copy_history[0]);
-                }
-                if (temp.attachments != null
-                    && temp.attachments.Count > 0)
-                {
-                    WallPosts.Add(temp);
-                }                
-            }
-            await CheckOffline(WallPosts);
-            return WallPosts;
-        }
-
+        #region My Audio
         public static async Task<ObservableCollection<VKAudio>> LoadMyAudio()
         {
             HttpClient http = new HttpClient();
@@ -469,11 +214,74 @@ namespace VKatcher.Services
             return r;
         }
 
+        public static async Task<VKAudio> SearchAudioById(string id, string ownerid)
+        {
+            HttpClient http = new HttpClient();
+            var q = new QueryString()
+            {
+                {"audios", ownerid + "_" + id },
+                {"access_token", await AuthenticationService.GetVKAccessToken() },
+                {"v", _apiVersion }
+            };
+            string request = _host + "audio.getById?" + q;
+
+            var res = await http.GetAsync(request);
+            var json = await res.Content.ReadAsStringAsync();
+
+            var r = JsonConvert.DeserializeObject<VKAudioByIdRoot>(json);
+            //await CheckOffline(r);
+            return r.response[0];
+        }
+
+        #endregion
+
+        #region Radio
+
+        public static async Task<VKRadio> GetMyRadio()
+        {
+            HttpClient client = new HttpClient();
+            var q = new QueryString
+            {
+                {"access_token", await AuthenticationService.GetVKAccessToken() },
+                {"v", _apiVersion }
+            };
+            var uri = new Uri(_host + "audio.getRecommendations?" + q);
+
+            var res = await client.GetAsync(uri);
+            var s = await res.Content.ReadAsStringAsync();
+
+            var r = JsonConvert.DeserializeObject<VKRadio>(s);
+            return r;
+        }
+
+        public static async Task<VKRadio> GetRadioByTrack(VKAudio Track)
+        {
+            HttpClient client = new HttpClient();
+            var q = new QueryString
+            {
+                {"target_audio", Track.owner_id + "_" + Track.id },
+                {"access_token", await AuthenticationService.GetVKAccessToken() },
+                {"v", _apiVersion }
+            };
+
+            var uri = new Uri(_host + "audio.getRecommendations?" + q);
+
+            var res = await client.GetAsync(uri);
+            var s = await res.Content.ReadAsStringAsync();
+
+            var r = JsonConvert.DeserializeObject<VKRadio>(s);
+            return null;
+        }
+        #endregion
+
+        #endregion
+
+        #region Formatting
         private static VKWallPost FormatPost(VKWallPost post)
         {
 
             #region Tags
-            post.text = FormatTags(post.text);
+            post.text = FormatPostText(post.text);
             #endregion
 
             for (int i = post.attachments.Count - 1; i > -1; i--)
@@ -486,6 +294,14 @@ namespace VKatcher.Services
                         break;
                     #region Photo
                     case "photo":
+                        try
+                        {
+                            post.post_image_aspect_ratio = attachment.photo.width / attachment.photo.height;
+                        }
+                        catch (Exception)
+                        {
+                            post.post_image_aspect_ratio = 1;
+                        }
                         if (attachment.photo.photo_2560 != null)
                         {
                             post.post_image = attachment.photo.photo_2560;
@@ -510,10 +326,10 @@ namespace VKatcher.Services
                         {
                             post.post_image = attachment.photo.photo_75;
                         }
-                        if (!string.IsNullOrWhiteSpace(attachment.photo.text) && 
+                        if (!string.IsNullOrWhiteSpace(attachment.photo.text) &&
                             string.IsNullOrWhiteSpace(post.text))
                         {
-                            post.text = FormatTags(attachment.photo.text);
+                            post.text = FormatPostText(attachment.photo.text);
                         }
                         post.attachments.RemoveAt(i);
                         break;
@@ -527,40 +343,36 @@ namespace VKatcher.Services
             return post;
         }
 
-        private static List<VKTag> FormatTagsList(string text)
+        private static string FormatPostText(string text)
         {
-            var lst = new List<VKTag>();
-            Regex r = new Regex(@"#(\w*[0-9a-zA-Z]+@?\w*[0-9a-zA-Z])");
-            foreach (Match m in r.Matches(text))
-            {
-                var tag = m.ToString();
-                var split = tag.Split('#','@');
-                lst.Add(new VKTag
-                {
-                    tag = split[0],
-                    domain = split[1]
-                });
-            }
-            return lst;
-        }
+            /// Tweak this to escape _underlines_ making things italic
 
-        private static string FormatTags(string text)
-        {
+            #region Line Breaks
+            //New line code needs a double space in Markdown
+            text = text.Replace("\n", " \n");
+            #endregion
+
+            #region Tags
             Regex r = new Regex(@"#(\w*[0-9a-zA-Z]+@?\w*[0-9a-zA-Z])");
             foreach (Match m in r.Matches(text))
             {
                 var newTag = "[" + m.Value + "](" + m.Value + ")";
                 text = text.Replace(m.Value, newTag);
             }
+            //Escape underscores
+            text = text.Replace("_", @"\_");
+            #endregion
             return text;
-        }
+        } 
+        #endregion
 
+        #region Status Checks
         private static bool CheckPlaying(VKAudio track)
         {
             if (App.ViewModelLocator.Main._currentTrack != null)
                 return App.ViewModelLocator.Main._currentTrack.id == track.id;
 
-            return false;            
+            return false;
         }
 
         private static async Task CheckOffline(ObservableCollection<VKAudio> tracks)
@@ -590,9 +402,9 @@ namespace VKatcher.Services
                         track.audio.IsOffline = true;
                     else
                         track.audio.IsOffline = false;
-                } 
+                }
             }
-        }
+        } 
         #endregion
     }
 }

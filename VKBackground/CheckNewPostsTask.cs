@@ -46,48 +46,10 @@ namespace VKBackground
             ToDownload = new ObservableCollection<VKAudio>();
             SubscribedGroups = new ObservableCollection<VKGroup>();
             await CheckSubscribedGroups();
-            //await DownloadPosts();
-            //if (_newTrackCount > 0)
-            //{
-            //    PopToast();
-            //}
             await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
             Debug.WriteLine("BG Task complete");
             _deferral.Complete();
         }
-
-        //private async Task DownloadPosts()
-        //{
-        //    foreach (var a in ToDownload)
-        //    {
-        //        #region Get Existing Downloads
-        //        var dls = await FileService.GetDownloads();
-        //        var lst = dls.ToList();
-        //        #endregion
-        //        //Check if already downloaded
-        //        var t = lst.Find(x => x.id == a.id);
-        //        if (t != null)
-        //        {
-        //            Debug.WriteLine("Download already exists");
-        //            break;
-        //        }
-        //        //Down't download huge files
-        //        if (a.duration < 1200)
-        //        {
-        //            //Download the file
-        //            var file = await a.DownloadTrackB();
-        //            //Increment track count
-        //            _newTrackCount++;
-
-        //            #region Add track to database
-        //            if (file != null)
-        //            {
-        //                FileService.WriteDownloads(a, file);
-        //                #endregion
-        //            }
-        //        }
-        //    }
-        //}
 
         private void OnCancelled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
@@ -116,35 +78,6 @@ namespace VKBackground
             toast.NotificationMirroring = NotificationMirroring.Allowed;
             ToastNotificationManager.CreateToastNotifier().Show(toast);
             _deferral.Complete();
-        }
-
-        private void PopToast()
-        {
-
-            string body = "We have " + _newTrackCount + " new tracks for you to check out!";
-
-            #region Toast Visual
-            ToastVisual visual = new ToastVisual()
-            {
-                BindingGeneric = new ToastBindingGeneric()
-                {
-                    Children =
-                    {
-                        new AdaptiveText() {Text = body},
-                    },
-                }
-            };
-            #endregion
-
-            ToastContent toastContent = new ToastContent()
-            {
-                Visual = visual,
-                ActivationType = ToastActivationType.Foreground,
-            };
-
-            var toast = new ToastNotification(toastContent.GetXml());
-            toast.NotificationMirroring = NotificationMirroring.Allowed;
-            ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
         private async Task CheckSubscribedGroups()
@@ -194,64 +127,5 @@ namespace VKBackground
             });
             File.WriteAllText(dlFile.Path, JsonConvert.SerializeObject(ToDownload));
         }
-
-        #region Old
-        private async void CheckNewPosts()
-        {
-            foreach (var group in SubscribedGroups)
-            {
-                group.to_save = group.to_save == null ? 3 : group.to_save;
-                var posts = await VKFacade.LoadWallPosts(group.id, group.to_save, 0);
-                await CheckAttachments(posts, group);
-            }
-        }
-        private async Task CheckAttachments(ObservableCollection<VKWallPost> posts, VKGroup group)
-        {
-            foreach (var post in posts)
-            {
-                if (post.id != group.last_id && post.is_pinned == 0)
-                {
-                    post.id = group.last_id;
-                    var attachments = post.attachments;
-                    foreach (var a in attachments)
-                    {
-                        var folder = await KnownFolders.MusicLibrary.CreateFolderAsync("VKatcher", CreationCollisionOption.OpenIfExists);
-                        StorageFile sf = await folder.CreateFileAsync(a.audio.title + "-" + a.audio.artist + ".mp3", CreationCollisionOption.ReplaceExisting);
-                        await StreamHelper.GetHttpStreamToStorageFileAsync(new Uri(a.audio.url), sf);
-                        //var file = await a.audio.DownloadTrack();
-                        _newTrackCount++;
-                        if (sf != null)
-                        {
-                            try
-                            {
-                                var temp = await ApplicationData.Current.LocalFolder.GetFileAsync(_downloadedDB);
-                                var str = File.ReadAllText(temp.Path);
-                                var myDLs = JsonConvert.DeserializeObject<ObservableCollection<DownloadedTrack>>(str);
-                                if (myDLs == null)
-                                {
-                                    myDLs = new ObservableCollection<DownloadedTrack>();
-                                }
-                                var d = new DownloadedTrack();
-                                d.artist = a.audio.artist;
-                                d.title = a.audio.title;
-                                d.file_path = sf.Path;
-                                d.duration = a.audio.duration;
-
-                                var tempcol = myDLs;
-                                tempcol.Insert(0, d);
-                                string newstr = JsonConvert.SerializeObject(tempcol);
-                                File.WriteAllText(temp.Path, newstr);
-                            }
-                            catch (Exception ex)
-                            {
-                                //var file = await ApplicationData.Current.RoamingFolder.CreateFileAsync(_downloadedDB);
-                                Debug.WriteLine(ex.Message);
-                            }
-                        }
-                    }
-                }
-            }
-        } 
-        #endregion
     }
 }

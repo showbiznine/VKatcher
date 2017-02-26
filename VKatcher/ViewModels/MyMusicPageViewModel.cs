@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK.API.Model;
+using VKatcher.ContentDialogs;
 using VKatcher.Services;
 using VKatcher.Views;
 using VKatcherShared.Messages;
@@ -27,6 +28,7 @@ namespace VKatcher.ViewModels
         private ObservableCollection<VKAudio> _currentPlaylist;
         public ObservableCollection<VKAudio> _mySavedTracks { get; set; }
         public ObservableCollection<VKAudio> _myDownloads { get; set; }
+        public ObservableCollection<VKAudio> _mySuggestedMusic { get; set; }
         public static VKAudio _selectedTrack { get; set; }
         public bool _inCall { get; set; }
         #endregion
@@ -37,6 +39,7 @@ namespace VKatcher.ViewModels
         public RelayCommand<Grid> DeleteDownloadCommand { get; private set; }
         public RelayCommand<object> SongHoldingCommand { get; private set; }
         public RelayCommand<object> SongRightTappedCommand { get; private set; }
+        public RelayCommand<Grid> PlayOnRemoteDeviceCommand { get; private set; }
 
         public MyMusicPageViewModel()
         {
@@ -78,6 +81,7 @@ namespace VKatcher.ViewModels
                 InitializeCommands();
                 LoadMyTracks();
                 LoadMyDownloads();
+                LoadMySuggestedMusicAsync();
             }
         }
 
@@ -99,38 +103,34 @@ namespace VKatcher.ViewModels
                         App.ViewModelLocator.Main._currentTrack.IsPlaying = false;
                     }
                     _selectedTrack.IsPlaying = true;
-                    App.ViewModelLocator.Main._currentTrack = _selectedTrack;
 
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         ListView lst = e.OriginalSource as ListView;
-                        _currentPlaylist = new ObservableCollection<VKAudio>();
+                        var itemIndex = lst.Items.IndexOf(e.ClickedItem);
+                        var myMusicPlaylist = new ObservableCollection<VKAudio>();
                         foreach (var item in lst.Items)
                         {
                             if ((item as VKAudio).IsOffline)
                             {
                                 containsOffline = true;
                             }
-                            _currentPlaylist.Add((item as VKAudio));
+                            myMusicPlaylist.Add((item as VKAudio));
                         }
-                        App.ViewModelLocator.Main._currentPlaylist = _currentPlaylist;
+                        PlayerService.BuildPlaylistFromCollection(myMusicPlaylist, itemIndex, true);
                     });
-
-                    MessageService.SendMessageToBackground(new UpdatePlaylistMessage(App.ViewModelLocator.Main._currentPlaylist));
                     if (containsOffline)
                     {
                         await Task.Delay(500);
                     }
-                    MessageService.SendMessageToBackground(new TrackChangedMessage(new Uri(_selectedTrack.url)));
-                    MessageService.SendMessageToBackground(new StartPlaybackMessage());
                 }
             });
             UploadToOneDriveCommand = new RelayCommand<Grid>(grid =>
             {
-                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
-                    var att = grid.DataContext as VKAttachment;
-                    DownloadTrack(att.audio);
+                    var audio = grid.DataContext as VKAudio;
+                    await OneDriveService.SaveToOneDrive(audio);
                 });
             });
             DownloadTrackCommand = new RelayCommand<Grid>(grid =>
@@ -173,6 +173,24 @@ namespace VKatcher.ViewModels
                     FlyoutBase.ShowAttachedFlyout(obj);
                 });
             });
+            PlayOnRemoteDeviceCommand = new RelayCommand<Grid>(grid =>
+            {
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+                {
+                    var att = grid.DataContext as VKAttachment;
+                    if (!string.IsNullOrWhiteSpace(att.audio.url))
+                    {
+                        var rdd = new RemoteDeviceDialog();
+                        await rdd.ShowAsync();
+                        if (rdd.SelectedRemoteDevice != null)
+                        {
+                            await RemoteSystemService.PlayAudioOnRemoteDeviceAsync(att.audio, rdd.SelectedRemoteDevice);
+                        }
+                    }
+                    else
+                        await new MessageDialog("This track has been deleted :(").ShowAsync();
+                });
+            });
         }
 
         private async void DownloadTrack(VKAudio track)
@@ -197,6 +215,31 @@ namespace VKatcher.ViewModels
                 else
                     await new MessageDialog("Error loading groups").ShowAsync();
             }
+        }
+
+        private async void LoadMySuggestedMusicAsync()
+        {
+            _inCall = true;
+            try
+            {
+                if (_mySuggestedMusic == null)
+                {
+                    _mySuggestedMusic = new ObservableCollection<VKAudio>();
+                    var temp = await DataService.GetMyRadio();
+                    foreach (var item in temp.response.items)
+                    {
+                        _mySuggestedMusic.Add(item);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is HttpRequestException)
+                    await new MessageDialog("Error connecting to VK").ShowAsync();
+                else
+                    await new MessageDialog("Error loading groups").ShowAsync();
+            }
+            _inCall = false;
         }
 
         public async void LoadMyTracks()

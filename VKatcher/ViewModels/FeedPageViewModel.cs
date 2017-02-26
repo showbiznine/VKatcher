@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using Microsoft.QueryStringDotNET;
 using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Newtonsoft.Json;
@@ -15,12 +16,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using VK.WindowsPhone.SDK.API.Model;
+using VKatcher.ContentDialogs;
 using VKatcher.Services;
 using VKatcher.Views;
 using VKatcherShared.Messages;
 using VKatcherShared.Services;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.System;
+using Windows.System.RemoteSystems;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -33,16 +37,12 @@ namespace VKatcher.ViewModels
     {
         #region Fields
         public VKGroup _currentGroup { get; set; }
-        public ObservableCollection<VKWallPost> _wallPosts { get; set; }
+        public ObservableCollection<VKWallPost> WallPosts { get; set; }
         public int _offset { get; set; }
         public bool _inCall { get; set; }
         //public static VKAudio _selectedTrack;
         //public static ObservableCollection<VKAudio> _currentPlaylist;
-        public VKAudio _selectedTrack;
-        public ObservableCollection<VKAudio> _currentPlaylist;
-        private MediaPlayer _mediaPlayer;
         private const string _downloadedDB = "downloaded_files.json";
-        private int _CurrentIndex;
         #endregion
 
         #region Commands
@@ -54,6 +54,7 @@ namespace VKatcher.ViewModels
         public RelayCommand<Grid> DeleteDownloadCommand { get; private set; }
         public RelayCommand<Grid> AddToPlaylistCommand { get; private set; }
         public RelayCommand<Grid> PlayNextCommand { get; private set; }
+        public RelayCommand<Grid> PlayOnRemoteDeviceCommand { get; private set; }
         public RelayCommand<ItemClickEventArgs> SongListViewItemClickCommand { get; private set; }
         public RelayCommand<LinkClickedEventArgs> TagClickCommand { get; private set; }
         public RelayCommand<object> SongHoldingCommand { get; private set; }
@@ -73,8 +74,7 @@ namespace VKatcher.ViewModels
             else
             {
                 InitializeCommands();
-                _wallPosts = new ObservableCollection<VKWallPost>();
-                _mediaPlayer = BackgroundMediaPlayer.Current;
+                WallPosts = new ObservableCollection<VKWallPost>();
             }
         }
 
@@ -85,18 +85,12 @@ namespace VKatcher.ViewModels
             RefreshPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
             UploadToOneDriveCommand = new RelayCommand<Grid>(grid =>
             {
-                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     var att = grid.DataContext as VKAttachment;
-                    DownloadTrack(att.audio);
-                });
-            });
-            UploadToOneDriveCommand = new RelayCommand<Grid>(grid =>
-            {
-                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                {
-                    var att = grid.DataContext as VKAttachment;
-                    SaveToOneDrive(att.audio);
+                    var t = await att.audio.DownloadTrack();
+                    var r = await OneDriveService.UploadFile(t, att.audio.title + " - " + att.audio.artist);
+                    //var rec = await DataService.GetRadioByTrack(att.audio);
                 });
             });
             DeleteDownloadCommand = new RelayCommand<Grid>(grid =>
@@ -106,36 +100,61 @@ namespace VKatcher.ViewModels
                     var att = grid.DataContext as VKAttachment;
                     if (att.audio.IsPlaying)
                     {
-                        MessageService.SendMessageToBackground(new SkipNextMessage());
+                        PlayerService.CurrentPlaybackList.MoveNext();
+                        await FileService.DeleteDownload(att.audio);
+                        att.audio.IsOffline = false;
                     }
-                    await FileService.DeleteDownload(att.audio);
-                    att.audio.IsOffline = false;
                 });
             });
             AddToPlaylistCommand = new RelayCommand<Grid>(grid =>
             {
-                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     var att = grid.DataContext as VKAttachment;
-                    App.ViewModelLocator.Main._currentPlaylist.Add(att.audio);
-                    MessageService.SendMessageToBackground(new AddToPlaylistMessage(att.audio));
+                    if (!string.IsNullOrWhiteSpace(att.audio.url))
+                    {
+                        PlayerService.AddAudioToPlaylist(att.audio);
+                    }
+                    else
+                        await new MessageDialog("This track has been deleted :(").ShowAsync();
                 });
             });
             PlayNextCommand = new RelayCommand<Grid>(grid =>
             {
-                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     var att = grid.DataContext as VKAttachment;
-                    var lst = App.ViewModelLocator.Main._currentPlaylist.ToList();
-                    var i = lst.FindIndex(0, lst.Count, x => x.id == App.ViewModelLocator.Main._currentTrack.id);
-                    App.ViewModelLocator.Main._currentPlaylist.Insert(i + 1, att.audio);
-                    MessageService.SendMessageToBackground(new PlayNextMessage(att.audio));
+                    if (!string.IsNullOrWhiteSpace(att.audio.url))
+                    {
+                        PlayerService.PlayAudioNext(att.audio);
+                    }
+                    else
+                        await new MessageDialog("This track has been deleted :(").ShowAsync();
                 });
             });
-            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>( args =>
+            PlayOnRemoteDeviceCommand = new RelayCommand<Grid>(grid =>
+            {
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
-                    OnSongListItemClick(args);
+                    var att = grid.DataContext as VKAttachment;
+                    if (!string.IsNullOrWhiteSpace(att.audio.url))
+                    {
+                        var rdd = new RemoteDeviceDialog();
+                        await rdd.ShowAsync();
+                        if (rdd.SelectedRemoteDevice != null)
+                        {
+                            await RemoteSystemService.PlayAudioOnRemoteDeviceAsync(att.audio, rdd.SelectedRemoteDevice);
+                        }
+                    }
+                    else
+                        await new MessageDialog("This track has been deleted :(").ShowAsync();
                 });
+            });
+
+            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(args =>
+               {
+                   OnSongListItemClick(args);
+               });
             TagClickCommand = new RelayCommand<LinkClickedEventArgs>(args =>
             {
                 OnTagClick(args.Link);
@@ -165,7 +184,7 @@ namespace VKatcher.ViewModels
         private async void OnTagClick(string tag)
         {
             _inCall = true;
-            _wallPosts.Clear();
+            WallPosts.Clear();
             var split = tag.Split('#', '@');
             List<string> fixedSplit = new List<string>();
             foreach (var t in split)
@@ -175,7 +194,7 @@ namespace VKatcher.ViewModels
             }
             foreach (var post in await DataService.SearchWallByTag(fixedSplit[0], fixedSplit.Count > 1 ? fixedSplit[1] : _currentGroup.screen_name))
             {
-                _wallPosts.Add(post);
+                WallPosts.Add(post);
             }
             _inCall = false;
         }
@@ -185,13 +204,13 @@ namespace VKatcher.ViewModels
             _inCall = true;
             try
             {
-                if (_wallPosts != null && clear)
+                if (WallPosts != null && clear)
                 {
-                    _wallPosts.Clear();
+                    WallPosts.Clear();
                 }
                 foreach (var post in await DataService.LoadWallPosts(_currentGroup.id, offset, count))
                 {
-                    _wallPosts.Add(post);
+                    WallPosts.Add(post);
                 }
                 
             }
@@ -214,54 +233,45 @@ namespace VKatcher.ViewModels
             }
         }
 
-        private async void SaveToOneDrive(VKAudio track)
-        {
-            var file = await track.DownloadTrack();
-            var odFile = await OneDriveService.UploadFile(file, track.title + " - " + track.artist + ".mp3");
-            await track.DeleteDownloadedTrack(file.Path);
-        }
-
         public async void OnSongListItemClick(ItemClickEventArgs e)
         {
             bool containsOffline = false;
-            _CurrentIndex = _wallPosts.IndexOf((VKWallPost)((e.OriginalSource as ListView).DataContext));
+            var clickedIndex = WallPosts.IndexOf((VKWallPost)((e.OriginalSource as ListView).DataContext));
+            VKAudio selectedTrack;
             if (e.ClickedItem is VKAttachment)
             {
-                if (_selectedTrack != null)
-                {
-                    _selectedTrack.IsPlaying = false;
-                }
-                _selectedTrack = (e.ClickedItem as VKAttachment).audio;
-                Debug.WriteLine("Clicked " + _selectedTrack.title);
+                //if (selectedTrack != null)
+                //{
+                //    selectedTrack.IsPlaying = false;
+                //}
+                selectedTrack = (e.ClickedItem as VKAttachment).audio;
+                Debug.WriteLine("Clicked " + selectedTrack.title);
                 if (App.ViewModelLocator.Main._currentTrack != null)
                 {
                     App.ViewModelLocator.Main._currentTrack.IsPlaying = false;
                 }
-                _selectedTrack.IsPlaying = true;
-                App.ViewModelLocator.Main._currentTrack = _selectedTrack;
+                selectedTrack.IsPlaying = true;
 
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     ListView lst = e.OriginalSource as ListView;
-                    _currentPlaylist = new ObservableCollection<VKAudio>();
+                    int itemIndex = lst.Items.IndexOf(e.ClickedItem);
+                    var postPlaylist = new ObservableCollection<VKAudio>();
                     foreach (var item in lst.Items)
                     {
                         if ((item as VKAttachment).audio.IsOffline)
                         {
                             containsOffline = true;
                         }
-                        _currentPlaylist.Add((item as VKAttachment).audio);
+                        postPlaylist.Add((item as VKAttachment).audio);
                     }
-                    App.ViewModelLocator.Main._currentPlaylist = _currentPlaylist;
+                    PlayerService.BuildPlaylistFromCollection(postPlaylist, itemIndex, true);
                 });
 
-                MessageService.SendMessageToBackground(new UpdatePlaylistMessage(App.ViewModelLocator.Main._currentPlaylist));
                 if (containsOffline)
                 {
                     await Task.Delay(500); 
                 }
-                MessageService.SendMessageToBackground(new TrackChangedMessage(new Uri(_selectedTrack.url)));
-                MessageService.SendMessageToBackground(new StartPlaybackMessage());
             }
         }
     }

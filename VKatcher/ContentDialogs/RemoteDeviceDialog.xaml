@@ -1,0 +1,21 @@
+﻿<ContentDialog
+    x:Class="VKatcher.ContentDialogs.RemoteDeviceDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:VKatcher.ContentDialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Cast to another device"
+    PrimaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+
+    <Grid>
+        <ListView x:Name="lstDevices" 
+                  IsItemClickEnabled="True" 
+                  SelectionMode="None" ItemClick="lstDevices_ItemClick"
+                  ItemsSource="{x:Bind AvailableRemoteDevices}">
+            
+        </ListView>
+    </Grid>
+</ContentDialog>

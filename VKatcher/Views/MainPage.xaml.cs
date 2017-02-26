@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -56,9 +58,6 @@ namespace VKatcher.Views
                 }
             }
         }
-        const int RPC_S_SERVER_UNAVAILABLE = -2147023174; // 0x800706BA
-        private AutoResetEvent backgroundAudioTaskStarted;
-        public MediaPlayer _mediaPlayer;
         private List<string> _scope = new List<string> { VKScope.FRIENDS, VKScope.WALL, VKScope.PHOTOS, VKScope.AUDIO, VKScope.GROUPS };
         private bool _controlsOpen;
         private bool _isNowPlaying = false;
@@ -69,28 +68,18 @@ namespace VKatcher.Views
             this.InitializeComponent();
             DispatcherHelper.Initialize();
             #region Media Player
-            backgroundAudioTaskStarted = new AutoResetEvent(false);
-            _mediaPlayer = BackgroundMediaPlayer.Current;
-            _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
-            BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground; 
+            PlayerService.MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
             #endregion
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             myFrame.Navigated += OnNavigated;
-            VKSDK.AccessTokenReceived += (sender, args) =>
-            {
-                App.ViewModelLocator.Main.Init();
-            };
             btnSmart.Loaded += (s, e) =>
             {
                 btnSmart.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY | ManipulationModes.TranslateRailsX | ManipulationModes.TranslateRailsY; //| ManipulationModes.TranslateInertia;
             };
             SetupSliderTimer();
-            #region App State
-            Application.Current.Suspending += ForegroundApp_Suspending;
-            Application.Current.Resuming += ForegroundApp_Resuming; 
-            #endregion
         }
 
+        #region Timer
         private void SetupSliderTimer()
         {
             _sliderTimer = new DispatcherTimer();
@@ -103,31 +92,17 @@ namespace VKatcher.Views
             CloseSlider.Begin();
             SmartHideTime.Begin();
             _sliderTimer.Stop();
-        }
+        } 
+        #endregion
 
+        #region Navigation
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             ApplicationSettingsHelper.SaveSettingsValue("appstate", "Active");
-            VKSDK.Initialize("5545387");
-            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            try
             {
-                VKSDK.WakeUpSession();
-            });
-            if (VKSDK.IsLoggedIn)
-            {
-                (DataContext as MainViewModel).Init();
-            }
-            else
-            {
-                try
-                {
-                    OneDriveService.InitializeAsync();
-                }
-                catch (Exception)
-                {
-                    //throw;
-                }
+                await OneDriveService.InitializeAsync();
                 var loggedIn = AuthenticationService.CheckLoggedIn("VK", "test");
                 if (loggedIn)
                     (DataContext as MainViewModel).Init();
@@ -136,10 +111,33 @@ namespace VKatcher.Views
                     await AuthenticationService.VKLogin();
                     (DataContext as MainViewModel).Init();
                 }
-
-                //var test = await AuthenticationService.VKLogin();
-                //VKSDK.Authorize(_scope, false, false);
             }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                if (ex is HttpRequestException)
+                {
+                    await new MessageDialog("Error connecting to the internet").ShowAsync();
+                }
+                else
+                {
+                    await new MessageDialog("Error connecting to VK").ShowAsync();
+                }
+            }
+
+            if (e.Parameter is string)
+            {
+                switch ((string)e.Parameter)
+                {
+                    case "downloads":
+                        myFrame.Navigate(typeof(MyMusicPage));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            //var test = await AuthenticationService.VKLogin();
+            //VKSDK.Authorize(_scope, false, false);
         }
 
         private void OnNavigated(object sender, NavigationEventArgs e)
@@ -160,8 +158,9 @@ namespace VKatcher.Views
                 ClosePlaybackControls_Staggered.Begin();
                 _controlsOpen = false;
             }
-            else if (!_controlsOpen && 
-                _mediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.None)
+            else if (!_controlsOpen &&
+                PlayerService.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing ||
+                PlayerService.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Paused)
             {
                 OpenPlaybackControls_Staggered.Begin();
                 _controlsOpen = true;
@@ -176,48 +175,8 @@ namespace VKatcher.Views
                 e.Handled = true;
                 myFrame.GoBack();
             }
-        }
-
-        private void ForegroundApp_Resuming(object sender, object e)
-        {
-            ApplicationSettingsHelper.SaveSettingsValue(ApplicationSettingsConstants.AppState, AppState.Active.ToString());
-
-            // Verify the task is running
-            if (isBackgroundTaskRunning)
-            {
-                // If yes, it's safe to reconnect to media play handlers
-                //AddMediaPlayerEventHandlers();
-
-                // Send message to background task that app is resumed so it can start sending notifications again
-                MessageService.SendMessageToBackground(new AppResumedMessage());
-
-            }
-
-            else
-            {
-
-            }
-        }
-
-        private void ForegroundApp_Suspending(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-
-            // Only if the background task is already running would we do these, otherwise
-            // it would trigger starting up the background task when trying to suspend.
-            if (isBackgroundTaskRunning)
-            {
-                // Stop handling player events immediately
-                //RemoveMediaPlayerEventHandlers();
-
-                // Tell the background task the foreground is suspended
-                MessageService.SendMessageToBackground(new AppSuspendedMessage());
-            }
-            // Persist that the foreground app is suspended
-            ApplicationSettingsHelper.SaveSettingsValue(ApplicationSettingsConstants.AppState, AppState.Suspended.ToString());
-
-            deferral.Complete();
-        }
+        } 
+        #endregion
 
         private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
@@ -239,103 +198,6 @@ namespace VKatcher.Views
             }
         }
 
-        #region BackgroundTask
-        private void StartBackgroundAudioTask()
-        {
-            //AddMediaPlayerEventHandlers();
-            var startResult = this.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                bool result = backgroundAudioTaskStarted.WaitOne(100);
-                //Send message to initiate playback
-                if (result == true)
-                {
-                    //MessageService.SendMessageToBackground(new UpdatePlaylistMessage(playlistView.Songs.ToList()));
-                    //MessageService.SendMessageToBackground(new StartPlaybackMessage());
-                }
-                else
-                {
-                    throw new Exception("Background Audio Task didn't start in expected time");
-                }
-            });
-            startResult.Completed = new AsyncActionCompletedHandler(BackgroundTaskInitializationCompleted);
-        }
-
-        private void BackgroundTaskInitializationCompleted(IAsyncAction action, AsyncStatus status)
-        {
-            if (status == AsyncStatus.Completed)
-            {
-                Debug.WriteLine("Background Audio Task initialized");
-            }
-            else if (status == AsyncStatus.Error)
-            {
-                Debug.WriteLine("Background Audio Task could not initialized due to an error ::" + action.ErrorCode.ToString());
-            }
-
-        }
-
-        private void ResetAfterLostBackground()
-        {
-            BackgroundMediaPlayer.Shutdown();
-            isBackgroundTaskRunning = false;
-            backgroundAudioTaskStarted.Reset();
-            ApplicationSettingsHelper.SaveSettingsValue(ApplicationSettingsConstants.BackgroundTaskState, BackgroundTaskState.Unknown.ToString());
-
-            try
-            {
-                BackgroundMediaPlayer.MessageReceivedFromBackground += BackgroundMediaPlayer_MessageReceivedFromBackground;
-            }
-            catch (Exception ex)
-            {
-                if (ex.HResult == RPC_S_SERVER_UNAVAILABLE)
-                {
-                    throw new Exception("Failed to get a MediaPlayer instance.");
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private void BackgroundMediaPlayer_MessageReceivedFromBackground(object sender, MediaPlayerDataReceivedEventArgs e)
-        {
-            TrackChangedMessage trackChangedMessage;
-            if (MessageService.TryParseMessage(e.Data, out trackChangedMessage))
-            {
-                int index;
-                VKAudio track;
-                var list = App.ViewModelLocator.Main._currentPlaylist.ToList();
-                if (!trackChangedMessage.TrackURL.ToString().StartsWith("file"))
-                {
-                    index = list.FindIndex(i => (string)i.url == trackChangedMessage.TrackURL.ToString());
-                }
-                else
-                {
-                    index = list.FindIndex(i => (string)i.url == trackChangedMessage.TrackURL.LocalPath.ToString());
-                }
-                track = list[index];
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
-                {
-                    App.ViewModelLocator.Main._currentTrack.IsPlaying = false;
-                    if (App.ViewModelLocator.Feed._selectedTrack != null)
-                    {
-                        App.ViewModelLocator.Feed._selectedTrack.IsPlaying = false;
-                    }
-                    //if (App.ViewModelLocator.MyMusic._selectedTrack != null)
-                    //{
-                    //    App.ViewModelLocator.Feed._selectedTrack.IsPlaying = false;
-                    //}
-                    track.IsPlaying = true;
-                    App.ViewModelLocator.Main._currentTrack = track;
-                    App.ViewModelLocator.Feed._selectedTrack = track;
-                });
-
-                BackgroundMediaPlayer.Current.Play();
-                return;
-            }
-        }
-        #endregion
-
         private void btnSmart_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
             var man = e.Cumulative.Translation;
@@ -354,6 +216,11 @@ namespace VKatcher.Views
             {
                 SmartSwipeLeftSlide.Begin();
             }
+        }
+
+        private void navTest_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            //navTest.IsSelected = !navTest.IsSelected;
         }
     }
 }

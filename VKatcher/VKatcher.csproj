@@ -102,12 +102,21 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Behaviors\ImageAspectRatioBehavior.cs" />
     <Compile Include="Behaviors\VisibilityTransitionBehavior.cs" />
+    <Compile Include="ContentDialogs\RemoteDeviceDialog.xaml.cs">
+      <DependentUpon>RemoteDeviceDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Backdrop.cs" />
+    <Compile Include="Controls\HamburgerMenuItem.cs" />
+    <Compile Include="Controls\NavPaneItem.xaml.cs">
+      <DependentUpon>NavPaneItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SwipeableSplitView.cs" />
     <Compile Include="Converters\AudioOfflineVisibilityConverter.cs" />
     <Compile Include="Converters\AudioTemplateConverter.cs" />
     <Compile Include="Converters\FollowedStringConverter.cs" />
+    <Compile Include="Converters\ImageHeightConverter.cs" />
     <Compile Include="Converters\TagNameConverter.cs" />
     <Compile Include="Converters\BooleanVisibilityConverter.cs" />
     <Compile Include="Converters\PlayingForegroundConverter.cs" />
@@ -118,9 +127,13 @@
     <Compile Include="Converters\TimespanStringConverter.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Models\VKToken.cs" />
+    <Compile Include="Services\AppDataService.cs" />
+    <Compile Include="Services\BackgroundTaskService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\NavigationService.cs" />
+    <Compile Include="Services\PlayerService.cs" />
+    <Compile Include="Services\RemoteSystemService.cs" />
     <Compile Include="ViewModels\CommunitiesPageViewModel.cs" />
     <Compile Include="ViewModels\FeedPageViewModel.cs" />
     <Compile Include="ViewModels\MyMusicPageViewModel.cs" />
@@ -161,6 +174,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Logo.png" />
     <Content Include="Assets\logo.svg" />
     <Content Include="Assets\NewStoreLogo.scale-100.png" />
     <Content Include="Assets\NewStoreLogo.scale-125.png" />
@@ -226,6 +240,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ContentDialogs\RemoteDeviceDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\NavPaneItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\Animations.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -250,6 +272,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="Resources\RadioButtonStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\SliderStyles.xaml">
       <SubType>Designer</SubType>
@@ -312,12 +338,17 @@
       <Project>{BF539F89-7D44-474E-ABD4-C94183775DE5}</Project>
       <Name>VKatcherShared</Name>
     </ProjectReference>
-    <ProjectReference Include="..\VKBackground\VKBackground.csproj">
-      <Project>{48dec106-b7ab-4e2c-91ac-47535be07ad6}</Project>
-      <Name>VKBackground</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <SDKReference Include="Microsoft.Advertising.Xaml, Version=10.0">
+      <Name>Microsoft Advertising SDK for XAML</Name>
+    </SDKReference>
+    <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
+      <Name>Microsoft Engagement Framework</Name>
+    </SDKReference>
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0">
+      <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
+    </SDKReference>
     <SDKReference Include="WindowsDesktop, Version=10.0.14393.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>

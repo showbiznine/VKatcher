@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
 using Microsoft.Practices.ServiceLocation;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,15 +29,13 @@ namespace VKatcher.ViewModels
     {
 
         #region Fields
-        private MediaPlayer _mediaPlayer;
         private DispatcherTimer _timer;
         private bool _sliderPressed;
-
+        private MediaPlayer MediaPlayer;
         public string _trackTime { get; set; }
         public double _trackPosition { get; set; }
         public string _searchQuery { get; set; }
         public VKAudio _currentTrack { get; set; }
-        public ObservableCollection<VKAudio> _currentPlaylist { get; set; }
         public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
         public bool _isPlaying { get; set; }
         public bool IsMenuOpen { get; set; }
@@ -66,17 +65,44 @@ namespace VKatcher.ViewModels
                 DispatcherHelper.Initialize();
                 _isPlaying = false;
                 InitializeCommands();
+                #region Background Tasks
                 var checkTask = RegisterBackgroundTask("VKBackground.CheckNewPostsTask",
-                    "CheckNewPostsTask",
-                    new MaintenanceTrigger(15, false),
-                    null);
+            "CheckNewPostsTask",
+            new TimeTrigger(15, false),
+            null);
                 var dlTask = RegisterBackgroundTask("VKBackground.DownloadPostsTask",
                     "DownloadPostsTask",
-                    new MaintenanceTrigger(15, false),
-    null);
+                    new TimeTrigger(15, false),
+                    null); 
+                #endregion
+                MediaPlayer = PlayerService.MediaPlayer;
+                LoadRoamingPlaylist();
                 SetupTimer();
-                _mediaPlayer = BackgroundMediaPlayer.Current;
-                _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                PlayerService.CurrentPlaybackList.CurrentItemChanged += OnTrackChanged;
+            }
+        }
+
+        private void LoadRoamingPlaylist()
+        {
+            var pl = AppDataService.GetRoamingSetting("current_playlist") as string;
+            if (pl != null)
+            {
+                var playlist = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(pl);
+                var currentTrack = AppDataService.GetRoamingSetting("current_track") as VKAudio;
+                var index = currentTrack == null ? 0 : playlist.IndexOf(currentTrack);
+                PlayerService.BuildPlaylistFromCollection(playlist, index, false);
+            }
+        }
+
+        private void OnTrackChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        {
+            if (sender.CurrentItem != null && PlayerService.CurrentPlaylist.Count > 0)
+            {
+                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    _currentTrack = PlayerService.CurrentPlaylist[(int)sender.CurrentItemIndex];
+                }); 
             }
         }
 
@@ -137,24 +163,24 @@ namespace VKatcher.ViewModels
         {
             try
             {
-                if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing &&
+                if (MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing &&
                     !_sliderPressed)
                 {
-                    var ts = _mediaPlayer.PlaybackSession.Position;
+                    var ts = MediaPlayer.PlaybackSession.Position;
                     if (ts.Hours > 0)
                     {
-                        _trackTime = _mediaPlayer.PlaybackSession.Position.ToString(@"hh\:mm\:ss");
+                        _trackTime = MediaPlayer.PlaybackSession.Position.ToString(@"hh\:mm\:ss");
                     }
                     else
                     {
-                        _trackTime = _mediaPlayer.PlaybackSession.Position.ToString(@"mm\:ss");
+                        _trackTime = MediaPlayer.PlaybackSession.Position.ToString(@"mm\:ss");
                     }
-                    _trackPosition = _mediaPlayer.PlaybackSession.Position.TotalSeconds;
+                    _trackPosition = MediaPlayer.PlaybackSession.Position.TotalSeconds;
                 }
             }
             catch (Exception)
             {
-                throw;
+                StopTimer();
             }
         }
         #endregion
@@ -186,13 +212,13 @@ namespace VKatcher.ViewModels
         {
             GoToNowPlayingCommand = new RelayCommand(() =>
             {
-                var lst = new ObservableCollection<object>(_currentPlaylist);
+                //var lst = new ObservableCollection<object>(_currentPlaylist);
                 //lst.Add(_currentTrack);
                 //lst.Add(_currentPlaylist);
-                Debug.WriteLine(_currentTrack.photo_url);
-                App.ViewModelLocator.NowPlaying._currentPlaylist = lst;
-                App.ViewModelLocator.NowPlaying._currentTrack = _currentTrack;
-                _navigationService.NavigateTo(typeof(NowPlayingPage));
+                //Debug.WriteLine(_currentTrack.photo_url);
+                //App.ViewModelLocator.NowPlaying._currentPlaylist = lst;
+                //App.ViewModelLocator.NowPlaying._currentTrack = _currentTrack;
+                //_navigationService.NavigateTo(typeof(NowPlayingPage));
                 IsMenuOpen = false;
             });
             GoToSettingsCommand = new RelayCommand(() =>
@@ -203,10 +229,11 @@ namespace VKatcher.ViewModels
             GoToMyMusicCommand = new RelayCommand(() =>
             {
                 _navigationService.NavigateTo(typeof(MyMusicPage));
+                IsMenuOpen = false;
             });
             PlayPauseCommand = new RelayCommand(() => PlayPause());
-            SkipNextCommand = new RelayCommand(() => MessageService.SendMessageToBackground(new SkipNextMessage()));
-            SkipPreviousCommand = new RelayCommand(() => MessageService.SendMessageToBackground(new SkipPreviousMessage()));
+            SkipNextCommand = new RelayCommand(() => PlayerService.CurrentPlaybackList.MoveNext());
+            SkipPreviousCommand = new RelayCommand(() => PlayerService.CurrentPlaybackList.MovePrevious());
             SmartSwipeCommand = new RelayCommand<ManipulationCompletedRoutedEventArgs>(e => OnSwipeCompleted(e));
             SliderDownCommand = new RelayCommand(() =>
             {
@@ -214,7 +241,7 @@ namespace VKatcher.ViewModels
             });
             SliderUpCommand = new RelayCommand(() =>
             {
-                _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(_trackPosition);
+                MediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(_trackPosition);
                 _sliderPressed = false;
             });
             SearchCommand = new RelayCommand(() =>
@@ -231,24 +258,24 @@ namespace VKatcher.ViewModels
             var man = e.Cumulative.Translation;
             if (man.X > 20)
             {
-                MessageService.SendMessageToBackground(new SkipNextMessage());
+                PlayerService.CurrentPlaybackList.MoveNext();
             }
             if (man.X < -20)
             {
-                MessageService.SendMessageToBackground(new SkipPreviousMessage());
+                PlayerService.CurrentPlaybackList.MovePrevious();
             }
         }
 
         private void PlayPause()
         {
-            var state = _mediaPlayer.PlaybackSession.PlaybackState;
+            var state = MediaPlayer.PlaybackSession.PlaybackState;
             if (state == MediaPlaybackState.Playing)
             {
-                _mediaPlayer.Pause();
+                MediaPlayer.Pause();
             }
             else if (state == MediaPlaybackState.Paused)
             {
-                _mediaPlayer.Play();
+                MediaPlayer.Play();
             }
         }
 

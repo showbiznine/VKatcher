@@ -26,6 +26,8 @@ namespace VK.WindowsPhone.SDK.API.Model
     {
         public string post_image { get; set; }
 
+        public double post_image_aspect_ratio { get; set; }
+
         public long id { get; set; }
 
         public long owner_id { get; set; }

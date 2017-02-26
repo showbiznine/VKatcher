@@ -217,7 +217,6 @@ namespace VKatcher.Controls
         public static readonly DependencyProperty OverrideMobileOnlyProperty =
             DependencyProperty.Register("OverrideMobileOnly", typeof(bool), typeof(SwipeableSplitView), new PropertyMetadata(false));
 
-
         #endregion
 
         public SwipeableSplitView()
@@ -375,9 +374,9 @@ namespace VKatcher.Controls
 
             // keep the pan within the bountry
             if (offset < 0) return; 
-            if (offset > OpenPaneLength)
+            if (offset >= OpenPaneLength && x > 0)
             {
-                //_paneRootVisual.Offset = new Vector3((float)OpenPaneLength, 0, 0);
+                _paneRootVisual.Offset = new Vector3((float)OpenPaneLength, 0, 0);
                 return;
             }       
 
@@ -391,7 +390,7 @@ namespace VKatcher.Controls
             var x = e.Velocities.Linear.X;
 
             // ignore a little bit velocity (+/-0.1)
-            if (x <= -0.1)
+            if (x <= -0.1 && _paneRootVisual.Offset.X < OpenPaneLength)
             {
                 CloseSwipeablePane();
             }

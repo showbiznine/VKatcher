@@ -15,16 +15,50 @@ namespace VKatcherShared.Services
     public class AuthenticationService
     {
         public static string _clientID = "00000000481A8D3A";
+        private const string _authHost = "https://oauth.vk.com/";
+        private const string _VKclientID = "2274003";
+        private const string _VKclientSecret = "hHbZxrka2uZ6jB1inYsH";
+
         #region VK
+
         public static async Task<bool> VKLogin()
+        {
+            HttpClient client = new HttpClient();
+            var q = new QueryString
+            {
+                {"client_id",  _VKclientID},
+                {"client_secret", _VKclientSecret },
+                {"grant_type", "password" },
+                {"username", "showbiznine@hotmail.com" },
+                {"password", "hgssucks1" },
+            };
+            var uri = new Uri(_authHost + "token?" + q);
+
+            try
+            {
+                var res = await client.GetAsync(uri);
+                var s = await res.Content.ReadAsStringAsync();
+
+                var r = JsonConvert.DeserializeObject<VKToken>(s);
+                StoreToken("VK", "test", r.access_token);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public static async Task<bool> VKLogin2()
         {
             var q = new QueryString
             {
+                //{"client_id",  "5545387"},
                 {"client_id",  "3697615"},
                 {"client_secret",  "AlVXZFMUqyrnABp8ncuU"},
                 {"scope",  "271390"},
                 {"redirect_uri",  ""},
-                {"display",  "popup"},
+                {"display",  "mobile"},
                 {"v",  "5.62"},
                 {"response_type",  "token"},
             };
@@ -37,8 +71,9 @@ namespace VKatcherShared.Services
             if (result.ResponseStatus == WebAuthenticationStatus.Success)
             {
                 var res = result.ResponseData.ToString();
-                var split = res.Split('=', '&');
-                StoreToken("VK", "test", split[1]);
+                var t = QueryString.Parse(res.Split('#')[1]);
+                var tok = t["access_token"];
+                StoreToken("VK", "test", tok);
                 return true;
             }
             else
@@ -48,17 +83,19 @@ namespace VKatcherShared.Services
         public static async Task<string> GetVKAccessToken()
         {
             var vault = new PasswordVault();
-            var tok = vault.Retrieve("VK", "test");
-            if (tok.Password == null)
+            try
+            {
+                var tok = vault.Retrieve("VK", "test");
+                return tok.Password;
+            }
+            catch (Exception)
             {
                 var success = await VKLogin();
                 if (success)
                     return vault.Retrieve("VK", "test").Password;
                 else
                     return null;
-            }
-            else
-                return tok.Password;
+            }   
         }
         #endregion
 

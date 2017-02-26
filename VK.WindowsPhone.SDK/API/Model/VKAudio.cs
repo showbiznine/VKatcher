@@ -25,6 +25,11 @@ namespace VK.WindowsPhone.SDK.API.Model
         }
     }
 
+    public class VKAudioByIdRoot
+    {
+        public ObservableCollection<VKAudio> response { get; set; }
+    }
+
     public partial class VKAudio : INotifyPropertyChanged
     {
         private bool m_IsSaved;

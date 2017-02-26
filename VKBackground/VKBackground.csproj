@@ -107,7 +107,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackgroundAudioTask.cs" />
     <Compile Include="DownloadPostsTask.cs" />
     <Compile Include="CheckNewPostsTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

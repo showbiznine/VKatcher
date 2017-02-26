@@ -21,25 +21,31 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
       <Extensions>
-        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.DownloadPostsTask">
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="vkatcher">
+            <uap:Logo>Assets\Logo.png</uap:Logo>
+            <uap:DisplayName>VKatcher</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
+        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.CheckNewPostsTask">
           <BackgroundTasks>
             <Task Type="general" />
+            <Task Type="timer" />
           </BackgroundTasks>
         </Extension>
+        <!--<Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.BackgroundAudioTask">
+          <BackgroundTasks>
+            <Task Type="audio" />
+          </BackgroundTasks>
+        </Extension> -->
         <uap:Extension Category="windows.mediaPlayback">
           <uap:MediaPlayback>
             <uap:Codec Name="mp3" />
           </uap:MediaPlayback>
         </uap:Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.BackgroundAudioTask">
-          <BackgroundTasks>
-            <Task Type="audio" />
-          </BackgroundTasks>
-        </Extension>
-        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.CheckNewPostsTask">
+        <Extension Category="windows.backgroundTasks" EntryPoint="VKBackground.DownloadPostsTask">
           <BackgroundTasks>
             <Task Type="general" />
-            <Task Type="timer" />
           </BackgroundTasks>
         </Extension>
       </Extensions>
@@ -49,5 +55,6 @@
     <Capability Name="internetClient" />
     <uap3:Capability Name="backgroundMediaPlayback" />
     <uap:Capability Name="musicLibrary" />
+    <uap3:Capability Name="remoteSystem" />
   </Capabilities>
 </Package>

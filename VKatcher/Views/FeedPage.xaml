@@ -62,7 +62,7 @@
                   Grid.Row="1"
                   Background="Transparent"
                   ItemTemplate="{StaticResource PostListTemplate}"
-                  ItemsSource="{Binding _wallPosts}"
+                  ItemsSource="{Binding WallPosts}"
                   SelectionMode="None">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

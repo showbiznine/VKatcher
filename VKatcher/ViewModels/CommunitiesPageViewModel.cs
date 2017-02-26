@@ -83,11 +83,7 @@ namespace VKatcher.ViewModels
             try
             {
                 _results.Clear();
-                await DispatcherHelper.RunAsync(async () =>
-                {
-                    _results = await DataService.LoadMyGroups();
-
-                });
+                _results = await DataService.LoadMyGroups();
             }
             catch (Exception ex)
             {

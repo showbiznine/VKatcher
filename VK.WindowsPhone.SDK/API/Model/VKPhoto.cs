@@ -28,6 +28,16 @@ namespace VK.WindowsPhone.SDK.API.Model
 
         public int width { get; set; }
         public int height { get; set; }
+
+        private double _aspect_ratio;
+
+        public double aspect_ratio
+        {
+            get { return _aspect_ratio; }
+            set { _aspect_ratio = value; }
+        }
+
+
         private string _text = "";
         public string text
         {

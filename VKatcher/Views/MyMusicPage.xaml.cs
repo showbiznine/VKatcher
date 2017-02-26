@@ -32,6 +32,11 @@ namespace VKatcher.Views
             base.OnNavigatedTo(e);
             App.ViewModelLocator.MyMusic.LoadMyDownloads();
             App.ViewModelLocator.MyMusic.LoadMyTracks();
+
+            if ((string)e.Parameter == "downloads")
+            {
+                pivRoot.SelectedIndex = 1;
+            }
         }
     }
 }

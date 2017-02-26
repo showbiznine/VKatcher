@@ -18,6 +18,11 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Microsoft.Services.Store.Engagement;
+using VKatcher.Services;
+using System.Diagnostics;
+using Windows.UI.Popups;
+using Microsoft.QueryStringDotNET;
 
 namespace VKatcher
 {
@@ -46,6 +51,9 @@ namespace VKatcher
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            CheckForRemoteDevices();
+            PlayerService.SetupPlayer();
+            AppDataService.GetDataFolders();
             Frame rootFrame = Window.Current.Content as Frame;
 
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
@@ -54,6 +62,8 @@ namespace VKatcher
                 statusBar.ForegroundColor = (Color)Current.Resources["SystemBaseHighColor"];
                 statusBar.BackgroundOpacity = 0;
             }
+
+            SetupStoreServicesAsync();
 
             ViewModelLocator = (ViewModelLocator)Current.Resources["Locator"];
 
@@ -90,6 +100,34 @@ namespace VKatcher
             }
         }
 
+        private async void ParseProtocolAsync(ProtocolActivatedEventArgs arguments)
+        {
+            //await new MessageDialog("Hey!").ShowAsync();
+            try
+            {
+                var qs = QueryString.Parse(arguments.Uri.Query);
+                var r = await DataService.SearchAudioById(qs["audio_id"], qs["owner_id"]);
+
+                PlayerService.BuildPlaylistFromAudio(r, true);
+                Debug.WriteLine(arguments.Uri);
+            }
+            catch (Exception ex)
+            {
+                await new MessageDialog(ex.Message).ShowAsync();
+            }
+        }
+
+        private async void CheckForRemoteDevices()
+        {
+            await RemoteSystemService.BuildDeviceListAsync();
+        }
+
+        private async void SetupStoreServicesAsync()
+        {
+            StoreServicesEngagementManager engagementManager = StoreServicesEngagementManager.GetDefault();
+            await engagementManager.RegisterNotificationChannelAsync();
+        }
+
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>
@@ -112,6 +150,92 @@ namespace VKatcher
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+
+            if (args.PreviousExecutionState == ApplicationExecutionState.NotRunning)
+            {
+                PlayerService.SetupPlayer();
+                AppDataService.GetDataFolders();
+            }
+
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                ParseProtocolAsync(args as ProtocolActivatedEventArgs);
+                ActivateWindow(typeof(MainPage), null);
+            }
+
+            if (args is ToastNotificationActivatedEventArgs)
+            {
+                var toastActivationArgs = args as ToastNotificationActivatedEventArgs;
+
+                StoreServicesEngagementManager engagementManager = StoreServicesEngagementManager.GetDefault();
+                string originalArgs = engagementManager.ParseArgumentsAndTrackAppLaunch(
+                    toastActivationArgs.Argument);
+
+                // Use the originalArgs variable to access the original arguments
+                // that were passed to the app.
+                switch (toastActivationArgs.Argument)
+                {
+                    case "downloads":
+                        ActivateWindow(typeof(MainPage), "downloads");
+                        break;
+                    default:
+                        ActivateWindow(typeof(MainPage), null);
+                        break;
+                }
+            }
+        }
+
+        private void ActivateWindow(Type destinationPage, string args)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+            if (rootFrame == null)
+            {
+                // Create a Frame to act as the navigation context and navigate to the first page
+                rootFrame = new Frame();
+
+                rootFrame.NavigationFailed += OnNavigationFailed;
+
+                // Place the frame in the current Window
+                Window.Current.Content = rootFrame;
+            }
+
+            if (rootFrame.Content == null)
+            {
+                // When the navigation stack isn't restored navigate to the first page,
+                // configuring the new page by passing required information as a navigation
+                // parameter
+                rootFrame.Navigate(destinationPage, args);
+            }
+            // Ensure the current window is active
+            Window.Current.Activate();
+            DispatcherHelper.Initialize();
+        }
+
+        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        {
+            base.OnBackgroundActivated(args);
+
+            var taskName = args.TaskInstance.Task.Name;
+
+            switch (taskName)
+            {
+                case "CheckPostsTask":
+                    BackgroundTaskService.CheckNewPosts(args.TaskInstance);
+                    break;
+                case "DownloadTracksTask":
+                    BackgroundTaskService.DownloadAudios(args.TaskInstance);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

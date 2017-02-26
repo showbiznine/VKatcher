@@ -97,17 +97,14 @@ namespace VKatcher.ViewModels
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
                         ListView lst = e.OriginalSource as ListView;
-                        _currentPlaylist = new ObservableCollection<VKAudio>();
+                        var itemIndex = lst.Items.IndexOf(e.ClickedItem);
+                        var playlist = new ObservableCollection<VKAudio>();
                         foreach (var item in lst.Items)
                         {
                             _currentPlaylist.Add((item as VKAudio));
                         }
-                        App.ViewModelLocator.Main._currentPlaylist = _currentPlaylist;
+                        PlayerService.BuildPlaylistFromCollection(playlist, itemIndex, true);
                     });
-
-                    MessageService.SendMessageToBackground(new UpdatePlaylistMessage(App.ViewModelLocator.Main._currentPlaylist));
-                    MessageService.SendMessageToBackground(new TrackChangedMessage(new Uri(_selectedTrack.url)));
-                    MessageService.SendMessageToBackground(new StartPlaybackMessage());
                 }
             });
             SelectGroup = new RelayCommand<VKGroup>(group =>

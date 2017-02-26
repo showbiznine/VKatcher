@@ -5,6 +5,7 @@
     xmlns:Converters="using:VKatcher.Converters"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:behaviors="using:VKatcher.Behaviors"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -18,6 +19,7 @@
     <Converters:AudioTemplateConverter x:Key="AudioTemplateSelector"
                                        SongListTemplate="{StaticResource SongListTemplate}"
                                        AudioListTemplate="{StaticResource AudioListTemplate}" />
+    <Converters:ImageHeightConverter x:Key="ImageHeightConverter"/>
 
     <DataTemplate x:Key="GroupGridDataTemplate">
         <Button Command="{Binding DataContext.SelectGroup, ElementName=pageRoot}"
@@ -59,7 +61,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="PostListTemplate">
-        <UserControl Margin="0,0,0,16">
+        <UserControl Margin="0,0,0,4">
              <Grid>
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="Layout">
@@ -91,76 +93,85 @@
                         </VisualState>
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
-                <Grid x:Name="grdParent">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition x:Name="col1"
-                                            Width="*"
-                                            MaxWidth="500" />
-                        <ColumnDefinition x:Name="col2"
-                                            Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition x:Name="row1"
-                                        Height="Auto" />
-                        <RowDefinition x:Name="row2"
-                                        Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid x:Name="grdTop">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Image x:Name="postImage"
-                                Source="{Binding post_image}"
-                                VerticalAlignment="Top"
-                                d:LayoutOverrides="Width, LeftPosition, RightPosition"
-                                Grid.Row="0" />
-                        <StackPanel x:Name="grdPostDetails"
-                                d:LayoutOverrides="Width, Height"
-                                Grid.Row="1"
-                                Margin="12,8,0,8">
-                            <toolkit:MarkdownTextBlock x:Name="mtbPostText" 
-                                                       Text="{Binding text}">
+                <Grid x:Name="grdParent"
+                          Margin="12"
+                          Background="{ThemeResource BG_Gray}"
+                          CornerRadius="4">
+                    <toolkit:DropShadowPanel OffsetX="2.0"
+                                         OffsetY="2.0"
+                                         BlurRadius="4"
+                                         ShadowOpacity="0.4"
+                                         Color="Black">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="col1"
+                                              Width="*"
+                                              MaxWidth="500" />
+                                <ColumnDefinition x:Name="col2"
+                                              Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="row1"
+                                           Height="Auto" />
+                                <RowDefinition x:Name="row2"
+                                           Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid x:Name="grdTop"
+                                  CornerRadius="4">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <toolkit:ImageEx x:Name="postImage"
+                                             Source="{Binding post_image}"
+                                             VerticalAlignment="Top"
+                                             Grid.Row="0"
+                                             Stretch="Fill"
+                                             IsCacheEnabled="True">
+                                    <!--<Interactivity:Interaction.Behaviors>
+                                    <behaviors:HeightBehavior Width="{Binding ElementName=grdParent, Path=Width}"
+                                                              AspectRatio="{Binding post_image_aspect_ratio}"
+                                                              ImageEx="{Binding ElementName=postImage}"/>
+                                </Interactivity:Interaction.Behaviors>-->
+                                </toolkit:ImageEx>
+                                <StackPanel x:Name="grdPostDetails"
+                                            d:LayoutOverrides="Width, Height"
+                                            Grid.Row="1"
+                                            Margin="12,8,0,8">
+                                    <toolkit:MarkdownTextBlock x:Name="mtbPostText"
+                                                               Text="{Binding text}">
+                                        <Interactivity:Interaction.Behaviors>
+                                            <Core:EventTriggerBehavior EventName="LinkClicked">
+                                                <Core:InvokeCommandAction Command="{Binding DataContext.TagClickCommand, ElementName=pageRoot}" />
+                                            </Core:EventTriggerBehavior>
+                                        </Interactivity:Interaction.Behaviors>
+                                    </toolkit:MarkdownTextBlock>
+                                </StackPanel>
+                            </Grid>
+                            <ListView x:Name="lstSongs"
+                                      ItemsSource="{Binding attachments}"
+                                      ScrollViewer.VerticalScrollMode="Disabled"
+                                      ItemContainerStyle="{StaticResource ListViewTextHighlight}"
+                                      ItemTemplateSelector="{StaticResource AudioTemplateSelector}"
+                                      Grid.Row="1"
+                                      HorizontalAlignment="Stretch"
+                                      HorizontalContentAlignment="Stretch"
+                                      IsItemClickEnabled="True"
+                                      SelectionMode="None">
                                 <Interactivity:Interaction.Behaviors>
-                                    <Core:EventTriggerBehavior EventName="LinkClicked">
-                                        <Core:InvokeCommandAction Command="{Binding DataContext.TagClickCommand, ElementName=pageRoot}"/>
+                                    <Core:EventTriggerBehavior EventName="ItemClick">
+                                        <Core:InvokeCommandAction Command="{Binding DataContext.SongListViewItemClickCommand, ElementName=pageRoot}" />
                                     </Core:EventTriggerBehavior>
                                 </Interactivity:Interaction.Behaviors>
-                            </toolkit:MarkdownTextBlock>
-                            <!--<ItemsControl x:Name="lstTags"
-                                          ItemTemplate="{StaticResource TagTemplate}"
-                                          ItemsSource="{Binding tags}">
-                                <ItemsControl.ItemsPanel>
+                                <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <VariableSizedWrapGrid Orientation="Horizontal" />
+                                        <StackPanel />
                                     </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>-->
-                        </StackPanel>
-                    </Grid>
-                    <ListView x:Name="lstSongs"
-                            ItemsSource="{Binding attachments}"
-                            ScrollViewer.VerticalScrollMode="Disabled"
-                            ItemContainerStyle="{StaticResource ListViewTextHighlight}"
-                            ItemTemplateSelector="{StaticResource AudioTemplateSelector}"
-                            Grid.Row="1"
-                            HorizontalAlignment="Stretch"
-                            HorizontalContentAlignment="Stretch"
-                            IsItemClickEnabled="True"
-                            SelectionMode="None">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="ItemClick">
-                                <!--<Core:InvokeCommandAction Command="{Binding DataContext.SongListViewItemClickCommand, ElementName=pageRoot}"
-                                                          CommandParameter="{Binding ElementName=lstSongs, Path=ClickedItem}" />-->
-                                <Core:InvokeCommandAction Command="{Binding DataContext.SongListViewItemClickCommand, ElementName=pageRoot}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel />
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                    </ListView>
+                                </ListView.ItemsPanel>
+                            </ListView>
+                        </Grid>
+                    </toolkit:DropShadowPanel>
+
                 </Grid>
             </Grid>
         </UserControl>
@@ -188,6 +199,12 @@
                         Text="Add to Now Playing" />
         <MenuFlyoutItem x:Name="flyPlayNext"
                         Text="Play next" />
+        <MenuFlyoutSeparator />
+        <MenuFlyoutItem x:Name="flyCast"
+                        Text="Cast to..."
+                        Command="{Binding DataContext.PlayOnRemoteDeviceCommand, ElementName=pageRoot}"
+                        CommandParameter="{Binding ElementName=grdRoot}"/>
+
     </MenuFlyout>
 
     <DataTemplate x:Key="TagTemplate">
@@ -233,6 +250,11 @@
                                     Text="Play next"
                                     Command="{Binding DataContext.PlayNextCommand, ElementName=pageRoot}"
                                     CommandParameter="{Binding ElementName=grdRoot}" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem x:Name="flyCast"
+                        Text="Cast to..."
+                        Command="{Binding DataContext.PlayOnRemoteDeviceCommand, ElementName=pageRoot}"
+                        CommandParameter="{Binding ElementName=grdRoot}"/>
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
             <StackPanel>
@@ -312,13 +334,16 @@
                                     Command="{Binding DataContext.DeleteDownloadCommand, ElementName=pageRoot}"
                                     CommandParameter="{Binding ElementName=grdRoot}"
                                     Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}}" />
-                    <MenuFlyoutItem x:Name="flySavetoAudio"
-                                    Text="Save to My Audio" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem x:Name="flyAddToPlaylist"
                                     Text="Add to Now Playing" />
                     <MenuFlyoutItem x:Name="flyPlayNext"
                                     Text="Play next" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem x:Name="flyCast"
+                        Text="Cast to..."
+                        Command="{Binding DataContext.PlayOnRemoteDeviceCommand, ElementName=pageRoot}"
+                        CommandParameter="{Binding ElementName=grdRoot}"/>
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
             <StackPanel>

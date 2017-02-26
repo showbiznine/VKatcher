@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="/Resources/DataTemplates.xaml" />
                 <ResourceDictionary Source="/Resources/Animations.xaml" />
                 <ResourceDictionary Source="/Resources/TextBox_BlockStyles.xaml" />
+                <ResourceDictionary Source="/Resources/RadioButtonStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <vm:ViewModelLocator xmlns:vm="using:VKatcher.ViewModels"
                                  x:Key="Locator" />

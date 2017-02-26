@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using VK.WindowsPhone.SDK.API.Model;
 using VKCatcherShared.Models;
 using Windows.Storage;
 
@@ -42,7 +43,7 @@ namespace VKatcherShared.Services
             return r;
         }
 
-        public static async void InitializeAsync()
+        public static async Task InitializeAsync()
         {
             Microsoft.Toolkit.Uwp.Services.OneDrive.OneDriveService.Instance.Initialize("00000000481A8D3A", OneDriveEnums.AccountProviderType.Msa, OneDriveScopes.OfflineAccess | OneDriveScopes.ReadWrite);
             if (!await Microsoft.Toolkit.Uwp.Services.OneDrive.OneDriveService.Instance.LoginAsync())
@@ -54,6 +55,13 @@ namespace VKatcherShared.Services
         public static async Task<OneDriveStorageFolder> GetMusicFolder()
         {
             return await Microsoft.Toolkit.Uwp.Services.OneDrive.OneDriveService.Instance.MusicFolderAsync();
+        }
+
+        public static async Task SaveToOneDrive(VKAudio track)
+        {
+            var file = await track.DownloadTrack();
+            var odFile = await UploadFile(file, track.title + " - " + track.artist + ".mp3");
+            await track.DeleteDownloadedTrack(file.Path);
         }
 
         public static async Task<OneDriveStorageFile> UploadFile(StorageFile file, string name)

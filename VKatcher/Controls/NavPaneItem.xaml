@@ -1,0 +1,67 @@
+﻿<UserControl x:Name="NavPaneListItem"
+             x:Class="VKatcher.Controls.NavPaneItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:VKatcher.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="56"
+             d:DesignWidth="400"
+             Loaded="NavPaneListItem_Loaded">
+    
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup x:Name="SelectionStates">
+            <VisualStateGroup.Transitions>
+                <VisualTransition GeneratedDuration="0:0:0.3">
+                    <VisualTransition.GeneratedEasingFunction>
+                        <CircleEase EasingMode="EaseInOut" />
+                    </VisualTransition.GeneratedEasingFunction>
+                </VisualTransition>
+            </VisualStateGroup.Transitions>
+            <VisualState x:Name="Unselected" />
+            <VisualState x:Name="Selected">
+                <VisualState.Setters>
+                    <Setter Target="lblIcon.(TextBlock.Foreground)"
+                            Value="{StaticResource MainBlue}" />
+                    <Setter Target="lblItemName.(TextBlock.Foreground)"
+                            Value="{StaticResource MainBlue}" />
+                </VisualState.Setters>
+            </VisualState>
+        </VisualStateGroup>
+    </VisualStateManager.VisualStateGroups>
+
+
+    <Grid x:Name="grdRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="56" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="lblIcon"
+                   HorizontalAlignment="Center"
+                   Height="Auto"
+                   VerticalAlignment="Center"
+                   Width="Auto"
+                   FontFamily="Segoe MDL2 Assets"
+                   FontSize="24"
+                   Text=""/>
+        <Line x:Name="lineSeparator"
+              Grid.Column="1"
+              HorizontalAlignment="Center"
+              Stroke="White"
+              StrokeThickness=".5"
+              Y2="400"
+              Margin="0,8" />
+        <TextBlock x:Name="lblItemName"
+                   Grid.Column="2"
+                   Margin="16,0,0,0"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"
+                   FontSize="24"
+                   Text="ChangeMe"
+                   LineStackingStrategy="BaselineToBaseline"
+                   TextLineBounds="Tight" />
+
+    </Grid>
+</UserControl>

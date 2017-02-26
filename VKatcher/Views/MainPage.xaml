@@ -9,9 +9,167 @@
       x:Name="pageRoot"
       x:Class="VKatcher.Views.MainPage"
       mc:Ignorable="d"
-      DataContext="{Binding Main, Source={StaticResource Locator}}">
+      >
 
     <Page.Resources>
+        <Style x:Key="HamburgerMenuItemStyle1"
+               TargetType="Controls:HamburgerMenuItem">
+            <Setter Property="Background"
+                    Value="Transparent" />
+            <Setter Property="Foreground"
+                    Value="{StaticResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="BorderBrush"
+                    Value="Transparent" />
+            <Setter Property="Padding"
+                    Value="8,6,0,0" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Left" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="HorizontalContentAlignment"
+                    Value="Left" />
+            <Setter Property="VerticalContentAlignment"
+                    Value="Top" />
+            <Setter Property="FontFamily"
+                    Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize"
+                    Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="MinWidth"
+                    Value="120" />
+            <Setter Property="UseSystemFocusVisuals"
+                    Value="True" />
+            <Setter Property="FocusVisualMargin"
+                    Value="-7,-3,-7,-3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Controls:HamburgerMenuItem">
+                        <Grid x:Name="RootGrid"
+                              BorderBrush="Transparent"
+                              BorderThickness="0"
+                              Height="48"
+                              Background="#00000000">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="48" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="Transparent" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="Transparent" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="Icon">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{ThemeResource SystemControlDisabledBaseMediumLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                                           Storyboard.TargetName="RootGrid">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="Transparent" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource MainBlue}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill"
+                                                                           Storyboard.TargetName="recSelected">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="{StaticResource MainBlue}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="ContentPresenter">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="White" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                           Storyboard.TargetName="Icon">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="White" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Fill"
+                                                                           Storyboard.TargetName="recSelected">
+                                                <DiscreteObjectKeyFrame KeyTime="0"
+                                                                        Value="Transparent" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid>
+                                <Rectangle x:Name="recSelected"
+                                           Stroke="Black"
+                                           StrokeThickness="0"
+                                           HorizontalAlignment="Left"
+                                           Width="4">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="Red" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <TextBlock x:Name="Icon"
+                                           Margin="0"
+                                           TextWrapping="Wrap"
+                                           Text="{TemplateBinding Icon}"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           FontSize="20"
+                                           FontFamily="Segoe MDL2 Assets" />
+                            </Grid>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                              Content="{TemplateBinding Content}"
+                                              Grid.Column="1"
+                                              Foreground="{TemplateBinding Foreground}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              TextWrapping="Wrap"
+                                              FontSize="20"
+                                              VerticalAlignment="Center"
+                                              Margin="12,0,0,0" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Converters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
         <Storyboard x:Name="OpenPlaybackControls">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
@@ -5145,6 +5303,10 @@
         </Storyboard>
     </Page.Resources>
 
+    <Page.DataContext>
+        <Binding Path="Main" Source="{StaticResource Locator}"/>
+    </Page.DataContext>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="WindowWidth">
@@ -5210,10 +5372,11 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
         <Controls:SwipeableSplitView x:Name="mySplitView"
-                   Margin="0"
-                   IsSwipeablePaneOpen="{Binding IsMenuOpen, Mode=TwoWay}">
-            <SplitView.Pane>
-                <Grid>
+                                     Margin="0"
+                                     MaxOpacity="0.5"
+                                     IsSwipeablePaneOpen="{Binding IsMenuOpen, Mode=TwoWay}">
+            <Controls:SwipeableSplitView.Pane>
+                <Grid Background="{StaticResource BG_Gray}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -5221,7 +5384,7 @@
                     </Grid.RowDefinitions>
                     <StackPanel x:Name="stkSearch"
                                 VerticalAlignment="Top"
-                                Margin="0,32,0,0">
+                                Margin="12,32,12,0">
                         <TextBlock x:Name="textBlock2"
                                    TextWrapping="Wrap"
                                    Text="Search" />
@@ -5236,23 +5399,51 @@
                             </Interactivity:Interaction.Behaviors>
                         </AutoSuggestBox>
                     </StackPanel>
-                    <Button x:Name="button"
-                            Content="SETTINGS"
+                    <Controls:HamburgerMenuItem x:Name="hmbSettings" 
+                                                 Content="Settings" 
+                                                 Grid.Row="1" 
+                                                GroupName="menu"
+                                                 Style="{StaticResource HamburgerMenuItemStyle1}"
+                                                 Icon="" 
+                                                 VerticalContentAlignment="Stretch" 
+                                                Margin="0,12,0,0">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="Checked">
+                                <Core:InvokeCommandAction Command="{Binding GoToSettingsCommand}" />
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </Controls:HamburgerMenuItem>
+                    <Controls:HamburgerMenuItem x:Name="hmbMyMusic" 
+                                                Content="My Music" 
+                                                Grid.Row="2"
+                                                GroupName="menu"
+                                                Icon="" 
+                                                Style="{StaticResource HamburgerMenuItemStyle1}">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="Checked">
+                                <Core:InvokeCommandAction Command="{Binding GoToMyMusicCommand}" />
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </Controls:HamburgerMenuItem>
+
+                    <!--<Button x:Name="button"
                             VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
+                            HorizontalAlignment="Stretch"
                             Margin="0"
                             d:LayoutOverrides="Width, LeftPosition, RightPosition"
                             Command="{Binding GoToSettingsCommand}"
-                            Grid.Row="1" />
-                    <Button x:Name="button_Copy"
+                            Grid.Row="1" Background="Transparent" Visibility="Collapsed" >
+                        <Grid/>
+                    </Button>-->
+                    <!--<Button x:Name="button_Copy"
                             Content="MY MUSIC"
                             VerticalAlignment="Bottom"
                             HorizontalAlignment="Center"
                             Margin="0,0,0,309"
                             Command="{Binding GoToMyMusicCommand}"
-                            Grid.Row="2" />
+                            Grid.Row="2" Visibility="Collapsed" />-->
                 </Grid>
-            </SplitView.Pane>
+            </Controls:SwipeableSplitView.Pane>
             <Grid>
                 <Frame x:Name="myFrame" />
             </Grid>
@@ -5297,13 +5488,11 @@
                 <Rectangle x:Name="recTint"
                            StrokeThickness="0"
                            RenderTransformOrigin="0.5,0.5"
-                           Grid.ColumnSpan="3">
+                           Grid.ColumnSpan="3"
+                           Fill="{StaticResource BG_Gray}">
                     <Rectangle.RenderTransform>
                         <CompositeTransform />
                     </Rectangle.RenderTransform>
-                    <Rectangle.Fill>
-                        <SolidColorBrush Color="{ThemeResource SystemBaseMediumColor}" />
-                    </Rectangle.Fill>
                 </Rectangle>
                 <Button x:Name="btnAlbum"
                         Style="{StaticResource SimpleButtonStyle}"
@@ -5324,7 +5513,7 @@
                                    HorizontalAlignment="Center"
                                    FontSize="56">
                             <TextBlock.Foreground>
-                                <SolidColorBrush Color="{ThemeResource SystemAltHighColor}" />
+                                <SolidColorBrush Color="White" />
                             </TextBlock.Foreground>
                         </TextBlock>
                         <Image x:Name="imgPlayingAlbumArt"
@@ -5457,7 +5646,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec01"
@@ -5472,7 +5661,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec02"
@@ -5487,7 +5676,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec03"
@@ -5502,7 +5691,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec04"
@@ -5517,7 +5706,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec10"
@@ -5533,7 +5722,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec11"
@@ -5550,7 +5739,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec12"
@@ -5567,7 +5756,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec13"
@@ -5584,7 +5773,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec14"
@@ -5601,7 +5790,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec20"
@@ -5617,7 +5806,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec21"
@@ -5634,7 +5823,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec22"
@@ -5651,7 +5840,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec23"
@@ -5668,7 +5857,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec24"
@@ -5685,7 +5874,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec30"
@@ -5701,7 +5890,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec31"
@@ -5718,7 +5907,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec32"
@@ -5735,7 +5924,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec33"
@@ -5752,7 +5941,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec34"
@@ -5769,7 +5958,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec40"
@@ -5785,7 +5974,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec41"
@@ -5802,7 +5991,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec42"
@@ -5819,7 +6008,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec43"
@@ -5836,7 +6025,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec44"
@@ -5853,7 +6042,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec21b"
@@ -5872,7 +6061,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <Rectangle x:Name="rec12b"
@@ -5891,7 +6080,7 @@
                             <CompositeTransform />
                         </Rectangle.RenderTransform>
                         <Rectangle.Fill>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumHighColor}" />
+                            <SolidColorBrush Color="#CCFFFFFF" />
                         </Rectangle.Fill>
                     </Rectangle>
                     <TextBlock x:Name="lblTrackTime"
@@ -5990,18 +6179,14 @@
                     <CompositeTransform />
                 </TextBlock.RenderTransform>
                 <TextBlock.Foreground>
-                    <SolidColorBrush Color="{ThemeResource SystemAltHighColor}" />
+                    <SolidColorBrush Color="#FFFFFFFF" />
                 </TextBlock.Foreground>
                     <Run Text="{Binding _currentTrack.title}"
                          FontWeight="Bold"
                          FontSize="20" />                
                     <LineBreak />
                     <Run Text="// "
-                         FontWeight="Light">
-                        <Run.Foreground>
-                            <SolidColorBrush Color="{ThemeResource SystemAltMediumColor}" />
-                        </Run.Foreground>
-                    </Run>
+                         FontWeight="Light"/>
                     <Run Text="{Binding _currentTrack.artist}"
                          FontWeight="SemiBold" />
             </TextBlock>
