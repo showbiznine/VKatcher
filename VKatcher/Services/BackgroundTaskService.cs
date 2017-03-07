@@ -28,6 +28,7 @@ namespace VKatcher.Services
 
         public static ObservableCollection<VKAudio> ToDownload { get; private set; }
         public static ObservableCollection<VKGroup> SubscribedGroups { get; private set; }
+        public static ObservableCollection<VKTag> SubscribedTags { get; private set; }
 
         #region Catcher task
         public static async void DownloadAudios(IBackgroundTaskInstance taskInstance)
@@ -146,10 +147,60 @@ namespace VKatcher.Services
             var networkInfo = NetworkInformation.GetInternetConnectionProfile();
             ToDownload = new ObservableCollection<VKAudio>();
             SubscribedGroups = new ObservableCollection<VKGroup>();
+            SubscribedTags = new ObservableCollection<VKTag>();
             await CheckSubscribedGroups();
+            await CheckSubscribedTags();
             await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
             Debug.WriteLine("BG Task complete");
             _deferral.Complete();
+        }
+
+        private static async Task CheckSubscribedTags()
+        {
+            SubscribedTags = await SubscriptionService.LoadSubscribedTags();
+            Debug.WriteLine("Loaded subscribed tags");
+            StorageFile dlFile;
+            try
+            {
+                dlFile = await ApplicationData.Current.LocalFolder.GetFileAsync("DL_List.json");
+            }
+            catch (Exception)
+            {
+                dlFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("DL_List.json");
+            }
+            var dlList = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(File.ReadAllText(dlFile.Path));
+            await Task.Run(async () =>
+            {
+                foreach (var tag in SubscribedTags)
+                {
+                    #region Get Posts
+                    tag.to_save = tag.to_save == 0 ? 3 : tag.to_save;
+                    var posts = await DataService.SearchWallByTag(tag.tag, tag.domain, tag.to_save);
+                    Debug.WriteLine("Loaded posts from #" + tag.tag + "@" + tag.domain);
+                    foreach (var post in posts)
+                    {
+                        //Check last post in the group
+                        if (post.id != tag.LastSavedId)
+                        {
+                            tag.LastSavedId = posts[0].id;
+                            var attachments = post.attachments;
+                            foreach (var att in attachments)
+                            {
+                                //Don't download huge files
+                                if (att.audio.duration < 1200)
+                                    ToDownload.Add(att.audio);
+                            }
+                        }
+                        else
+                            break;
+                        //Set the last post ID
+                        tag.LastSavedId = posts[0].id;
+                    }
+                    Debug.WriteLine("The latest post was ID# " + posts[0].id);
+                    #endregion
+                }
+            });
+            File.WriteAllText(dlFile.Path, JsonConvert.SerializeObject(ToDownload));
         }
 
         private static async Task CheckSubscribedGroups()

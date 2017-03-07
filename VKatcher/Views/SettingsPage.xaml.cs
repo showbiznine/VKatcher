@@ -31,7 +31,7 @@ namespace VKatcher.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            App.ViewModelLocator.Settings.InitializeGroups();
+            App.ViewModelLocator.Settings.Initializesubscriptions();
         }
 
         private void btnClearDLs_Click(object sender, RoutedEventArgs e)

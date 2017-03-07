@@ -177,14 +177,14 @@ namespace VKatcher.ViewModels
             {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
-                    var att = grid.DataContext as VKAttachment;
-                    if (!string.IsNullOrWhiteSpace(att.audio.url))
+                    var att = grid.DataContext as VKAudio;
+                    if (!string.IsNullOrWhiteSpace(att.url))
                     {
                         var rdd = new RemoteDeviceDialog();
                         await rdd.ShowAsync();
                         if (rdd.SelectedRemoteDevice != null)
                         {
-                            await RemoteSystemService.PlayAudioOnRemoteDeviceAsync(att.audio, rdd.SelectedRemoteDevice);
+                            await RemoteSystemService.PlayAudioOnRemoteDeviceAsync(att, rdd.SelectedRemoteDevice);
                         }
                     }
                     else

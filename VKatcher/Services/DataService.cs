@@ -146,7 +146,7 @@ namespace VKatcher.Services
             return r;
         }
 
-        public static async Task<ObservableCollection<VKWallPost>> SearchWallByTag(string query, string domain)
+        public static async Task<ObservableCollection<VKWallPost>> SearchWallByTag(string query, string domain, int count)
         {
             var WallPosts = new ObservableCollection<VKWallPost>();
 
@@ -155,7 +155,7 @@ namespace VKatcher.Services
             {
                 {"query", "#" + query },
                 {"domain", domain },
-                {"count", "30" },
+                {"count", count.ToString() },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
                 {"v", _apiVersion }
             };
@@ -369,8 +369,8 @@ namespace VKatcher.Services
         #region Status Checks
         private static bool CheckPlaying(VKAudio track)
         {
-            if (App.ViewModelLocator.Main._currentTrack != null)
-                return App.ViewModelLocator.Main._currentTrack.id == track.id;
+            //if (App.ViewModelLocator.Main._currentTrack != null)
+            //    return App.ViewModelLocator.Main._currentTrack.id == track.id;
 
             return false;
         }

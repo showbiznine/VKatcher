@@ -13,6 +13,7 @@ namespace VKatcherShared.Services
     public class FileService
     {
         private const string _downloadedDB = "downloaded_files.json";
+        private const string _dlList = "DL_List.json";
 
         public static async Task<ObservableCollection<VKAudio>> GetDownloads()
         {
@@ -135,6 +136,29 @@ namespace VKatcherShared.Services
                 Debug.WriteLine("Wrote to database");
             }
         }
+
+        public static async void ClearToDownload()
+        {
+            StorageFile dlFile;
+            try
+            {
+                dlFile = await ApplicationData.Current.LocalFolder.GetFileAsync(_dlList);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                dlFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(_dlList);
+                Debug.WriteLine("Created new file");
+            }
+            if (dlFile != null)
+            {
+                var empty = new ObservableCollection<VKAudio>();
+                string newstr = JsonConvert.SerializeObject(empty);
+                File.WriteAllText(dlFile.Path, newstr);
+                Debug.WriteLine("Wrote to database");
+            }
+        }
+
 
         //public static async void OneDriveUpload(string url)
         //{

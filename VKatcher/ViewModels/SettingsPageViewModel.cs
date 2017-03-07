@@ -21,6 +21,7 @@ namespace VKatcher.ViewModels
     public class SettingsPageViewModel : ViewModelBase
     {
         public ObservableCollection<VKGroup> SubscribedGroups { get; set; }
+        public ObservableCollection<VKTag> SubscribedTags { get; set; }
         //public ObservableCollection<Playlist> SpotifyPlaylists { get; set; }
         public VKUser MyUser { get; set; }
         public bool IsPlaying { get; set; }
@@ -28,10 +29,11 @@ namespace VKatcher.ViewModels
         public bool IsSpotifyConnected { get; set; }
 
         public RelayCommand<ItemClickEventArgs> SelectGroup { get; set; }
-        public RelayCommand<VKGroup> UnsubscribeCommand { get; set; }
+        public RelayCommand<object> UnsubscribeCommand { get; set; }
         public RelayCommand LogOutCommand { get; set; }
         public RelayCommand ConnectSpotifyCommand { get; set; }
         public RelayCommand ClearTokenCommand { get; set; }
+        public RelayCommand ClearToDownloadCommand { get; set; }
 
         public SettingsPageViewModel()
         {
@@ -48,7 +50,7 @@ namespace VKatcher.ViewModels
             {
                 //SpotifyPlaylists = new ObservableCollection<Playlist>();
                 IsPlaying = App.ViewModelLocator.Main._isPlaying;
-                InitializeGroups();
+                Initializesubscriptions();
                 InitializeCommands();
                 InitializeUser();
             }
@@ -91,21 +93,41 @@ namespace VKatcher.ViewModels
                 var group = args.ClickedItem as VKGroup;
                 _navigationService.NavigateTo(typeof(FeedPage), group);
             });
-            UnsubscribeCommand = new RelayCommand<VKGroup>(async group =>
+            UnsubscribeCommand = new RelayCommand<object>(async obj =>
             {
-                MessageDialog msg = new MessageDialog("Are you sure you want to unsubscribe from " +
-                    group.name + "?");
-                msg.Commands.Add(new UICommand("Yes", async (command) =>
+                if (obj is VKGroup)
                 {
-                    var res = await SubscriptionService.SubscribeToGroup(group);
-                    if (!res)
+                    MessageDialog msg = new MessageDialog("Are you sure you want to unsubscribe from " +
+                        ((VKGroup)obj).name + "?");
+                    msg.Commands.Add(new UICommand("Yes", async (command) =>
                     {
-                        SubscribedGroups.Remove(group);
-                    }
-                }));
-                msg.Commands.Add(new UICommand("No"));
-                msg.DefaultCommandIndex = 1;
-                await msg.ShowAsync();
+                        var res = await SubscriptionService.SubscribeToGroup((VKGroup)obj);
+                        if (!res)
+                        {
+                            SubscribedGroups.Remove((VKGroup)obj);
+                        }
+                    }));
+                    msg.Commands.Add(new UICommand("No"));
+                    msg.DefaultCommandIndex = 1;
+                    await msg.ShowAsync();
+                }
+                else if (obj is VKTag)
+                {
+                    MessageDialog msg = new MessageDialog("Are you sure you want to unsubscribe from " +
+                        ((VKTag)obj).tag + "?");
+                    msg.Commands.Add(new UICommand("Yes", async (command) =>
+                    {
+                        var res = await SubscriptionService.SubscribeToTag((VKTag)obj);
+                        if (!res)
+                        {
+                            SubscribedTags.Remove((VKTag)obj);
+                        }
+                    }));
+                    msg.Commands.Add(new UICommand("No"));
+                    msg.DefaultCommandIndex = 1;
+                    await msg.ShowAsync();
+                }
+
             });
             LogOutCommand = new RelayCommand(() =>
             {
@@ -122,6 +144,10 @@ namespace VKatcher.ViewModels
                 var localSettings = ApplicationData.Current.LocalSettings;
                 localSettings.Values["token"] = null;
             });
+            ClearToDownloadCommand = new RelayCommand(() =>
+            {
+
+            });
         }
 
         private async Task AuthenticateSpotify()
@@ -135,10 +161,13 @@ namespace VKatcher.ViewModels
             //IsSpotifyConnected = res;
         }
 
-        public async void InitializeGroups()
+        public async void Initializesubscriptions()
         {
             SubscribedGroups = new ObservableCollection<VKGroup>();
             SubscribedGroups = await SubscriptionService.LoadSubscribedGroups();
+
+            SubscribedTags = new ObservableCollection<VKTag>();
+            SubscribedTags = await SubscriptionService.LoadSubscribedTags();
         }
     }
 }

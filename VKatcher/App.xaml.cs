@@ -23,6 +23,8 @@ using VKatcher.Services;
 using System.Diagnostics;
 using Windows.UI.Popups;
 using Microsoft.QueryStringDotNET;
+using Windows.ApplicationModel.Background;
+using Windows.ApplicationModel.AppService;
 
 namespace VKatcher
 {
@@ -33,6 +35,8 @@ namespace VKatcher
     {
 
         public static ViewModelLocator ViewModelLocator;
+        private BackgroundTaskDeferral backgroundTaskDeferral;
+        private AppServiceConnection appServiceconnection;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -223,19 +227,52 @@ namespace VKatcher
         {
             base.OnBackgroundActivated(args);
 
+            // Get a deferral so that the service isn't terminated.
+            this.backgroundTaskDeferral = args.TaskInstance.GetDeferral();
+
+            // Associate a cancellation handler with the background task.
+            args.TaskInstance.Canceled += OnTaskCanceled;
+
+            // Retrieve the app service connection and set up a listener for incoming app service requests.
+            var details = args.TaskInstance.TriggerDetails as AppServiceTriggerDetails;
+            if (details != null)
+            {
+                appServiceconnection = details.AppServiceConnection;
+                appServiceconnection.RequestReceived += RemoteSystemService.OnRequestRevievedAsync;
+                appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed; 
+            }
+
             var taskName = args.TaskInstance.Task.Name;
 
-            switch (taskName)
+            if (taskName != null)
             {
-                case "CheckPostsTask":
-                    BackgroundTaskService.CheckNewPosts(args.TaskInstance);
-                    break;
-                case "DownloadTracksTask":
-                    BackgroundTaskService.DownloadAudios(args.TaskInstance);
-                    break;
-                default:
-                    break;
+                switch (taskName)
+                {
+                    case "CheckNewPostsTask":
+                        BackgroundTaskService.CheckNewPosts(args.TaskInstance);
+                        break;
+                    case "DownloadPostsTask":
+                        BackgroundTaskService.DownloadAudios(args.TaskInstance);
+                        break;
+                    default:
+                        break;
+                } 
             }
+        }
+
+        private void AppServiceconnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            throw new NotImplementedException();
         }
     }
 }

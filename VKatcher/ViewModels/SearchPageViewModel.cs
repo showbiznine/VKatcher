@@ -19,6 +19,7 @@ using Microsoft.Practices.ServiceLocation;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Net.Http;
 using Windows.UI.Popups;
+using VKatcherShared.Services;
 
 namespace VKatcher.ViewModels
 {
@@ -28,7 +29,9 @@ namespace VKatcher.ViewModels
         public RelayCommand<Visibility> SearchCommand { get; set; }
         public RelayCommand<ItemClickEventArgs> PlaySongCommand { get; set; }
         public RelayCommand<VKGroup> SelectGroup { get; set; }
-        public RelayCommand<object> SongHoldingCommand { get; private set; }
+        public RelayCommand<object> SongHoldingCommand { get; set; }
+        public RelayCommand<ItemClickEventArgs> SongListViewItemClickCommand { get; set; }
+        public RelayCommand SubscribeToTagCommand { get; set; }
         #endregion
 
         #region Fields
@@ -36,9 +39,14 @@ namespace VKatcher.ViewModels
         public VKAudio _selectedTrack;
         public ObservableCollection<VKAudio> _currentPlaylist;
         public string _searchQuery { get; set; }
+        public VKTag TagQuery { get; set; }
         public string _resultsString { get; set; }
         public ObservableCollection<VKGroup> GroupResults { get; set; }
         public ObservableCollection<VKAudio> TrackResults { get; set; }
+        public ObservableCollection<VKWallPost> PostResults { get; set; }
+        public bool TracksVisible { get; set; }
+        public bool PostsVisible { get; set; }
+        public bool GroupsVisible { get; set; }
         public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
         #endregion
 
@@ -53,6 +61,7 @@ namespace VKatcher.ViewModels
                 _mainVM = ((Window.Current.Content as Frame).Content as MainPage).DataContext as MainViewModel;
                 GroupResults = new ObservableCollection<VKGroup>();
                 TrackResults = new ObservableCollection<VKAudio>();
+                PostResults = new ObservableCollection<VKWallPost>();
                 InitializeCommands();
             }
         }
@@ -119,6 +128,56 @@ namespace VKatcher.ViewModels
                     FlyoutBase.ShowAttachedFlyout(obj);
                 });
             });
+            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(args =>
+            {
+                OnSongListItemClick(args);
+            });
+            SubscribeToTagCommand = new RelayCommand(async () =>
+            {
+                if (await SubscriptionService.SubscribeToTag(TagQuery))
+                    await new MessageDialog("Subscribed to tag").ShowAsync();
+                else
+                    await new MessageDialog("Failed to subscribe to tag").ShowAsync();
+
+            });
+        }
+
+        public async void OnSongListItemClick(ItemClickEventArgs e)
+        {
+            bool containsOffline = false;
+            //var clickedIndex = WallPosts.IndexOf((VKWallPost)((e.OriginalSource as ListView).DataContext));
+            VKAudio selectedTrack;
+            if (e.ClickedItem is VKAttachment)
+            {
+                selectedTrack = (e.ClickedItem as VKAttachment).audio;
+                Debug.WriteLine("Clicked " + selectedTrack.title);
+                if (App.ViewModelLocator.Main._currentTrack != null)
+                {
+                    App.ViewModelLocator.Main._currentTrack.IsPlaying = false;
+                }
+                selectedTrack.IsPlaying = true;
+
+                GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                {
+                    ListView lst = e.OriginalSource as ListView;
+                    int itemIndex = lst.Items.IndexOf(e.ClickedItem);
+                    var postPlaylist = new ObservableCollection<VKAudio>();
+                    foreach (var item in lst.Items)
+                    {
+                        if ((item as VKAttachment).audio.IsOffline)
+                        {
+                            containsOffline = true;
+                        }
+                        postPlaylist.Add((item as VKAttachment).audio);
+                    }
+                    PlayerService.BuildPlaylistFromCollection(postPlaylist, itemIndex, true);
+                });
+
+                if (containsOffline)
+                {
+                    await Task.Delay(500);
+                }
+            }
         }
 
         public void Search()
@@ -130,6 +189,35 @@ namespace VKatcher.ViewModels
                 TrackResults.Clear();
                 TrackResults = await DataService.SearchAudio(_searchQuery);
                 _resultsString = "\"" + _searchQuery + "\"";
+            });
+        }
+
+        public void Search(string Tag, string groupScreenName)
+        {
+            var split = Tag.Split('#', '@');
+            List<string> fixedSplit = new List<string>();
+            foreach (var t in split)
+            {
+                if (!string.IsNullOrWhiteSpace(t))
+                    fixedSplit.Add(t);
+            }
+            TagQuery = new VKTag
+            {
+                tag = fixedSplit[0],
+                domain = fixedSplit.Count > 1 ? fixedSplit[1] : groupScreenName
+            };
+            DispatcherHelper.CheckBeginInvokeOnUI(async () =>
+            {
+                //_inCall = true;
+                TrackResults.Clear();               
+                foreach (var post in await DataService.SearchWallByTag(TagQuery.tag, TagQuery.domain, 30))
+                {
+                    PostResults.Add(post);
+                }
+                TracksVisible = false;
+                GroupsVisible = false;
+                PostsVisible = true;
+                //_inCall = false;
             });
         }
     }

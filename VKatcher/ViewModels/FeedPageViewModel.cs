@@ -1,8 +1,10 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Threading;
+using Microsoft.Practices.ServiceLocation;
 using Microsoft.QueryStringDotNET;
 using Microsoft.Toolkit.Uwp;
+using Microsoft.Toolkit.Uwp.UI;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Newtonsoft.Json;
 using System;
@@ -30,6 +32,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace VKatcher.ViewModels
 {
@@ -40,9 +43,14 @@ namespace VKatcher.ViewModels
         public ObservableCollection<VKWallPost> WallPosts { get; set; }
         public int _offset { get; set; }
         public bool _inCall { get; set; }
+        private VKWallPost _heldWallPost;
+        private int _heldAudioIndex;
+        public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
+
+
         //public static VKAudio _selectedTrack;
         //public static ObservableCollection<VKAudio> _currentPlaylist;
-        private const string _downloadedDB = "downloaded_files.json";
+        //private const string _downloadedDB = "downloaded_files.json";
         #endregion
 
         #region Commands
@@ -143,7 +151,12 @@ namespace VKatcher.ViewModels
                         await rdd.ShowAsync();
                         if (rdd.SelectedRemoteDevice != null)
                         {
-                            await RemoteSystemService.PlayAudioOnRemoteDeviceAsync(att.audio, rdd.SelectedRemoteDevice);
+                            var audios = new ObservableCollection<VKAudio>();
+                            foreach (var item in _heldWallPost.attachments)
+                            {
+                                audios.Add(item.audio);
+                            }
+                            await RemoteSystemService.PlayAudioOnRemoteDeviceAsync(audios, rdd.SelectedRemoteDevice, _heldAudioIndex);
                         }
                     }
                     else
@@ -152,9 +165,9 @@ namespace VKatcher.ViewModels
             });
 
             SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(args =>
-               {
-                   OnSongListItemClick(args);
-               });
+            {
+                OnSongListItemClick(args);
+            });
             TagClickCommand = new RelayCommand<LinkClickedEventArgs>(args =>
             {
                 OnTagClick(args.Link);
@@ -168,6 +181,9 @@ namespace VKatcher.ViewModels
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Grid obj = (Grid)sender;
+                    var lst = obj.FindVisualAscendant<ListView>();
+                    _heldWallPost = lst.DataContext as VKWallPost;
+                    _heldAudioIndex = lst.Items.IndexOf(obj.DataContext);
                     FlyoutBase.ShowAttachedFlyout(obj);
                 });
             });
@@ -176,27 +192,18 @@ namespace VKatcher.ViewModels
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
                     Grid obj = (Grid)sender;
+                    var lst = obj.FindVisualAscendant<ListView>();
+                    _heldWallPost = lst.DataContext as VKWallPost;
+                    _heldAudioIndex = lst.Items.IndexOf(obj.DataContext);
                     FlyoutBase.ShowAttachedFlyout(obj);
                 });
             });
         }
 
-        private async void OnTagClick(string tag)
+        private void OnTagClick(string tag)
         {
-            _inCall = true;
-            WallPosts.Clear();
-            var split = tag.Split('#', '@');
-            List<string> fixedSplit = new List<string>();
-            foreach (var t in split)
-            {
-                if (!string.IsNullOrWhiteSpace(t))
-                    fixedSplit.Add(t);
-            }
-            foreach (var post in await DataService.SearchWallByTag(fixedSplit[0], fixedSplit.Count > 1 ? fixedSplit[1] : _currentGroup.screen_name))
-            {
-                WallPosts.Add(post);
-            }
-            _inCall = false;
+            App.ViewModelLocator.Search.Search(tag, _currentGroup.screen_name);
+            _navigationService.NavigateTo(typeof(SearchPage));
         }
 
         public async void LoadPosts(int offset, int count, bool clear)
@@ -240,10 +247,6 @@ namespace VKatcher.ViewModels
             VKAudio selectedTrack;
             if (e.ClickedItem is VKAttachment)
             {
-                //if (selectedTrack != null)
-                //{
-                //    selectedTrack.IsPlaying = false;
-                //}
                 selectedTrack = (e.ClickedItem as VKAttachment).audio;
                 Debug.WriteLine("Clicked " + selectedTrack.title);
                 if (App.ViewModelLocator.Main._currentTrack != null)

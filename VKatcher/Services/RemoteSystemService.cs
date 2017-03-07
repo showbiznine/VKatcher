@@ -6,8 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK.API.Model;
+using Windows.ApplicationModel.AppService;
+using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.System.RemoteSystems;
+using Windows.UI.Popups;
 
 namespace VKatcher.Services
 {
@@ -120,6 +123,66 @@ namespace VKatcher.Services
                     await RemoteLauncher.LaunchUriAsync(
                         new RemoteSystemConnectionRequest(system),
                         new Uri("vkatcher:?" + q));
+            if (launchUriStatus != RemoteLaunchUriStatus.Success)
+            {
+                await new MessageDialog("Unable to connect to remote device").ShowAsync();
+            }
+        }
+
+        public static async Task PlayAudioOnRemoteDeviceAsync(ObservableCollection<VKAudio> audios, RemoteSystem system, int index)
+        {
+            //var q = new QueryString
+            //{
+            //    {"action", "play_audios" },
+            //    {"audio_id", audios[index].id.ToString() },
+            //    {"owner_id", audios[index].owner_id.ToString() },
+            //    {"url", audios[index].url }
+            //};
+
+            //RemoteLaunchUriStatus launchUriStatus =
+            //        await RemoteLauncher.LaunchUriAsync(
+            //            new RemoteSystemConnectionRequest(system),
+            //            new Uri("vkatcher:?" + q));
+
+            var appService = new AppServiceConnection()
+            {
+                AppServiceName = "com.vkatcher.playlist",
+                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+            };
+
+            RemoteSystemConnectionRequest connectionRequest = new RemoteSystemConnectionRequest(system);
+            var status = await appService.OpenRemoteAsync(connectionRequest);
+
+            if (status == AppServiceConnectionStatus.Success)
+            {
+                var message = new ValueSet();
+                foreach (var item in audios)
+                {
+                    message.Add(item.id.ToString(), item.url);
+                }
+                var response = await appService.SendMessageAsync(message);
+            }
+        }
+
+        public static async void OnRequestRevievedAsync(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            var messageDeferral = args.GetDeferral();
+
+            ValueSet message = args.Request.Message;
+            ValueSet returnData = new ValueSet();
+
+            if (message.ContainsKey("Command"))
+            {
+                string command = message["Command"] as string;
+                // ... // 
+            }
+            else
+            {
+                returnData.Add("Status", "Fail: Missing command");
+            }
+
+            await args.Request.SendResponseAsync(returnData); // Return the data to the caller. 
+            messageDeferral.Complete();
         }
         #endregion
 

@@ -66,12 +66,10 @@ namespace VKatcher.ViewModels
                 _isPlaying = false;
                 InitializeCommands();
                 #region Background Tasks
-                var checkTask = RegisterBackgroundTask("VKBackground.CheckNewPostsTask",
-            "CheckNewPostsTask",
-            new TimeTrigger(15, false),
-            null);
-                var dlTask = RegisterBackgroundTask("VKBackground.DownloadPostsTask",
-                    "DownloadPostsTask",
+                var checkTask = RegisterBackgroundTask("CheckNewPostsTask",
+                    new TimeTrigger(15, false),
+                    null);
+                var dlTask = RegisterBackgroundTask("DownloadPostsTask",
                     new TimeTrigger(15, false),
                     null); 
                 #endregion
@@ -106,10 +104,9 @@ namespace VKatcher.ViewModels
             }
         }
 
-        public static async Task<BackgroundTaskRegistration> RegisterBackgroundTask(string taskEntryPoint,
-                                                        string name,
-                                                        IBackgroundTrigger trigger,
-                                                        IBackgroundCondition condition)
+        public static async Task<BackgroundTaskRegistration> RegisterBackgroundTask(string name,
+            IBackgroundTrigger trigger,
+            IBackgroundCondition condition)
         {
             //Check for existing registrations
             foreach (var _task in BackgroundTaskRegistration.AllTasks)
@@ -128,7 +125,6 @@ namespace VKatcher.ViewModels
             var builder = new BackgroundTaskBuilder();
             await BackgroundExecutionManager.RequestAccessAsync();
             builder.Name = name;
-            builder.TaskEntryPoint = taskEntryPoint;
             builder.SetTrigger(trigger);
 
             if (condition != null)

@@ -512,24 +512,42 @@
                                    FontWeight="SemiBold"
                                    Margin="0"
                                    Pivot.SlideInAnimationGroup="1" />
-                        <ListView x:Name="lstGroups"
-                                  Header=""
-                                  CanDragItems="True"
-                                  CanReorderItems="True"
-                                  ItemsSource="{Binding SubscribedGroups}"
-                                  ItemTemplate="{StaticResource GroupListTemplate}"
-                                  Margin="0"
-                                  Grid.Row="1"
-                                  IsItemClickEnabled="True"
-                                  SelectionMode="None"
-                                  Pivot.SlideInAnimationGroup="2"
-                                  ItemContainerStyle="{StaticResource ListViewPlainStretchStyle}">
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="ItemClick">
-                                    <Core:InvokeCommandAction Command="{Binding SelectGroup}" />
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </ListView>
+                        <StackPanel Orientation="Vertical" Grid.Row="1">
+                            <ListView x:Name="lstGroups"
+                                Header=""
+                                CanDragItems="True"
+                                CanReorderItems="True"
+                                ItemsSource="{Binding SubscribedGroups}"
+                                ItemTemplate="{StaticResource GroupListTemplate}"
+                                Margin="0"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                Pivot.SlideInAnimationGroup="2"
+                                ItemContainerStyle="{StaticResource ListViewPlainStretchStyle}" VerticalAlignment="Top">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="ItemClick">
+                                        <Core:InvokeCommandAction Command="{Binding SelectGroup}" />
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </ListView>
+                            <ListView x:Name="lstTags"
+                                Header=""
+                                CanDragItems="True"
+                                CanReorderItems="True"
+                                ItemsSource="{Binding SubscribedTags}"
+                                ItemTemplate="{StaticResource GroupListTemplate}"
+                                Margin="0"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                Pivot.SlideInAnimationGroup="2"
+                                ItemContainerStyle="{StaticResource ListViewPlainStretchStyle}" VerticalAlignment="Top">
+                                <Interactivity:Interaction.Behaviors>
+                                    <Core:EventTriggerBehavior EventName="ItemClick">
+                                        <Core:InvokeCommandAction Command="{Binding SelectGroup}" />
+                                    </Core:EventTriggerBehavior>
+                                </Interactivity:Interaction.Behaviors>
+                            </ListView>
+                        </StackPanel>
                     </Grid>
                 </Grid>
             </PivotItem>
@@ -757,6 +775,7 @@
                             Margin="90,125,0,0"
                             Click="btnLastID_Click" />
                     <Button x:Name="btnClearToken" Content="Clear Token" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="90,293,0,0" Command="{Binding ClearTokenCommand}"/>
+                    <Button x:Name="btnClearDLList" Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="217,412,0,0" Command="{Binding ClearToDownloadCommand}"/>
                 </Grid>
             </PivotItem>
         </Pivot>

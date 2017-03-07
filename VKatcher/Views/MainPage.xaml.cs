@@ -38,27 +38,27 @@ namespace VKatcher.Views
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private bool isBackgroundTaskRunning = false;
-        private bool IsBackgroundTaskRunning
-        {
-            get
-            {
-                if (isBackgroundTaskRunning)
-                    return true;
+        //private bool isBackgroundTaskRunning = false;
+        //private bool IsBackgroundTaskRunning
+        //{
+        //    get
+        //    {
+        //        if (isBackgroundTaskRunning)
+        //            return true;
 
-                object value = ApplicationSettingsHelper.ReadResetSettingsValue("backgroundtaskstate");
-                if (value == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    isBackgroundTaskRunning = ((string)value).Equals("BackgroundTaskRunning");
-                    return isBackgroundTaskRunning;
-                }
-            }
-        }
-        private List<string> _scope = new List<string> { VKScope.FRIENDS, VKScope.WALL, VKScope.PHOTOS, VKScope.AUDIO, VKScope.GROUPS };
+        //        object value = ApplicationSettingsHelper.ReadResetSettingsValue("backgroundtaskstate");
+        //        if (value == null)
+        //        {
+        //            return false;
+        //        }
+        //        else
+        //        {
+        //            isBackgroundTaskRunning = ((string)value).Equals("BackgroundTaskRunning");
+        //            return isBackgroundTaskRunning;
+        //        }
+        //    }
+        //}
+        //private List<string> _scope = new List<string> { VKScope.FRIENDS, VKScope.WALL, VKScope.PHOTOS, VKScope.AUDIO, VKScope.GROUPS };
         private bool _controlsOpen;
         private bool _isNowPlaying = false;
         private DispatcherTimer _sliderTimer;
