@@ -65,20 +65,34 @@ namespace VKatcher.ViewModels
                 DispatcherHelper.Initialize();
                 _isPlaying = false;
                 InitializeCommands();
+
                 #region Background Tasks
-                var checkTask = RegisterBackgroundTask("CheckNewPostsTask",
-                    new TimeTrigger(15, false),
-                    null);
-                var dlTask = RegisterBackgroundTask("DownloadPostsTask",
-                    new TimeTrigger(15, false),
-                    null); 
+                RegisterBackgroundTasks();
                 #endregion
+
                 MediaPlayer = PlayerService.MediaPlayer;
                 LoadRoamingPlaylist();
                 SetupTimer();
                 MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                 PlayerService.CurrentPlaybackList.CurrentItemChanged += OnTrackChanged;
             }
+        }
+
+        private async void RegisterBackgroundTasks()
+        {
+            var bgStatus = await BackgroundExecutionManager.RequestAccessAsync();
+            await Task.Run(() =>
+            {
+                var checkTask = RegisterBackgroundTask("CheckNewPostsTask",
+                    new TimeTrigger(15, false),
+                    new SystemCondition(SystemConditionType.InternetAvailable));
+            });
+            await Task.Run(() =>
+            {
+                var dlTask = RegisterBackgroundTask("DownloadPostsTask",
+                    new TimeTrigger(15, false), 
+                    new SystemCondition(SystemConditionType.FreeNetworkAvailable));
+            });
         }
 
         private void LoadRoamingPlaylist()

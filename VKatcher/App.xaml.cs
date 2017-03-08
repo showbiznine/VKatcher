@@ -182,15 +182,7 @@ namespace VKatcher
 
                 // Use the originalArgs variable to access the original arguments
                 // that were passed to the app.
-                switch (toastActivationArgs.Argument)
-                {
-                    case "downloads":
-                        ActivateWindow(typeof(MainPage), "downloads");
-                        break;
-                    default:
-                        ActivateWindow(typeof(MainPage), null);
-                        break;
-                }
+                ActivateWindow(typeof(MainPage), toastActivationArgs.Argument);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Threading;
+using Microsoft.QueryStringDotNET;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -127,7 +128,8 @@ namespace VKatcher.Views
 
             if (e.Parameter is string)
             {
-                switch ((string)e.Parameter)
+                var query = QueryString.Parse(e.Parameter as string);
+                switch (query["page"])
                 {
                     case "downloads":
                         myFrame.Navigate(typeof(MyMusicPage));

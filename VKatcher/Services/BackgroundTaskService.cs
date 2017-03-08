@@ -42,55 +42,26 @@ namespace VKatcher.Services
             if (networkInfo.IsWlanConnectionProfile)
             {
                 Debug.WriteLine("WiFi connected");
-                await DownloadPosts();
-                if (_newTrackCount > 0)
-                {
-                    PopToast();
-                }
+
+                var res = await DownloadPosts();
+                if (res is int && (int)res > 0)
+                    NotificationService.PopToastGeneric((int)res);
+                else if (res is VKAudio && (VKAudio)res != null)
+                    NotificationService.PopToastTrack((VKAudio)res);
             }
             else
             {
                 Debug.WriteLine("Not on WiFi...");
             }
-            Debug.WriteLine("BG Task complete");
+            Debug.WriteLine("Download Posts Task complete");
             _deferral.Complete();
         }
 
-        private static void PopToast()
+        private static async Task<object> DownloadPosts()
         {
-            string body;
-            if (_newTrackCount > 1)
-                body = "We have " + _newTrackCount + " new tracks for you to check out!";
-            else
-                body = "We have a new track for you to check out!";
-
-            #region Toast Visual
-            ToastVisual visual = new ToastVisual()
-            {
-                BindingGeneric = new ToastBindingGeneric()
-                {
-                    Children =
-                    {
-                        new AdaptiveText() {Text = body},
-                    },
-                }
-            };
-            #endregion
-
-            ToastContent toastContent = new ToastContent()
-            {
-                Visual = visual,
-                ActivationType = ToastActivationType.Foreground,
-                Launch = "downloads"
-            };
-
-            var toast = new ToastNotification(toastContent.GetXml());
-            toast.NotificationMirroring = NotificationMirroring.Allowed;
-            ToastNotificationManager.CreateToastNotifier().Show(toast);
-        }
-
-        private static async Task DownloadPosts()
-        {
+            int max = 1;
+            int count = 0;
+            VKAudio lastDL = null;
             var dlFile = await ApplicationData.Current.LocalFolder.GetFileAsync("DL_List.json");
             if (dlFile == null)
             {
@@ -105,12 +76,15 @@ namespace VKatcher.Services
 
             if (ToDownload.Count > 0)
             {
-                for (int i = 0; i < 1; i++)
+                for (int i = 0; i < max; i++)
                 {
                     //Check if already downloaded
                     var t = lst.Find(x => x.id == ToDownload[i].id);
                     if (t != null)
+                    {
                         Debug.WriteLine("Download already exists");
+                        max++;
+                    }
                     else
                     {
                         //Don't download huge files
@@ -120,7 +94,8 @@ namespace VKatcher.Services
                             var file = await ToDownload[i].DownloadTrackB();
 
                             //Increment track count
-                            _newTrackCount++;
+                            count++;
+                            lastDL = ToDownload[i];
 
                             #region Add track to database
                             if (file != null)
@@ -133,7 +108,14 @@ namespace VKatcher.Services
                     ToDownload.Remove(ToDownload[i]);
                 }
                 File.WriteAllText(dlFile.Path, JsonConvert.SerializeObject(ToDownload));
+
+                if (count > 1)
+                    return count;
+                else
+                    return lastDL;
             }
+
+            return null;
         }
         #endregion
 
@@ -151,7 +133,7 @@ namespace VKatcher.Services
             await CheckSubscribedGroups();
             await CheckSubscribedTags();
             await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
-            Debug.WriteLine("BG Task complete");
+            Debug.WriteLine("Check Posts Task complete");
             _deferral.Complete();
         }
 
@@ -219,6 +201,7 @@ namespace VKatcher.Services
             var dlList = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(File.ReadAllText(dlFile.Path));
             await Task.Run(async () =>
             {
+                int count = 0;
                 foreach (var group in SubscribedGroups)
                 {
                     #region Get Posts
@@ -236,7 +219,10 @@ namespace VKatcher.Services
                             {
                                 //Don't download huge files
                                 if (att.audio.duration < 1200)
+                                {
                                     ToDownload.Add(att.audio);
+                                    count++;
+                                }
                             }
                         }
                         else
@@ -245,6 +231,8 @@ namespace VKatcher.Services
                         group.last_id = posts[0].id;
                     }
                     Debug.WriteLine("The latest post was ID# " + posts[0].id);
+                    if (count > 0)
+                        NotificationService.PopToastCommunity(group, count);
                     #endregion
                 }
             });
