@@ -142,7 +142,7 @@ namespace VKatcher.ViewModels
             });
         }
 
-        public async void OnSongListItemClick(ItemClickEventArgs e)
+        public async Task OnSongListItemClick(ItemClickEventArgs e)
         {
             bool containsOffline = false;
             //var clickedIndex = WallPosts.IndexOf((VKWallPost)((e.OriginalSource as ListView).DataContext));

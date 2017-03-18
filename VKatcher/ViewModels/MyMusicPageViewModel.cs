@@ -193,7 +193,7 @@ namespace VKatcher.ViewModels
             });
         }
 
-        private async void DownloadTrack(VKAudio track)
+        private async Task DownloadTrack(VKAudio track)
         {
             var file = await track.DownloadTrack();
             if (file != null)
@@ -202,7 +202,7 @@ namespace VKatcher.ViewModels
             }
         }
 
-        public async void LoadMyDownloads()
+        public async Task LoadMyDownloads()
         {
             try
             {
@@ -217,7 +217,7 @@ namespace VKatcher.ViewModels
             }
         }
 
-        private async void LoadMySuggestedMusicAsync()
+        private async Task LoadMySuggestedMusicAsync()
         {
             _inCall = true;
             try
@@ -242,7 +242,7 @@ namespace VKatcher.ViewModels
             _inCall = false;
         }
 
-        public async void LoadMyTracks()
+        public async Task LoadMyTracks()
         {
             _inCall = true;
             try

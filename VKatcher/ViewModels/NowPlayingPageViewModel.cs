@@ -148,7 +148,7 @@ namespace VKatcher.ViewModels
             }
         }
 
-        private async void DownloadTrack(VKAudio a)
+        private async Task DownloadTrack(VKAudio a)
         {
             var file = await a.DownloadTrack();
             if (file != null)
@@ -157,7 +157,7 @@ namespace VKatcher.ViewModels
             }
         }
 
-        public async void OnSongListItemClick(ItemClickEventArgs e)
+        public async Task OnSongListItemClick(ItemClickEventArgs e)
         {
             bool containsOffline = false;
             if (e.ClickedItem is VKAudio)

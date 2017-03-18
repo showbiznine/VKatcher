@@ -6,6 +6,7 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:behaviors="using:VKatcher.Behaviors"
+    xmlns:model="using:VK.WindowsPhone.SDK.API.Model"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -22,47 +23,49 @@
     <Converters:ImageHeightConverter x:Key="ImageHeightConverter"/>
 
     <DataTemplate x:Key="GroupGridDataTemplate">
-        <Button Command="{Binding DataContext.SelectGroup, ElementName=pageRoot}"
-                CommandParameter="{Binding}"
-                Style="{StaticResource SimpleButtonStyle}">
+        <UserControl>
+            <toolkit:DropShadowPanel OffsetX="2"
+                                        OffsetY="2"
+                                        BlurRadius="4"
+                                        ShadowOpacity="0.4"
+                                        Color="Black">
             <Grid x:Name="imgGroupPicture"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Stretch"
-                  Margin="0"
-                  Background="Transparent"
-                  Width="{Binding ItemsPanelRoot.ItemWidth, ElementName=gridView, Mode=OneWay}"
-                  Height="{Binding ItemsPanelRoot.ItemHeight, ElementName=gridView, Mode=OneWay}">
-                <Image x:Name="image"
-                       HorizontalAlignment="Stretch"
-                       VerticalAlignment="Stretch"
-                       Stretch="UniformToFill"
-                       Source="{Binding photo_200}" />
-                <Grid x:Name="grid"
-                      VerticalAlignment="Bottom"
-                      Margin="0,12,0,0">
-                    <Grid.Background>
-                        <SolidColorBrush Color="#99252525" />
-                    </Grid.Background>
-                    <Controls:BackDrop Margin="0"
-                                       BlurAmount="3" />
-                    <TextBlock x:Name="textBlock"
-                               HorizontalAlignment="Left"
-                               TextWrapping="Wrap"
-                               Text="{Binding name}"
-                               VerticalAlignment="Top"
-                               Margin="12,12,0,12">
-                        <TextBlock.Foreground>
-                            <SolidColorBrush Color="White" />
-                        </TextBlock.Foreground>
-                    </TextBlock>
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent">
+                    <Border x:Name="image"
+                            Grid.Row="0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            CornerRadius="5,5,0,0">
+                        <Border.Background>
+                            <ImageBrush ImageSource="{Binding photo_200}"/>
+                        </Border.Background>
+                        <Image Source="{Binding photo_200}"
+                                Opacity="0"/>
+                    </Border>
+                    <Grid x:Name="grid"
+                            VerticalAlignment="Bottom">
+                        <Grid.Background>
+                            <SolidColorBrush Color="#99252525" />
+                        </Grid.Background>
+                        <Controls:BackDrop BlurAmount="3" />
+                        <TextBlock x:Name="textBlock"
+                                    HorizontalAlignment="Left"
+                                    TextWrapping="Wrap"
+                                    Text="{Binding name}"
+                                    VerticalAlignment="Top"
+                                    Margin="12,12,0,12"
+                                    Foreground="White" />
+                    </Grid>
                 </Grid>
-            </Grid>
-        </Button>
+            </toolkit:DropShadowPanel>
+        </UserControl>
     </DataTemplate>
 
     <DataTemplate x:Key="PostListTemplate">
         <UserControl Margin="0,0,0,4">
-             <Grid>
+            <Grid>
                 <VisualStateManager.VisualStateGroups>
                     <VisualStateGroup x:Name="Layout">
                         <VisualState x:Name="Mobile">
@@ -94,27 +97,27 @@
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
                 <Grid x:Name="grdParent"
-                          Margin="12"
-                          Background="{ThemeResource BG_Gray}"
-                          CornerRadius="4">
+                      Margin="12"
+                      Background="{StaticResource Light_Gray}"
+                      CornerRadius="4">
                     <toolkit:DropShadowPanel OffsetX="2.0"
-                                         OffsetY="2.0"
-                                         BlurRadius="4"
-                                         ShadowOpacity="0.4"
-                                         Color="Black">
-                        <Grid>
+                                             OffsetY="2.0"
+                                             BlurRadius="4"
+                                             ShadowOpacity="0.4"
+                                             Color="Black">
+                        <Grid Background="{StaticResource Light_Gray}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition x:Name="col1"
-                                              Width="*"
-                                              MaxWidth="500" />
+                                                  Width="*"
+                                                  MaxWidth="500" />
                                 <ColumnDefinition x:Name="col2"
-                                              Width="Auto" />
+                                                  Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="row1"
-                                           Height="Auto" />
+                                               Height="Auto" />
                                 <RowDefinition x:Name="row2"
-                                           Height="Auto" />
+                                               Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid x:Name="grdTop"
                                   CornerRadius="4">
@@ -123,11 +126,11 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <toolkit:ImageEx x:Name="postImage"
-                                             Source="{Binding post_image}"
-                                             VerticalAlignment="Top"
-                                             Grid.Row="0"
-                                             Stretch="Fill"
-                                             IsCacheEnabled="True">
+                                                 Source="{Binding post_image}"
+                                                 VerticalAlignment="Top"
+                                                 Grid.Row="0"
+                                                 Stretch="Fill"
+                                                 IsCacheEnabled="True">
                                     <!--<Interactivity:Interaction.Behaviors>
                                     <behaviors:HeightBehavior Width="{Binding ElementName=grdParent, Path=Width}"
                                                               AspectRatio="{Binding post_image_aspect_ratio}"
@@ -139,7 +142,7 @@
                                             Grid.Row="1"
                                             Margin="12,8,0,8">
                                     <toolkit:MarkdownTextBlock x:Name="mtbPostText"
-                                                               Text="{Binding text}" 
+                                                               Text="{Binding text}"
                                                                Foreground="White">
                                         <Interactivity:Interaction.Behaviors>
                                             <Core:EventTriggerBehavior EventName="LinkClicked">
@@ -172,7 +175,6 @@
                             </ListView>
                         </Grid>
                     </toolkit:DropShadowPanel>
-
                 </Grid>
             </Grid>
         </UserControl>

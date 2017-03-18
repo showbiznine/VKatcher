@@ -31,7 +31,7 @@ namespace VKatcher.Services
         public static ObservableCollection<VKTag> SubscribedTags { get; private set; }
 
         #region Catcher task
-        public static async void DownloadAudios(IBackgroundTaskInstance taskInstance)
+        public static async Task DownloadAudios(IBackgroundTaskInstance taskInstance)
         {
             Debug.WriteLine("Starting catcher task...");
             _deferral = taskInstance.GetDeferral();
@@ -120,7 +120,7 @@ namespace VKatcher.Services
         #endregion
 
         #region Check posts task
-        public static async void CheckNewPosts(IBackgroundTaskInstance taskInstance)
+        public static async Task CheckNewPosts(IBackgroundTaskInstance taskInstance)
         {
             Debug.WriteLine("Starting catcher task...");
             _deferral = taskInstance.GetDeferral();

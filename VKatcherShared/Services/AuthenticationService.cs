@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -45,6 +46,7 @@ namespace VKatcherShared.Services
             }
             catch (Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 return false;
             }
         }

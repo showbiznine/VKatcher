@@ -25,6 +25,7 @@ using Windows.UI.Popups;
 using Microsoft.QueryStringDotNET;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.AppService;
+using System.Threading.Tasks;
 
 namespace VKatcher
 {
@@ -121,12 +122,12 @@ namespace VKatcher
             }
         }
 
-        private async void CheckForRemoteDevices()
+        private async Task CheckForRemoteDevices()
         {
             await RemoteSystemService.BuildDeviceListAsync();
         }
 
-        private async void SetupStoreServicesAsync()
+        private async Task SetupStoreServicesAsync()
         {
             StoreServicesEngagementManager engagementManager = StoreServicesEngagementManager.GetDefault();
             await engagementManager.RegisterNotificationChannelAsync();

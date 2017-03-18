@@ -5376,7 +5376,7 @@
                                      MaxOpacity="0.5"
                                      IsSwipeablePaneOpen="{Binding IsMenuOpen, Mode=TwoWay}">
             <Controls:SwipeableSplitView.Pane>
-                <Grid Background="{StaticResource BG_Gray}">
+                <Grid Background="{StaticResource Med_Gray}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -5489,7 +5489,7 @@
                            StrokeThickness="0"
                            RenderTransformOrigin="0.5,0.5"
                            Grid.ColumnSpan="3"
-                           Fill="{StaticResource BG_Gray}">
+                           Fill="{StaticResource Med_Gray}">
                     <Rectangle.RenderTransform>
                         <CompositeTransform />
                     </Rectangle.RenderTransform>

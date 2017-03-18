@@ -411,7 +411,7 @@
         <Converters:PlayingToMarginConverter x:Key="PlayingToMarginConverter" />
     </Page.Resources>
 
-    <Grid Background="#FF4E5867">
+    <Grid Background="{StaticResource Med_Gray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -780,7 +780,7 @@
             </PivotItem>
         </Pivot>
         <Grid x:Name="grdTopBar"
-              Background="#FF4E5867"
+              Background="{StaticResource Med_Gray}"
               Height="64"
               VerticalAlignment="Top">
             <Grid.ColumnDefinitions>

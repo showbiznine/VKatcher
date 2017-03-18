@@ -20,8 +20,12 @@
             </ResourceDictionary.MergedDictionaries>
             <vm:ViewModelLocator xmlns:vm="using:VKatcher.ViewModels"
                                  x:Key="Locator" />
-            <SolidColorBrush x:Key="BG_Gray"
-                             Color="#FF1C1C1C" />
+            <SolidColorBrush x:Key="Med_Gray"
+                             Color="#FF444444" />
+            <SolidColorBrush x:Key="Dark_Gray"
+                             Color="#FF333333" />
+            <SolidColorBrush x:Key="Light_Gray"
+                             Color="#FF555555" />
             <SolidColorBrush x:Key="MainBlue"
                              Color="#FF4E5867" />
         </ResourceDictionary>

@@ -39,27 +39,6 @@ namespace VKatcher.Views
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        //private bool isBackgroundTaskRunning = false;
-        //private bool IsBackgroundTaskRunning
-        //{
-        //    get
-        //    {
-        //        if (isBackgroundTaskRunning)
-        //            return true;
-
-        //        object value = ApplicationSettingsHelper.ReadResetSettingsValue("backgroundtaskstate");
-        //        if (value == null)
-        //        {
-        //            return false;
-        //        }
-        //        else
-        //        {
-        //            isBackgroundTaskRunning = ((string)value).Equals("BackgroundTaskRunning");
-        //            return isBackgroundTaskRunning;
-        //        }
-        //    }
-        //}
-        //private List<string> _scope = new List<string> { VKScope.FRIENDS, VKScope.WALL, VKScope.PHOTOS, VKScope.AUDIO, VKScope.GROUPS };
         private bool _controlsOpen;
         private bool _isNowPlaying = false;
         private DispatcherTimer _sliderTimer;
@@ -129,13 +108,16 @@ namespace VKatcher.Views
             if (e.Parameter is string)
             {
                 var query = QueryString.Parse(e.Parameter as string);
-                switch (query["page"])
+                if (query.Contains("page"))
                 {
-                    case "downloads":
-                        myFrame.Navigate(typeof(MyMusicPage));
-                        break;
-                    default:
-                        break;
+                    switch (query["page"])
+                    {
+                        case "downloads":
+                            myFrame.Navigate(typeof(MyMusicPage));
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
             //var test = await AuthenticationService.VKLogin();

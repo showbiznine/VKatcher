@@ -53,7 +53,7 @@
         </Storyboard>
     </Page.Resources>
 
-    <Grid Background="#FF4E5867">
+    <Grid Background="{StaticResource Med_Gray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="64" />
             <RowDefinition />
@@ -77,13 +77,13 @@
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Header>
-                <toolkit:ScrollHeader x:Name="lstHeader" 
+                <toolkit:ScrollHeader x:Name="lstHeader"
                                       Mode="QuickReturn"
                                       TargetListViewBase="{x:Bind listView}"
                                       HorizontalContentAlignment="Stretch">
                     <Grid Width="Auto"
                           Height="100"
-                          Background="{StaticResource MainBlue}"
+                          Background="{StaticResource Med_Gray}"
                           Margin="0,0,0,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
@@ -136,8 +136,8 @@
                                            FontFamily="Segoe MDL2 Assets"
                                            FontSize="36"
                                            HorizontalAlignment="Center"
-                                           Margin="0,0,0,4" 
-                                           Opacity="{Binding _currentGroup.IsSubscribed,Converter={StaticResource SubscribedColorConverter}}"/>
+                                           Margin="0,0,0,4"
+                                           Opacity="{Binding _currentGroup.IsSubscribed,Converter={StaticResource SubscribedColorConverter}}" />
                                 <TextBlock x:Name="textBlock1_Copy"
                                            TextWrapping="Wrap"
                                            Text="{Binding _currentGroup.IsSubscribed, Converter={StaticResource SubscribedStringConverter}}"
@@ -199,16 +199,16 @@
             </Button>
         </StackPanel>
         <Grid x:Name="grdTopBar"
-              Background="{StaticResource MainBlue}">
+              Background="{StaticResource Med_Gray}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="64" />
             </Grid.ColumnDefinitions>
             <Button x:Name="btnHamburger"
                     Content="&#xE700;"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    d:LayoutOverrides="Width"
                     Background="#00000000"
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="28"
@@ -223,8 +223,18 @@
                        FontWeight="Black"
                        TextLineBounds="Tight"
                        Grid.Column="1"
-                       Margin="8,0,0,0"
+                       Margin="8,24,0,24"
                        Foreground="White" />
+            <Ellipse x:Name="ellGroupImage"
+                     HorizontalAlignment="Center"
+                     Height="48"
+                     VerticalAlignment="Center"
+                     Width="48"
+                     Grid.Column="2">
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="{Binding _currentGroup.photo_50}"/>
+                </Ellipse.Fill>
+            </Ellipse>
         </Grid>
     </Grid>
 </Page>

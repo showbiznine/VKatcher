@@ -73,12 +73,13 @@ namespace VKatcher.ViewModels
                 MediaPlayer = PlayerService.MediaPlayer;
                 LoadRoamingPlaylist();
                 SetupTimer();
+
                 MediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
                 PlayerService.CurrentPlaybackList.CurrentItemChanged += OnTrackChanged;
             }
         }
 
-        private async void RegisterBackgroundTasks()
+        private async Task RegisterBackgroundTasks()
         {
             var bgStatus = await BackgroundExecutionManager.RequestAccessAsync();
             await Task.Run(() =>

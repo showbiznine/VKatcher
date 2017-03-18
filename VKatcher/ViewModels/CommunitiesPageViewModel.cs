@@ -5,6 +5,7 @@ using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.ObjectModel;
 using System.Net.Http;
+using System.Threading.Tasks;
 using VK.WindowsPhone.SDK.API.Model;
 using VKatcher.Services;
 using VKatcher.Views;
@@ -29,7 +30,7 @@ namespace VKatcher.ViewModels
         public RelayCommand OpenMenuCommand { get; set; }
         public RelayCommand GoToSettingsCommand { get; set; }
         public RelayCommand GoToMyMusicCommand { get; set; }
-        public RelayCommand<VKGroup> SelectGroup { get; set; }
+        public RelayCommand<ItemClickEventArgs> SelectGroupCommand { get; set; }
         #endregion
 
         public CommunitiesPageViewModel()
@@ -69,15 +70,16 @@ namespace VKatcher.ViewModels
             {
                 App.ViewModelLocator.Main.IsMenuOpen = !App.ViewModelLocator.Main.IsMenuOpen;
             });
-            SelectGroup = new RelayCommand<VKGroup>(group =>
+            SelectGroupCommand = new RelayCommand<ItemClickEventArgs>(item =>
             {
-                App.ViewModelLocator.Feed._currentGroup = group;
+                var g = item.ClickedItem as VKGroup;
+                App.ViewModelLocator.Feed._currentGroup = g;
                 App.ViewModelLocator.Feed.LoadPosts(0, 30, true);
                 _navigationService.NavigateTo(typeof(FeedPage));
             });
         }
 
-        private async void LoadGroups()
+        private async Task LoadGroups()
         {
             _inCall = true;
             try

@@ -121,7 +121,7 @@
         </Storyboard>
     </Page.Resources>
 
-    <Grid Background="{StaticResource MainBlue}">
+    <Grid Background="{StaticResource Med_Gray}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />

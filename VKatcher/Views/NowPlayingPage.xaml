@@ -16,21 +16,21 @@
         <Converters:TimespanStringConverter x:Key="TimespanStringConverter" />
     </Page.Resources>
 
-    <Grid Background="{StaticResource BG_Gray}">
+    <Grid Background="{StaticResource Med_Gray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <ScrollViewer x:Name="myScrollViewer"
                       Margin="0"
-                      Background="{x:Null}"
+                      Background="Transparent"
                       Grid.RowSpan="2"
                       Padding="0"
                       Grid.Row="1">
             <StackPanel x:Name="stkMain"
                         Margin="0"
                         Visibility="Visible"
-                        Background="{StaticResource BG_Gray}">
+                        Background="{StaticResource Med_Gray}">
                 <StackPanel x:Name="stkTopControls"
                             Padding="24,0">
                     <Grid Visibility="Collapsed">

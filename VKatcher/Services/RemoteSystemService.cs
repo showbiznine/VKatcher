@@ -16,7 +16,7 @@ namespace VKatcher.Services
 {
     public class RemoteSystemService
     {
-        private static RemoteSystemWatcher _remoteSystemWatcher;
+        public static RemoteSystemWatcher RemoteSystemWatcher;
         public static ObservableCollection<RemoteSystem> _deviceList = new ObservableCollection<RemoteSystem>();
         private static Dictionary<string, RemoteSystem> _deviceMap = new Dictionary<string, RemoteSystem>();
 
@@ -27,36 +27,36 @@ namespace VKatcher.Services
 
             if (accessStatus == RemoteSystemAccessStatus.Allowed)
             {
-                _remoteSystemWatcher = RemoteSystem.CreateWatcher();
+                RemoteSystemWatcher = RemoteSystem.CreateWatcher();
 
                 // Subscribing to the event raised when a new remote system is found by the watcher.
-                _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
+                RemoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
 
                 // Subscribing to the event raised when a previously found remote system is no longer available.
-                _remoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
+                RemoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
 
-                _remoteSystemWatcher.Start();
+                RemoteSystemWatcher.Start();
             }
         }
 
         public static void GetNearbyDevices()
         {
-            _remoteSystemWatcher.Stop();
+            RemoteSystemWatcher.Stop();
             _deviceList.Clear();
             _deviceMap.Clear();
             // store filter list
             List<IRemoteSystemFilter> listOfFilters = makeFilterList();
 
             // construct watcher with the list
-            _remoteSystemWatcher = RemoteSystem.CreateWatcher(listOfFilters);
+            RemoteSystemWatcher = RemoteSystem.CreateWatcher(listOfFilters);
 
             // Subscribing to the event raised when a new remote system is found by the watcher.
-            _remoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
+            RemoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
 
             // Subscribing to the event raised when a previously found remote system is no longer available.
-            _remoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
+            RemoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
 
-            _remoteSystemWatcher.Start();
+            RemoteSystemWatcher.Start();
         }
 
         private static List<IRemoteSystemFilter> makeFilterList()

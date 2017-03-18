@@ -6,13 +6,13 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
-    <Grid Background="{StaticResource BG_Gray}">
+    <Grid Background="{StaticResource Med_Gray}">
         <Grid.RowDefinitions>
             <RowDefinition Height="64" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid x:Name="grdTopBar"
-              Background="#FF4E5867">
+              Background="{StaticResource Med_Gray}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64" />
                 <ColumnDefinition />

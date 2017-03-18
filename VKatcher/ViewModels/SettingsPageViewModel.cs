@@ -56,7 +56,7 @@ namespace VKatcher.ViewModels
             }
         }
 
-        private async void InitializeUser()
+        private async Task InitializeUser()
         {
             //await Task.Run(() =>
             //{
@@ -77,7 +77,7 @@ namespace VKatcher.ViewModels
             //});
         }
 
-        private async void LoadSpotifyPlaylists()
+        private async Task LoadSpotifyPlaylists()
         {
             //var pl = await SpotifyService.GetUserPlaylists();
             //foreach (var playlist in pl)
@@ -161,7 +161,7 @@ namespace VKatcher.ViewModels
             //IsSpotifyConnected = res;
         }
 
-        public async void Initializesubscriptions()
+        public async Task Initializesubscriptions()
         {
             SubscribedGroups = new ObservableCollection<VKGroup>();
             SubscribedGroups = await SubscriptionService.LoadSubscribedGroups();

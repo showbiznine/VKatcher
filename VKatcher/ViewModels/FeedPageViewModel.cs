@@ -206,7 +206,7 @@ namespace VKatcher.ViewModels
             _navigationService.NavigateTo(typeof(SearchPage));
         }
 
-        public async void LoadPosts(int offset, int count, bool clear)
+        public async Task LoadPosts(int offset, int count, bool clear)
         {
             _inCall = true;
             try
@@ -231,7 +231,7 @@ namespace VKatcher.ViewModels
             _inCall = false;
         }
 
-        private async void DownloadTrack(VKAudio track)
+        private async Task DownloadTrack(VKAudio track)
         {
             var file = await track.DownloadTrack();
             if (file != null)
@@ -240,7 +240,7 @@ namespace VKatcher.ViewModels
             }
         }
 
-        public async void OnSongListItemClick(ItemClickEventArgs e)
+        public async Task OnSongListItemClick(ItemClickEventArgs e)
         {
             bool containsOffline = false;
             var clickedIndex = WallPosts.IndexOf((VKWallPost)((e.OriginalSource as ListView).DataContext));
