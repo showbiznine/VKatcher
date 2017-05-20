@@ -28,7 +28,7 @@ namespace VKatcher.Services
     {
         private const string _host = "https://api.vk.com/method/";
         private const string _authHost = "https://oauth.vk.com/";
-        private const string _apiVersion = "5.62";
+        private const string _apiVersion = "5.63";
 
         #region API Calls
 
@@ -64,14 +64,14 @@ namespace VKatcher.Services
 
                 HttpClient http = new HttpClient();
                 var q = new QueryString()
-            {
-                {"owner_id", "-" + groupID },
-                {"extended", "1" },
-                {"offset", offset.ToString() },
-                {"count", count.ToString() },
-                {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
-            };
+                {
+                    {"owner_id", "-" + groupID },
+                    {"extended", "1" },
+                    {"offset", offset.ToString() },
+                    {"count", count.ToString() },
+                    {"access_token", await AuthenticationService.GetVKAccessToken() },
+                    {"v", _apiVersion }
+                };
                 string request = _host + "wall.get?" + q;
 
                 var res = await http.GetAsync(request);

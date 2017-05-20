@@ -17,8 +17,8 @@ namespace VKatcherShared.Services
     {
         public static string _clientID = "00000000481A8D3A";
         private const string _authHost = "https://oauth.vk.com/";
-        private const string _VKclientID = "2274003";
-        private const string _VKclientSecret = "hHbZxrka2uZ6jB1inYsH";
+        private const string _VKclientID = "3502561";
+        private const string _VKclientSecret = "omvP3y2MZmpREFZJDNHd";
 
         #region VK
 
@@ -32,8 +32,8 @@ namespace VKatcherShared.Services
                 {"grant_type", "password" },
                 {"username", "showbiznine@hotmail.com" },
                 {"password", "hgssucks1" },
-                {"scope", "all" },
-                {"libverify_support", "1" }
+                {"scope", "notify, friends, photos, audio, video, docs, notes, pages, status, wall, groups, messages, notifications, stats" },
+                {"v", "5.63" }
             };
             var uri = new Uri(_authHost + "token?" + q);
 
@@ -53,15 +53,15 @@ namespace VKatcherShared.Services
             }
         }
 
-        public static async Task<bool> VKLogin2()
+        public static async Task<bool> VKLoginWeb()
         {
             var q = new QueryString
             {
-                {"client_id",  "2685278"},
-                {"scope",  "271390"},
+                {"client_id",  "3803024"},
+                {"scope",  "all"},
                 {"redirect_uri",  ""},
-                {"display",  "touch"},
-                {"v",  "5.62"},
+                {"display",  "wap"},
+                {"v",  "5.63"},
                 {"response_type",  "token"},
             };
             string startURI = "https://oauth.vk.com/authorize?" + q;

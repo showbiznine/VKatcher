@@ -151,18 +151,16 @@ namespace VK.WindowsPhone.SDK.API.Model
             return sf;
         }
 
-        public async Task<StorageFile> DownloadTrackB()
+        public async void DownloadTrackBackground()
         {
             var folder = await KnownFolders.MusicLibrary.CreateFolderAsync("VKatcher", CreationCollisionOption.OpenIfExists);
             StorageFile sf = await folder.CreateFileAsync(title + "-" + artist + ".mp3", CreationCollisionOption.ReplaceExisting);
 
             var bgd = new BackgroundDownloader();
             var dlOp = bgd.CreateDownload(new Uri(url), sf);
-            Progress<DownloadOperation> progress = new Progress<DownloadOperation>(OnDLProgressChanged);
             CancellationTokenSource cts = new CancellationTokenSource();
 
             await dlOp.StartAsync();
-            return sf;
         }
 
         private void OnDLProgressChanged(DownloadOperation dlOP)

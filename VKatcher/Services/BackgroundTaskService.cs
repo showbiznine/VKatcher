@@ -23,7 +23,6 @@ namespace VKatcher.Services
         private static string _followedFile = "followed_groups.json";
         private static string _downloadedDB = "downloaded_files.json";
         private static BackgroundTaskDeferral _deferral;
-        private static AutoResetEvent _ARE;
         private static int _newTrackCount;
 
         public static ObservableCollection<VKAudio> ToDownload { get; private set; }
@@ -35,8 +34,7 @@ namespace VKatcher.Services
         {
             Debug.WriteLine("Starting catcher task...");
             _deferral = taskInstance.GetDeferral();
-            _ARE = new AutoResetEvent(false);
-            //taskInstance.Canceled += OnTaskCanceled;
+            taskInstance.Canceled += OnTaskCanceled;
             var networkInfo = NetworkInformation.GetInternetConnectionProfile();
             ToDownload = new ObservableCollection<VKAudio>();
             if (networkInfo.IsWlanConnectionProfile)
@@ -92,19 +90,19 @@ namespace VKatcher.Services
                         {
                             //Download the file
                             Debug.WriteLine("Downloading: " + ToDownload[i].title);
-                            var file = await ToDownload[i].DownloadTrackB();
+                            ToDownload[i].DownloadTrackBackground();
                             Debug.WriteLine("Download complete");
 
                             //Increment track count
                             count++;
                             lastDL = ToDownload[i];
 
-                            #region Add track to database
-                            if (file != null)
-                            {
-                                FileService.WriteDownloads(ToDownload[i], file);
-                                #endregion
-                            }
+                            //#region Add track to database
+                            //if (file != null)
+                            //{
+                            //    FileService.WriteDownloads(ToDownload[i], file);
+                            //    #endregion
+                            //}
                         }
                     }
                     ToDownload.Remove(ToDownload[i]);
@@ -125,15 +123,18 @@ namespace VKatcher.Services
         public static async Task CheckNewPosts(IBackgroundTaskInstance taskInstance)
         {
             Debug.WriteLine("Starting catcher task...");
+
             _deferral = taskInstance.GetDeferral();
-            _ARE = new AutoResetEvent(false);
-            //taskInstance.Canceled += OnTaskCanceled;
-            var networkInfo = NetworkInformation.GetInternetConnectionProfile();
+
+            taskInstance.Canceled += OnTaskCanceled;
+
             ToDownload = new ObservableCollection<VKAudio>();
             SubscribedGroups = new ObservableCollection<VKGroup>();
             SubscribedTags = new ObservableCollection<VKTag>();
+
             await CheckSubscribedGroups();
-            await CheckSubscribedTags();
+            //await CheckSubscribedTags();
+
             await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
             Debug.WriteLine("Check Posts Task complete");
             _deferral.Complete();
@@ -189,6 +190,7 @@ namespace VKatcher.Services
             SubscribedGroups = await SubscriptionService.LoadSubscribedGroups();
             Debug.WriteLine("Loaded subscribed groups");
             StorageFile dlFile;
+
             try
             {
                 dlFile = await ApplicationData.Current.LocalFolder.GetFileAsync("DL_List.json");
@@ -197,7 +199,9 @@ namespace VKatcher.Services
             {
                 dlFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("DL_List.json");
             }
+
             var dlList = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(File.ReadAllText(dlFile.Path));
+
             int count;
             foreach (var group in SubscribedGroups)
             {
@@ -233,6 +237,7 @@ namespace VKatcher.Services
                     NotificationService.PopToastCommunity(group, count);
                 #endregion
             }
+
             File.WriteAllText(dlFile.Path, JsonConvert.SerializeObject(ToDownload));
         }
 
@@ -264,6 +269,8 @@ namespace VKatcher.Services
             var toast = new ToastNotification(toastContent.GetXml());
             toast.NotificationMirroring = NotificationMirroring.Allowed;
             ToastNotificationManager.CreateToastNotifier().Show(toast);
+
+            _deferral.Complete();
         }
 
     }
