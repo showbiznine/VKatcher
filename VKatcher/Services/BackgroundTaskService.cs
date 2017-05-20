@@ -36,7 +36,7 @@ namespace VKatcher.Services
             Debug.WriteLine("Starting catcher task...");
             _deferral = taskInstance.GetDeferral();
             _ARE = new AutoResetEvent(false);
-            taskInstance.Canceled += new BackgroundTaskCanceledEventHandler(OnCancelled);
+            //taskInstance.Canceled += OnTaskCanceled;
             var networkInfo = NetworkInformation.GetInternetConnectionProfile();
             ToDownload = new ObservableCollection<VKAudio>();
             if (networkInfo.IsWlanConnectionProfile)
@@ -91,7 +91,9 @@ namespace VKatcher.Services
                         if (ToDownload[i].duration < 1200)
                         {
                             //Download the file
+                            Debug.WriteLine("Downloading: " + ToDownload[i].title);
                             var file = await ToDownload[i].DownloadTrackB();
+                            Debug.WriteLine("Download complete");
 
                             //Increment track count
                             count++;
@@ -125,7 +127,7 @@ namespace VKatcher.Services
             Debug.WriteLine("Starting catcher task...");
             _deferral = taskInstance.GetDeferral();
             _ARE = new AutoResetEvent(false);
-            taskInstance.Canceled += new BackgroundTaskCanceledEventHandler(OnCancelled);
+            //taskInstance.Canceled += OnTaskCanceled;
             var networkInfo = NetworkInformation.GetInternetConnectionProfile();
             ToDownload = new ObservableCollection<VKAudio>();
             SubscribedGroups = new ObservableCollection<VKGroup>();
@@ -151,37 +153,34 @@ namespace VKatcher.Services
                 dlFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("DL_List.json");
             }
             var dlList = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(File.ReadAllText(dlFile.Path));
-            await Task.Run(async () =>
+            foreach (var tag in SubscribedTags)
             {
-                foreach (var tag in SubscribedTags)
+                #region Get Posts
+                tag.to_save = tag.to_save == 0 ? 3 : tag.to_save;
+                var posts = await DataService.SearchWallByTag(tag.tag, tag.domain, tag.to_save, false);
+                Debug.WriteLine("Loaded posts from #" + tag.tag + "@" + tag.domain);
+                foreach (var post in posts)
                 {
-                    #region Get Posts
-                    tag.to_save = tag.to_save == 0 ? 3 : tag.to_save;
-                    var posts = await DataService.SearchWallByTag(tag.tag, tag.domain, tag.to_save);
-                    Debug.WriteLine("Loaded posts from #" + tag.tag + "@" + tag.domain);
-                    foreach (var post in posts)
+                    //Check last post in the group
+                    if (post.id != tag.LastSavedId)
                     {
-                        //Check last post in the group
-                        if (post.id != tag.LastSavedId)
-                        {
-                            tag.LastSavedId = posts[0].id;
-                            var attachments = post.attachments;
-                            foreach (var att in attachments)
-                            {
-                                //Don't download huge files
-                                if (att.audio.duration < 1200)
-                                    ToDownload.Add(att.audio);
-                            }
-                        }
-                        else
-                            break;
-                        //Set the last post ID
                         tag.LastSavedId = posts[0].id;
+                        var attachments = post.attachments;
+                        foreach (var att in attachments)
+                        {
+                            //Don't download huge files
+                            if (att.audio.duration < 1200)
+                                ToDownload.Add(att.audio);
+                        }
                     }
-                    Debug.WriteLine("The latest post was ID# " + posts[0].id);
-                    #endregion
+                    else
+                        break;
+                    //Set the last post ID
+                    tag.LastSavedId = posts[0].id;
                 }
-            });
+                Debug.WriteLine("The latest post was ID# " + posts[0].id);
+                #endregion
+            }
             File.WriteAllText(dlFile.Path, JsonConvert.SerializeObject(ToDownload));
         }
 
@@ -199,51 +198,73 @@ namespace VKatcher.Services
                 dlFile = await ApplicationData.Current.LocalFolder.CreateFileAsync("DL_List.json");
             }
             var dlList = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(File.ReadAllText(dlFile.Path));
-            await Task.Run(async () =>
+            int count;
+            foreach (var group in SubscribedGroups)
             {
-                int count = 0;
-                foreach (var group in SubscribedGroups)
+                count = 0;
+                #region Get Posts
+                group.to_save = group.to_save == 0 ? 3 : group.to_save;
+                var posts = await DataService.LoadWallPosts(group.id, group.to_save, 0, false);
+                Debug.WriteLine("Loaded posts from " + group.name);
+                foreach (var post in posts)
                 {
-                    #region Get Posts
-                    group.to_save = group.to_save == 0 ? 3 : group.to_save;
-                    var posts = await DataService.LoadWallPosts(group.id, group.to_save, 0);
-                    Debug.WriteLine("Loaded posts from " + group.name);
-                    foreach (var post in posts)
+                    //Check last post in the group
+                    if (post.id != group.last_id)
                     {
-                        //Check last post in the group
-                        if (post.id != group.last_id)
+                        group.last_id = posts[0].id;
+                        var attachments = post.attachments;
+                        foreach (var att in attachments)
                         {
-                            group.last_id = posts[0].id;
-                            var attachments = post.attachments;
-                            foreach (var att in attachments)
+                            //Don't download huge files
+                            if (att.audio.duration < 1200)
                             {
-                                //Don't download huge files
-                                if (att.audio.duration < 1200)
-                                {
-                                    ToDownload.Add(att.audio);
-                                    count++;
-                                }
+                                ToDownload.Add(att.audio);
+                                count++;
                             }
                         }
-                        else
-                            break;
-                        //Set the last post ID
-                        group.last_id = posts[0].id;
                     }
-                    Debug.WriteLine("The latest post was ID# " + posts[0].id);
-                    if (count > 0)
-                        NotificationService.PopToastCommunity(group, count);
-                    #endregion
+                    else
+                        break;
+                    //Set the last post ID
+                    group.last_id = posts[0].id;
                 }
-            });
+                Debug.WriteLine("The latest post was ID# " + posts[0].id);
+                if (count > 0)
+                    NotificationService.PopToastCommunity(group, count);
+                #endregion
+            }
             File.WriteAllText(dlFile.Path, JsonConvert.SerializeObject(ToDownload));
         }
 
         #endregion
 
-        private static void OnCancelled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        private static void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
-            throw new NotImplementedException();
+            string body = string.Format("Background task {0} failed because of error: {1}", sender.Task.Name, reason.ToString());
+
+            #region Toast Visual
+            ToastVisual visual = new ToastVisual()
+            {
+                BindingGeneric = new ToastBindingGeneric()
+                {
+                    Children =
+                    {
+                        new AdaptiveText() {Text = body},
+                    },
+                }
+            };
+            #endregion
+
+            ToastContent toastContent = new ToastContent()
+            {
+                Visual = visual,
+                ActivationType = ToastActivationType.Foreground,
+            };
+
+            var toast = new ToastNotification(toastContent.GetXml());
+            toast.NotificationMirroring = NotificationMirroring.Allowed;
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
+
     }
 }

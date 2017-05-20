@@ -22,9 +22,8 @@ namespace VKatcher.ViewModels
     public class NowPlayingPageViewModel : ViewModelBase
     {
         #region Fields
-        public VKAudio _currentTrack { get; set; }
-        public ObservableCollection<object> _currentPlaylist { get; set; }
-        private MediaPlayer _mediaPlayer { get; set; }
+        public VKAudio CurrentTrack { get; set; }
+        public ObservableCollection<object> CurrentPlaylist { get; set; }
         private DispatcherTimer _timer;
         private bool _sliderPressed;
         public string _trackTime { get; set; }
@@ -54,12 +53,17 @@ namespace VKatcher.ViewModels
             }
             else
             {
-                _mediaPlayer = BackgroundMediaPlayer.Current;
-                _currentTrack = new VKAudio();
-                _currentPlaylist = new ObservableCollection<object>();
+                CurrentTrack = new VKAudio();
+                CurrentPlaylist = new ObservableCollection<object>();
+                PlayerService.TrackChangedEvent += OnTrackChanged;
                 InitializeCommands();
                 SetupTimer();
             }
+        }
+
+        private void OnTrackChanged(VKAudio e)
+        {
+            CurrentTrack = e;
         }
 
         private void InitializeCommands()
@@ -100,11 +104,8 @@ namespace VKatcher.ViewModels
             {
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
                 {
-                    //var att = grid.DataContext as VKAudio;
-                    //var lst = App.ViewModelLocator.Main._currentPlaylist.ToList();
-                    //var i = lst.FindIndex(0, lst.Count, x => x.id == App.ViewModelLocator.Main._currentTrack.id);
-                    //App.ViewModelLocator.Main._currentPlaylist.Insert(i + 1, att);
-                    //MessageService.SendMessageToBackground(new PlayNextMessage(att));
+                    var att = grid.DataContext as VKAudio;
+                    PlayerService.PlayAudioNext(att);
                 });
             });
             PlaySongCommand = new RelayCommand<ItemClickEventArgs>(args => OnSongListItemClick(args));
@@ -130,22 +131,22 @@ namespace VKatcher.ViewModels
             });
             SliderUpCommand = new RelayCommand(() =>
             {
-                _mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(_trackPosition);
+                //_mediaPlayer.PlaybackSession.Position = TimeSpan.FromSeconds(_trackPosition);
                 _sliderPressed = false;
             });
         }
 
         private void PlayPause()
         {
-            var state = _mediaPlayer.PlaybackSession.PlaybackState;
-            if (state == MediaPlaybackState.Playing)
-            {
-                _mediaPlayer.Pause();
-            }
-            else if (state == MediaPlaybackState.Paused)
-            {
-                _mediaPlayer.Play();
-            }
+            //var state = _mediaPlayer.PlaybackSession.PlaybackState;
+            //if (state == MediaPlaybackState.Playing)
+            //{
+            //    _mediaPlayer.Pause();
+            //}
+            //else if (state == MediaPlaybackState.Paused)
+            //{
+            //    _mediaPlayer.Play();
+            //}
         }
 
         private async Task DownloadTrack(VKAudio a)
@@ -162,18 +163,18 @@ namespace VKatcher.ViewModels
             bool containsOffline = false;
             if (e.ClickedItem is VKAudio)
             {
-                if (_currentTrack != null)
+                if (CurrentTrack != null)
                 {
-                    _currentTrack.IsPlaying = false;
+                    CurrentTrack.IsPlaying = false;
                 }
-                _currentTrack = (e.ClickedItem as VKAudio);
-                Debug.WriteLine("Clicked " + _currentTrack.title);
+                CurrentTrack = (e.ClickedItem as VKAudio);
+                Debug.WriteLine("Clicked " + CurrentTrack.title);
                 if (App.ViewModelLocator.Main._currentTrack != null)
                 {
                     App.ViewModelLocator.Main._currentTrack.IsPlaying = false;
                 }
-                _currentTrack.IsPlaying = true;
-                App.ViewModelLocator.Main._currentTrack = _currentTrack;
+                CurrentTrack.IsPlaying = true;
+                App.ViewModelLocator.Main._currentTrack = CurrentTrack;
 
                 if (containsOffline)
                 {
@@ -204,27 +205,27 @@ namespace VKatcher.ViewModels
 
         private void _timer_Tick(object sender, object e)
         {
-            try
-            {
-                if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing &&
-                    !_sliderPressed)
-                {
-                    var ts = _mediaPlayer.PlaybackSession.Position;
-                    if (ts.Hours > 0)
-                    {
-                        _trackTime = _mediaPlayer.PlaybackSession.Position.ToString(@"hh\:mm\:ss");
-                    }
-                    else
-                    {
-                        _trackTime = _mediaPlayer.PlaybackSession.Position.ToString(@"mm\:ss");
-                    }
-                    _trackPosition = _mediaPlayer.PlaybackSession.Position.TotalSeconds;
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            //try
+            //{
+            //    if (_mediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing &&
+            //        !_sliderPressed)
+            //    {
+            //        var ts = _mediaPlayer.PlaybackSession.Position;
+            //        if (ts.Hours > 0)
+            //        {
+            //            _trackTime = _mediaPlayer.PlaybackSession.Position.ToString(@"hh\:mm\:ss");
+            //        }
+            //        else
+            //        {
+            //            _trackTime = _mediaPlayer.PlaybackSession.Position.ToString(@"mm\:ss");
+            //        }
+            //        _trackPosition = _mediaPlayer.PlaybackSession.Position.TotalSeconds;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.WriteLine(ex.Message);
+            //}
         }
         #endregion
     }

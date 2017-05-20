@@ -56,12 +56,14 @@ namespace VKatcher.Services
             return r.response.items;
         }
 
-        public static async Task<ObservableCollection<VKWallPost>> LoadWallPosts(long groupID, int offset, int count)
+        public static async Task<ObservableCollection<VKWallPost>> LoadWallPosts(long groupID, int offset, int count, bool foreground)
         {
-            var WallPosts = new ObservableCollection<VKWallPost>();
+            try
+            {
+                var WallPosts = new ObservableCollection<VKWallPost>();
 
-            HttpClient http = new HttpClient();
-            var q = new QueryString()
+                HttpClient http = new HttpClient();
+                var q = new QueryString()
             {
                 {"owner_id", "-" + groupID },
                 {"extended", "1" },
@@ -70,34 +72,40 @@ namespace VKatcher.Services
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
                 {"v", _apiVersion }
             };
-            string request = _host + "wall.get?" + q;
+                string request = _host + "wall.get?" + q;
 
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
+                var res = await http.GetAsync(request);
+                var json = await res.Content.ReadAsStringAsync();
 
-            var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(json);
-            var r = ReturnedObject.response.items;
-            foreach (var wp in r)
-            {
-                var temp = wp;
-                if (temp.attachments != null
-                    && temp.attachments.Count > 0)
+                var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(json);
+                var r = ReturnedObject.response.items;
+                foreach (var wp in r)
                 {
-                    temp = FormatPost(temp);
+                    var temp = wp;
+                    if (temp.attachments != null
+                        && temp.attachments.Count > 0)
+                    {
+                        temp = FormatPost(temp, foreground);
+                    }
+                    else if (temp.copy_history != null
+                    && temp.copy_history.Count > 0)
+                    {
+                        temp = FormatPost(temp.copy_history[0], foreground);
+                    }
+                    if (temp.attachments != null
+                        && temp.attachments.Count > 0)
+                    {
+                        WallPosts.Add(temp);
+                    }
                 }
-                else if (temp.copy_history != null
-                && temp.copy_history.Count > 0)
-                {
-                    temp = FormatPost(temp.copy_history[0]);
-                }
-                if (temp.attachments != null
-                    && temp.attachments.Count > 0)
-                {
-                    WallPosts.Add(temp);
-                }
+                await CheckOffline(WallPosts);
+                return WallPosts;
             }
-            await CheckOffline(WallPosts);
-            return WallPosts;
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
         #endregion
 
@@ -146,7 +154,7 @@ namespace VKatcher.Services
             return r;
         }
 
-        public static async Task<ObservableCollection<VKWallPost>> SearchWallByTag(string query, string domain, int count)
+        public static async Task<ObservableCollection<VKWallPost>> SearchWallByTag(string query, string domain, int count, bool foreground)
         {
             var WallPosts = new ObservableCollection<VKWallPost>();
 
@@ -172,12 +180,12 @@ namespace VKatcher.Services
                 if (temp.attachments != null
                     && temp.attachments.Count > 0)
                 {
-                    temp = FormatPost(temp);
+                    temp = FormatPost(temp, foreground);
                 }
                 else if (temp.copy_history != null
                 && temp.copy_history.Count > 0)
                 {
-                    temp = FormatPost(temp.copy_history[0]);
+                    temp = FormatPost(temp.copy_history[0], foreground);
                 }
                 if (temp.attachments != null
                     && temp.attachments.Count > 0)
@@ -277,68 +285,79 @@ namespace VKatcher.Services
         #endregion
 
         #region Formatting
-        private static VKWallPost FormatPost(VKWallPost post)
+        private static VKWallPost FormatPost(VKWallPost post, bool foreground)
         {
-
-            #region Tags
-            post.text = FormatPostText(post.text);
-            #endregion
-
-            for (int i = post.attachments.Count - 1; i > -1; i--)
+            try
             {
-                var attachment = post.attachments[i];
-                switch (attachment.type)
+                string postImage = null;
+                #region Tags
+                post.text = FormatPostText(post.text);
+                #endregion
+
+                for (int i = 0; i < post.attachments.Count; i++)
                 {
-                    case "audio":
-                        attachment.audio.IsPlaying = CheckPlaying(attachment.audio);
-                        break;
-                    #region Photo
-                    case "photo":
-                        try
-                        {
-                            post.post_image_aspect_ratio = attachment.photo.width / attachment.photo.height;
-                        }
-                        catch (Exception)
-                        {
-                            post.post_image_aspect_ratio = 1;
-                        }
-                        if (attachment.photo.photo_2560 != null)
-                        {
-                            post.post_image = attachment.photo.photo_2560;
-                        }
-                        else if (attachment.photo.photo_1280 != null)
-                        {
-                            post.post_image = attachment.photo.photo_1280;
-                        }
-                        else if (attachment.photo.photo_807 != null)
-                        {
-                            post.post_image = attachment.photo.photo_807;
-                        }
-                        else if (attachment.photo.photo_604 != null)
-                        {
-                            post.post_image = attachment.photo.photo_604;
-                        }
-                        else if (attachment.photo.photo_130 != null)
-                        {
-                            post.post_image = attachment.photo.photo_130;
-                        }
-                        else if (attachment.photo.photo_75 != null)
-                        {
-                            post.post_image = attachment.photo.photo_75;
-                        }
-                        if (!string.IsNullOrWhiteSpace(attachment.photo.text) &&
-                            string.IsNullOrWhiteSpace(post.text))
-                        {
-                            post.text = FormatPostText(attachment.photo.text);
-                        }
-                        post.attachments.RemoveAt(i);
-                        break;
-                    default:
-                        post.attachments.RemoveAt(i);
-                        //Or else remove the attachment
-                        break;
-                        #endregion
+                    var attachment = post.attachments[i];
+                    switch (attachment.type)
+                    {
+                        case "audio":
+                            if (foreground)
+                                attachment.audio.IsPlaying = CheckPlaying(attachment.audio);
+                            //attachment.audio.photo_url = postImage;
+                            break;
+                        #region Photo
+                        case "photo":
+                            try
+                            {
+                                post.post_image_aspect_ratio = attachment.photo.width / attachment.photo.height;
+                            }
+                            catch (Exception)
+                            {
+                                post.post_image_aspect_ratio = 1;
+                            }
+
+                            if (foreground)
+                            {
+                                if (attachment.photo.photo_2560 != null)
+                                    post.post_image = postImage = attachment.photo.photo_2560;
+                                else if (attachment.photo.photo_1280 != null && postImage == null)
+                                    post.post_image = postImage = attachment.photo.photo_1280;
+                                else if (attachment.photo.photo_807 != null && postImage == null)
+                                    post.post_image = postImage = attachment.photo.photo_807;
+                            }
+
+                            //else if (attachment.photo.photo_604 != null && postImage == null)
+                            //{
+                            //    post.post_image = postImage = attachment.photo.photo_604;
+                            //}
+                            //else if (attachment.photo.photo_130 != null && postImage == null)
+                            //{
+                            //    post.post_image = postImage = attachment.photo.photo_130;
+                            //}
+                            //else if (attachment.photo.photo_75 != null && postImage == null)
+                            //{
+                            //    post.post_image = postImage = attachment.photo.photo_75;
+                            //}
+
+                            if (!string.IsNullOrWhiteSpace(attachment.photo.text) &&
+                                string.IsNullOrWhiteSpace(post.text))
+                            {
+                                post.text = FormatPostText(attachment.photo.text);
+                            }
+                            post.attachments.Remove(attachment);
+                            i--;
+                            break;
+                        default:
+                            post.attachments.Remove(attachment);
+                            i--;
+                            //Or else remove the attachment
+                            break;
+                            #endregion
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
             return post;
         }
@@ -369,8 +388,8 @@ namespace VKatcher.Services
         #region Status Checks
         private static bool CheckPlaying(VKAudio track)
         {
-            //if (App.ViewModelLocator.Main._currentTrack != null)
-            //    return App.ViewModelLocator.Main._currentTrack.id == track.id;
+            if (App.ViewModelLocator.Main._currentTrack != null)
+                return App.ViewModelLocator.Main._currentTrack.id == track.id;
 
             return false;
         }

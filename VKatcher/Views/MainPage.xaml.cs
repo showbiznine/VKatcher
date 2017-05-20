@@ -20,6 +20,7 @@ using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
+using Windows.System.RemoteSystems;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -57,6 +58,19 @@ namespace VKatcher.Views
                 btnSmart.ManipulationMode = ManipulationModes.TranslateX | ManipulationModes.TranslateY | ManipulationModes.TranslateRailsX | ManipulationModes.TranslateRailsY; //| ManipulationModes.TranslateInertia;
             };
             SetupSliderTimer();
+
+            //RemoteSystemService.RemoteSystemWatcher.RemoteSystemAdded += RemoteSystemWatcher_RemoteSystemAdded;
+            //RemoteSystemService.RemoteSystemWatcher.RemoteSystemRemoved += RemoteSystemWatcher_RemoteSystemRemoved;
+        }
+
+        private async void RemoteSystemWatcher_RemoteSystemRemoved(RemoteSystemWatcher sender, RemoteSystemRemovedEventArgs args)
+        {
+            await new MessageDialog(string.Format("{0} disconnected", args.RemoteSystemId)).ShowAsync();
+        }
+
+        private async void RemoteSystemWatcher_RemoteSystemAdded(RemoteSystemWatcher sender, RemoteSystemAddedEventArgs args)
+        {
+            await new MessageDialog(string.Format("New {0} connected: {1}", args.RemoteSystem.Kind, args.RemoteSystem.DisplayName)).ShowAsync();
         }
 
         #region Timer
@@ -205,6 +219,23 @@ namespace VKatcher.Views
         private void navTest_Tapped(object sender, TappedRoutedEventArgs e)
         {
             //navTest.IsSelected = !navTest.IsSelected;
+        }
+
+        private void pageRoot_Loaded(object sender, RoutedEventArgs e)
+        {
+            NavView.MenuItems.Add(new NavigationMenuItem()
+            { Text = "Feed", Icon = new SymbolIcon(Symbol.Shuffle), Tag = "feed" });
+            NavView.MenuItems.Add(new NavigationMenuItem()
+            { Text = "My Music", Icon = new SymbolIcon(Symbol.Audio), Tag = "my_music" });
+            NavView.MenuItems.Add(new NavigationMenuItem()
+            { Text = "Communities", Icon = new SymbolIcon(Symbol.Contact2), Tag = "communities" });
+            NavView.MenuItems.Add(new NavigationMenuItem()
+            { Text = "Now PLaying", Icon = new SymbolIcon(Symbol.MusicInfo), Tag = "now_playing" });
+        }
+
+        public void GoToSettings(NavigationView sender, object args)
+        {
+            App.ViewModelLocator.Main._navigationService.NavigateTo(typeof(SettingsPage));
         }
     }
 }

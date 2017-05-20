@@ -26,6 +26,10 @@ using Microsoft.QueryStringDotNET;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.AppService;
 using System.Threading.Tasks;
+using Microsoft.Toolkit.Uwp.Notifications;
+using Windows.UI.Notifications;
+using Windows.ApplicationModel.Core;
+using Windows.UI.ViewManagement;
 
 namespace VKatcher
 {
@@ -56,6 +60,45 @@ namespace VKatcher
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            AppSetup();
+
+            ActivateWindow(typeof(MainPage), null);
+
+            //// Do not repeat app initialization when the Window already has content,
+            //// just ensure that the window is active
+            //if (rootFrame == null)
+            //{
+            //    // Create a Frame to act as the navigation context and navigate to the first page
+            //    rootFrame = new Frame();
+
+            //    rootFrame.NavigationFailed += OnNavigationFailed;
+
+            //    if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+            //    {
+            //        //TODO: Load state from previously suspended application
+            //    }
+
+            //    // Place the frame in the current Window
+            //    Window.Current.Content = rootFrame;
+            //}
+
+            //if (e.PrelaunchActivated == false)
+            //{
+            //    if (rootFrame.Content == null)
+            //    {
+            //        // When the navigation stack isn't restored navigate to the first page,
+            //        // configuring the new page by passing required information as a navigation
+            //        // parameter
+            //        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+            //    }
+            //    // Ensure the current window is active
+            //    Window.Current.Activate();
+            //    DispatcherHelper.Initialize();
+            //}
+        }
+
+        private void AppSetup()
+        {
             CheckForRemoteDevices();
             PlayerService.SetupPlayer();
             AppDataService.GetDataFolders();
@@ -67,47 +110,22 @@ namespace VKatcher
                 statusBar.ForegroundColor = (Color)Current.Resources["SystemBaseHighColor"];
                 statusBar.BackgroundOpacity = 0;
             }
+            else
+            {
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+                ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                titleBar.ButtonForegroundColor = Colors.Black;
+            }
 
             SetupStoreServicesAsync();
 
             ViewModelLocator = (ViewModelLocator)Current.Resources["Locator"];
-
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (rootFrame == null)
-            {
-                // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
-
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
-
-                // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
-            }
-
-            if (e.PrelaunchActivated == false)
-            {
-                if (rootFrame.Content == null)
-                {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
-                }
-                // Ensure the current window is active
-                Window.Current.Activate();
-                DispatcherHelper.Initialize();
-            }
         }
 
-        private async void ParseProtocolAsync(ProtocolActivatedEventArgs arguments)
+        private async Task ParseProtocolAsync(ProtocolActivatedEventArgs arguments)
         {
-            //await new MessageDialog("Hey!").ShowAsync();
             try
             {
                 var qs = QueryString.Parse(arguments.Uri.Query);
@@ -138,8 +156,9 @@ namespace VKatcher
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        async void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
+            await new MessageDialog("Failed to load Page " + e.SourcePageType.FullName).ShowAsync();
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
 
@@ -157,20 +176,22 @@ namespace VKatcher
             deferral.Complete();
         }
 
-        protected override void OnActivated(IActivatedEventArgs args)
+        protected override async void OnActivated(IActivatedEventArgs args)
         {
             base.OnActivated(args);
 
             if (args.PreviousExecutionState == ApplicationExecutionState.NotRunning)
             {
+                AppSetup();
                 PlayerService.SetupPlayer();
                 AppDataService.GetDataFolders();
+
+                ActivateWindow(typeof(MainPage), null);
             }
 
             if (args.Kind == ActivationKind.Protocol)
             {
                 ParseProtocolAsync(args as ProtocolActivatedEventArgs);
-                ActivateWindow(typeof(MainPage), null);
             }
 
             if (args is ToastNotificationActivatedEventArgs)
@@ -253,6 +274,35 @@ namespace VKatcher
             }
         }
 
+        private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
+        {
+            string body = string.Format("Background task {0} failed because of error: {1}", sender.Task.Name, reason.ToString());
+
+            #region Toast Visual
+            ToastVisual visual = new ToastVisual()
+            {
+                BindingGeneric = new ToastBindingGeneric()
+                {
+                    Children =
+                    {
+                        new AdaptiveText() {Text = body},
+                    },
+                }
+            };
+            #endregion
+
+            ToastContent toastContent = new ToastContent()
+            {
+                Visual = visual,
+                ActivationType = ToastActivationType.Foreground,
+            };
+
+            var toast = new ToastNotification(toastContent.GetXml());
+            toast.NotificationMirroring = NotificationMirroring.Allowed;
+            ToastNotificationManager.CreateToastNotifier().Show(toast);
+        }
+
+
         private void AppServiceconnection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
             throw new NotImplementedException();
@@ -260,12 +310,8 @@ namespace VKatcher
 
         private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
-        private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

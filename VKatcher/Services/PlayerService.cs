@@ -20,6 +20,10 @@ namespace VKatcher.Services
         public static ObservableCollection<VKAudio> CurrentPlaylist { get; set; } = new ObservableCollection<VKAudio>();
         #endregion
 
+        #region Events
+        public static Action<VKAudio> TrackChangedEvent;
+        #endregion
+
         public static void SetupPlayer()
         {
             MediaPlayer.Dispose();
@@ -28,6 +32,7 @@ namespace VKatcher.Services
             CurrentPlaylist = new ObservableCollection<VKAudio>();
 
             CurrentPlaybackList = new MediaPlaybackList();
+
             CurrentPlaybackList.CurrentItemChanged += OnTrackChanged;
 
             MediaPlayer.Source = CurrentPlaybackList;
@@ -35,13 +40,22 @@ namespace VKatcher.Services
 
         #region Methods
 
-        private static void OnTrackChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        private static async void OnTrackChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
             if (sender.CurrentItem != null)
             {
                 var data = JsonConvert.SerializeObject(CurrentPlaylist[(int)sender.CurrentItemIndex]);
                 AppDataService.SetRoamingSetting("current_track", data); 
             }
+            await Task.Delay(100);
+            TrackChangedEvent?.Invoke(GetCurrentlyPlayingAudio());
+        }
+
+        private static VKAudio GetCurrentlyPlayingAudio()
+        {
+            int i = int.Parse(CurrentPlaybackList.CurrentItemIndex.ToString());
+            var audio = CurrentPlaylist[i];
+            return audio;
         }
 
         public static void BuildPlaylistFromCollection(ObservableCollection<VKAudio> audios, int playFrom, bool autoPlay)

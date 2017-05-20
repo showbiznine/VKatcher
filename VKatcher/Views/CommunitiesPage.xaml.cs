@@ -52,14 +52,15 @@ namespace VKatcher.Views
 
         private void gridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var item = e.ClickedItem as VKGroup;
+            gridView.PrepareConnectedAnimation("groupImage", e.ClickedItem, "image");
+            //var item = e.ClickedItem as VKGroup;
 
-            var root = (e.OriginalSource as GridView).ContainerFromItem(e.ClickedItem) as GridViewItem;
-            var uc = root.ContentTemplateRoot as UserControl;
-            var image = ((uc.Content as DropShadowPanel).Content as Grid).FindDescendantByName("image");
+            //var root = (e.OriginalSource as GridView).ContainerFromItem(e.ClickedItem) as GridViewItem;
+            //var uc = root.ContentTemplateRoot as UserControl;
+            //var image = ((uc.Content as DropShadowPanel).Content as Grid).FindDescendantByName("image");
 
-            var cas = ConnectedAnimationService.GetForCurrentView();
-            cas.PrepareToAnimate("groupImage", image);
+            //var cas = ConnectedAnimationService.GetForCurrentView();
+            //cas.PrepareToAnimate("groupImage", image);
         }
     }
 }

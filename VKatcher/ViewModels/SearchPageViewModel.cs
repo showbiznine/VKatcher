@@ -210,7 +210,7 @@ namespace VKatcher.ViewModels
             {
                 //_inCall = true;
                 TrackResults.Clear();               
-                foreach (var post in await DataService.SearchWallByTag(TagQuery.tag, TagQuery.domain, 30))
+                foreach (var post in await DataService.SearchWallByTag(TagQuery.tag, TagQuery.domain, 30, true))
                 {
                     PostResults.Add(post);
                 }

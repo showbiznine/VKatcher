@@ -44,10 +44,6 @@ namespace VKatcher.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            var anim = ConnectedAnimationService.GetForCurrentView().GetAnimation("groupImage");
-            if (anim != null)
-                anim.TryStart(ellGroupImage);
         }
 
         private async Task CheckSubscribed(VKGroup group)
@@ -62,6 +58,15 @@ namespace VKatcher.Views
                 }
             }
             group.IsSubscribed = false;
+        }
+
+        private void ImageBrush_ImageOpened(object sender, RoutedEventArgs e)
+        {
+            var anim = ConnectedAnimationService.GetForCurrentView().GetAnimation("groupImage");
+            if (anim != null)
+            {
+                anim.TryStart(ellGroupImage);
+            }
         }
     }
 }

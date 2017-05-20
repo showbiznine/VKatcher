@@ -81,17 +81,18 @@ namespace VKatcher.ViewModels
 
         private async Task RegisterBackgroundTasks()
         {
+            //BackgroundExecutionManager.RemoveAccess();
             var bgStatus = await BackgroundExecutionManager.RequestAccessAsync();
             await Task.Run(() =>
             {
                 var checkTask = RegisterBackgroundTask("CheckNewPostsTask",
-                    new TimeTrigger(15, false),
+                    new MaintenanceTrigger(19, false),
                     new SystemCondition(SystemConditionType.InternetAvailable));
             });
             await Task.Run(() =>
             {
                 var dlTask = RegisterBackgroundTask("DownloadPostsTask",
-                    new TimeTrigger(15, false), 
+                    new MaintenanceTrigger(15, false), 
                     new SystemCondition(SystemConditionType.FreeNetworkAvailable));
             });
         }
@@ -229,7 +230,7 @@ namespace VKatcher.ViewModels
                 //Debug.WriteLine(_currentTrack.photo_url);
                 //App.ViewModelLocator.NowPlaying._currentPlaylist = lst;
                 //App.ViewModelLocator.NowPlaying._currentTrack = _currentTrack;
-                //_navigationService.NavigateTo(typeof(NowPlayingPage));
+                _navigationService.NavigateTo(typeof(NowPlayingPage));
                 IsMenuOpen = false;
             });
             GoToSettingsCommand = new RelayCommand(() =>
@@ -293,6 +294,11 @@ namespace VKatcher.ViewModels
         public void Init()
         {
             _navigationService.NavigateTo(typeof(CommunitiesPage));
+        }
+
+        public void GoToSettings(NavigationView sender, object args)
+        {
+            _navigationService.NavigateTo(typeof(SettingsPage));
         }
     }
 }

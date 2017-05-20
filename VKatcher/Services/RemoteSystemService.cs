@@ -131,37 +131,37 @@ namespace VKatcher.Services
 
         public static async Task PlayAudioOnRemoteDeviceAsync(ObservableCollection<VKAudio> audios, RemoteSystem system, int index)
         {
-            //var q = new QueryString
-            //{
-            //    {"action", "play_audios" },
-            //    {"audio_id", audios[index].id.ToString() },
-            //    {"owner_id", audios[index].owner_id.ToString() },
-            //    {"url", audios[index].url }
-            //};
-
-            //RemoteLaunchUriStatus launchUriStatus =
-            //        await RemoteLauncher.LaunchUriAsync(
-            //            new RemoteSystemConnectionRequest(system),
-            //            new Uri("vkatcher:?" + q));
-
-            var appService = new AppServiceConnection()
+            var q = new QueryString
             {
-                AppServiceName = "com.vkatcher.playlist",
-                PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+                {"action", "play_audios" },
+                {"audio_id", audios[index].id.ToString() },
+                {"owner_id", audios[index].owner_id.ToString() },
+                {"url", audios[index].url }
             };
 
-            RemoteSystemConnectionRequest connectionRequest = new RemoteSystemConnectionRequest(system);
-            var status = await appService.OpenRemoteAsync(connectionRequest);
+            RemoteLaunchUriStatus launchUriStatus =
+                    await RemoteLauncher.LaunchUriAsync(
+                        new RemoteSystemConnectionRequest(system),
+                        new Uri("vkatcher:?" + q));
 
-            if (status == AppServiceConnectionStatus.Success)
-            {
-                var message = new ValueSet();
-                foreach (var item in audios)
-                {
-                    message.Add(item.id.ToString(), item.url);
-                }
-                var response = await appService.SendMessageAsync(message);
-            }
+            //var appService = new AppServiceConnection()
+            //{
+            //    AppServiceName = "com.vkatcher.playlist",
+            //    PackageFamilyName = Windows.ApplicationModel.Package.Current.Id.FamilyName
+            //};
+
+            //RemoteSystemConnectionRequest connectionRequest = new RemoteSystemConnectionRequest(system);
+            //var status = await appService.OpenRemoteAsync(connectionRequest);
+
+            //if (status == AppServiceConnectionStatus.Success)
+            //{
+            //    var message = new ValueSet();
+            //    foreach (var item in audios)
+            //    {
+            //        message.Add(item.id.ToString(), item.url);
+            //    }
+            //    var response = await appService.SendMessageAsync(message);
+            //}
         }
 
         public static async void OnRequestRevievedAsync(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)

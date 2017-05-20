@@ -22,7 +22,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="48" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <GridView x:Name="gridView"
@@ -50,40 +50,7 @@
                       Grid.ColumnSpan="2"
                       IsActive="{Binding _inCall}"
                       Visibility="{Binding _inCall, Converter={StaticResource BooleanVisibilityConverter}}" />
-        <toolkit:DropShadowPanel OffsetX="2"
-                                 OffsetY="2"
-                                 Color="Black"
-                                 ShadowOpacity="0.4">
-            <Grid x:Name="grdTopBar"
-                  Background="{StaticResource Med_Gray}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="48" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Button x:Name="btnHamburger"
-                        Content="&#xE700;"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        d:LayoutOverrides="Width"
-                        Background="#00000000"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="20"
-                        Foreground="White"
-                        Command="{Binding OpenMenuCommand}" />
-                <TextBlock x:Name="textBlock"
-                           Margin="0"
-                           TextWrapping="Wrap"
-                           Text="Communities"
-                           VerticalAlignment="Center"
-                           d:LayoutOverrides="Width"
-                           HorizontalAlignment="Left"
-                           Grid.Column="1"
-                           FontSize="20"
-                           FontWeight="Medium"
-                           TextLineBounds="Tight"
-                           Foreground="White" />
-            </Grid>
-        </toolkit:DropShadowPanel>
+        <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Communities" VerticalAlignment="Top" Margin="16,48,0,24" FontSize="48" Foreground="White"/>
 
     </Grid>
 </Page>

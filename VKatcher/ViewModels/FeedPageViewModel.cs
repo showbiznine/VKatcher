@@ -215,7 +215,7 @@ namespace VKatcher.ViewModels
                 {
                     WallPosts.Clear();
                 }
-                foreach (var post in await DataService.LoadWallPosts(_currentGroup.id, offset, count))
+                foreach (var post in await DataService.LoadWallPosts(_currentGroup.id, offset, count, true))
                 {
                     WallPosts.Add(post);
                 }

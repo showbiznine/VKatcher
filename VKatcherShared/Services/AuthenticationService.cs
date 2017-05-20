@@ -32,6 +32,8 @@ namespace VKatcherShared.Services
                 {"grant_type", "password" },
                 {"username", "showbiznine@hotmail.com" },
                 {"password", "hgssucks1" },
+                {"scope", "all" },
+                {"libverify_support", "1" }
             };
             var uri = new Uri(_authHost + "token?" + q);
 
@@ -55,12 +57,10 @@ namespace VKatcherShared.Services
         {
             var q = new QueryString
             {
-                //{"client_id",  "5545387"},
-                {"client_id",  "3697615"},
-                {"client_secret",  "AlVXZFMUqyrnABp8ncuU"},
+                {"client_id",  "2685278"},
                 {"scope",  "271390"},
                 {"redirect_uri",  ""},
-                {"display",  "mobile"},
+                {"display",  "touch"},
                 {"v",  "5.62"},
                 {"response_type",  "token"},
             };
@@ -68,7 +68,7 @@ namespace VKatcherShared.Services
             string endURI = "https://oauth.vk.com/blank.html";
             var result = await WebAuthenticationBroker.AuthenticateAsync
                 (WebAuthenticationOptions.None,
-                new Uri(startURI),
+                new Uri(startURI), 
                 new Uri(endURI));
             if (result.ResponseStatus == WebAuthenticationStatus.Success)
             {
@@ -98,6 +98,20 @@ namespace VKatcherShared.Services
                 else
                     return null;
             }   
+        }
+
+        public static async Task VKLogout()
+        {
+            var vault = new PasswordVault();
+            try
+            {
+                var tok = vault.Retrieve("VK", "test");
+                vault.Remove(tok);
+            }
+            catch (Exception)
+            {
+                
+            }
         }
         #endregion
 
@@ -181,13 +195,20 @@ namespace VKatcherShared.Services
         public static bool CheckLoggedIn(string ServiceName, string Username)
         {
             var vault = new PasswordVault();
-            var tok = vault.Retrieve(ServiceName, Username);
-            if (tok == null)
+            try
+            {
+                var tok = vault.Retrieve(ServiceName, Username);
+                if (tok == null)
+                {
+                    return false;
+                }
+                else
+                    return true;
+            }
+            catch (Exception)
             {
                 return false;
-            }
-            else
-                return true;
+            }            
         } 
         #endregion
     }

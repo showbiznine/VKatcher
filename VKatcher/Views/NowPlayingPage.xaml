@@ -7,18 +7,23 @@
       xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
       xmlns:ViewModels="using:VKatcher.ViewModels"
       xmlns:Converters="using:VKatcher.Converters"
+      xmlns:Controls="using:VKatcher.Controls"
       x:Name="pageRoot"
       x:Class="VKatcher.Views.NowPlayingPage"
       mc:Ignorable="d"
-      DataContext="{Binding NowPlaying, Source={StaticResource Locator}}">
+      >
 
     <Page.Resources>
         <Converters:TimespanStringConverter x:Key="TimespanStringConverter" />
     </Page.Resources>
 
+    <Page.DataContext>
+        <Binding Path="NowPlaying" Source="{StaticResource Locator}"/>
+    </Page.DataContext>
+
     <Grid Background="{StaticResource Med_Gray}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="480" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <ScrollViewer x:Name="myScrollViewer"
@@ -33,26 +38,6 @@
                         Background="{StaticResource Med_Gray}">
                 <StackPanel x:Name="stkTopControls"
                             Padding="24,0">
-                    <Grid Visibility="Collapsed">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="lblCurrentTime"
-                                   TextWrapping="Wrap"
-                                   Text="{Binding _trackTime}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,12,0"
-                                   d:LayoutOverrides="Width" />
-                        <TextBlock x:Name="lblDuration"
-                                   TextWrapping="Wrap"
-                                   Text="{Binding _currentTrack.duration, Converter={StaticResource TimespanStringConverter}}"
-                                   Margin="12,0,0,0"
-                                   VerticalAlignment="Center"
-                                   Grid.Column="2"
-                                   HorizontalAlignment="Left" />
-                    </Grid>
                     <StackPanel x:Name="stkControls"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal"
@@ -96,38 +81,6 @@
                                 FontSize="24"
                                 Foreground="White" />
                     </StackPanel>
-                    <StackPanel x:Name="stkDetails"
-                                VerticalAlignment="Top"
-                                Visibility="Collapsed">
-                        <TextBlock x:Name="textBlock"
-                                   TextWrapping="Wrap"
-                                   FontSize="30"
-                                   FontWeight="Bold"
-                                   Text="{Binding DataContext._currentTrack.title, ElementName=pageRoot}" />
-                        <TextBlock x:Name="textBlock_Copy"
-                                   TextWrapping="Wrap"
-                                   FontSize="24"
-                                   Margin="0,4,0,0"
-                                   FontWeight="SemiBold"
-                                   Text="{Binding DataContext._currentTrack.artist, ElementName=pageRoot}" />
-                    </StackPanel>
-                    <StackPanel x:Name="stkDetails_Copy"
-                                VerticalAlignment="Top">
-                        <TextBlock x:Name="textBlock1"
-                                   TextWrapping="Wrap"
-                                   FontSize="48"
-                                   FontWeight="Black"
-                                   Text="Title"
-                                   Foreground="White" />
-                        <TextBlock x:Name="textBlock_Copy1"
-                                   TextWrapping="Wrap"
-                                   FontSize="32"
-                                   Margin="0,4,0,0"
-                                   FontWeight="SemiBold"
-                                   Text="Artist"
-                                   Foreground="White"
-                                   Opacity="0.6" />
-                    </StackPanel>
                 </StackPanel>
                 <ListView x:Name="listView"
                           ItemsSource="{Binding DataContext._currentPlaylist, ElementName=pageRoot}"
@@ -149,17 +102,30 @@
             </StackPanel>
         </ScrollViewer>
         <Grid>
-            <Image x:Name="image"
-                   Source="{Binding DataContext._currentTrack.photo_url, ElementName=pageRoot}"
-                   Stretch="UniformToFill"
-                   Width="432"
-                   Height="432"
-                   d:IsHidden="True" />
-            <Image x:Name="image_Copy"
-                   Stretch="UniformToFill"
-                   Width="432"
-                   Height="432"
-                   Source="ms-appx:///Assets/Sample Data/Album Art/JucC-gF1BnM.jpg" />
+            <!--<Image x:Name="imgAlbumArt"
+                   Source="{x:Bind vM.CurrentTrack.photo_url}"                   
+                   Width="300"
+                   Height="300"
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center" />-->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="48,0,0,0">
+                <Image x:Name="imgAlbum" HorizontalAlignment="Left" Height="360" VerticalAlignment="Center" Width="360" Source="ms-appx:///Assets/Sample Data/Album Art/JucC-gF1BnM.jpg"/>
+                <StackPanel VerticalAlignment="Bottom" Margin="48,0,0,0">
+                    <TextBlock x:Name="lblTitle"
+                        TextWrapping="Wrap"
+                        FontSize="48"
+                        FontWeight="Black"
+                        Text="Title"
+                        Foreground="White" />
+                    <TextBlock x:Name="lblArtist"
+                        TextWrapping="Wrap"
+                        FontSize="32"
+                        FontWeight="SemiBold"
+                        Text="Artist"
+                        Foreground="White"
+                        Opacity="0.6" />
+                </StackPanel>
+            </StackPanel>
             <Slider x:Name="slider"
                     Style="{StaticResource TrackControlSliderStyle}"
                     Value="{Binding _trackPosition, Mode=TwoWay}"
@@ -178,24 +144,6 @@
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
             </Slider>
-        </Grid>
-        <Grid x:Name="grdTopBar"
-              Height="64"
-              VerticalAlignment="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="64" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="64" />
-            </Grid.ColumnDefinitions>
-            <Button x:Name="btnHamburger"
-                    Content="&#xE700;"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    d:LayoutOverrides="Width"
-                    Background="#00000000"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="28"
-                    Foreground="White" />
         </Grid>
 
     </Grid>

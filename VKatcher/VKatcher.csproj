@@ -11,7 +11,7 @@
     <AssemblyName>VKatcher</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.14393.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.16190.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.14393.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="Behaviors\ImageAspectRatioBehavior.cs" />
     <Compile Include="Behaviors\VisibilityTransitionBehavior.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="ContentDialogs\RemoteDeviceDialog.xaml.cs">
       <DependentUpon>RemoteDeviceDialog.xaml</DependentUpon>
     </Compile>
@@ -350,11 +351,11 @@
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
-    <SDKReference Include="WindowsDesktop, Version=10.0.14393.0">
+    <SDKReference Include="WindowsDesktop, Version=10.0.16190.0">
       <Name>Windows Desktop Extensions for the UWP</Name>
     </SDKReference>
-    <SDKReference Include="WindowsMobile, Version=10.0.14393.0">
-      <Name>Windows Mobile Extensions for the UWP %28WindowsMobile, Version=10.0.14393.0</Name>
+    <SDKReference Include="WindowsMobile, Version=10.0.16190.0">
+      <Name>Windows Mobile Extensions for the UWP</Name>
     </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

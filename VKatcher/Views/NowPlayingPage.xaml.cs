@@ -36,15 +36,28 @@ namespace VKatcher.Views
         private float _parallaxRatio = 0.3f;
         private Visual _AlbumArt;
         private double _margin;
+        public NowPlayingPageViewModel vM;
 
         public NowPlayingPage()
         {
             this.InitializeComponent();
             _compositor = ElementCompositionPreview.GetElementVisual(this).Compositor;
-            _mediaPlayer = BackgroundMediaPlayer.Current;
+            vM = App.ViewModelLocator.NowPlaying;
             //SetupTimer();
             SetupMargins();
             SetupParalax();
+            SetupAnimations();
+        }
+
+        private void SetupAnimations()
+        {
+            var albumArtAnimation = _compositor.CreateScalarKeyFrameAnimation();
+            albumArtAnimation.Target = "Translation.Y";
+            albumArtAnimation.Duration = TimeSpan.FromMilliseconds(400);
+            albumArtAnimation.InsertKeyFrame(0, -200f);
+            albumArtAnimation.InsertKeyFrame(1, 0);
+            ElementCompositionPreview.SetIsTranslationEnabled(imgAlbum, true);
+            ElementCompositionPreview.SetImplicitShowAnimation(imgAlbum, albumArtAnimation);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -64,15 +77,15 @@ namespace VKatcher.Views
 
         private void SetupParalax()
         {
-            myScrollViewer.Loaded += (s, e) =>
-            {
-                image.ImageOpened += (_s, _e) =>
-                {
-                    var scrollProperties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(myScrollViewer);
-                    _AlbumArt = ElementCompositionPreview.GetElementVisual(image);
-                    InitializeParalax(scrollProperties);
-                };
-            };
+            //myScrollViewer.Loaded += (s, e) =>
+            //{
+            //    imgAlbumArt.ImageOpened += (_s, _e) =>
+            //    {
+            //        var scrollProperties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(myScrollViewer);
+            //        _AlbumArt = ElementCompositionPreview.GetElementVisual(imgAlbumArt);
+            //        InitializeParalax(scrollProperties);
+            //    };
+            //};
         }
 
         private void InitializeParalax(CompositionPropertySet scrollProperties)
