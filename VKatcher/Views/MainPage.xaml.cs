@@ -223,22 +223,22 @@ namespace VKatcher.Views
 
         private void pageRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            NavView.MenuItems.Add(new NavigationMenuItem()
-            { Text = "Feed", Icon = new SymbolIcon(Symbol.Shuffle), Tag = "feed" });
-            NavView.MenuItems.Add(new NavigationMenuItem()
-            { Text = "My Music", Icon = new SymbolIcon(Symbol.Audio), Tag = "my_music" });
-            NavView.MenuItems.Add(new NavigationMenuItem()
-            { Text = "Communities", Icon = new SymbolIcon(Symbol.Contact2), Tag = "communities" });
-            NavView.MenuItems.Add(new NavigationMenuItem()
-            { Text = "Now Playing", Icon = new SymbolIcon(Symbol.MusicInfo), Tag = "now_playing" });
+            //NavView.MenuItems.Add(new NavigationMenuItem()
+            //{ Text = "Feed", Icon = new SymbolIcon(Symbol.Shuffle), Tag = "feed" });
+            //NavView.MenuItems.Add(new NavigationMenuItem()
+            //{ Text = "My Music", Icon = new SymbolIcon(Symbol.Audio), Tag = "my_music" });
+            //NavView.MenuItems.Add(new NavigationMenuItem()
+            //{ Text = "Communities", Icon = new SymbolIcon(Symbol.Contact2), Tag = "communities" });
+            //NavView.MenuItems.Add(new NavigationMenuItem()
+            //{ Text = "Now Playing", Icon = new SymbolIcon(Symbol.MusicInfo), Tag = "now_playing" });
 
-            foreach (var nmi in NavView.MenuItems)
-            {
-                if (nmi is NavigationMenuItem)
-                {
-                    (nmi as NavigationMenuItem).Invoked += Nav_Invoked;
-                }
-            }
+            //foreach (var nmi in NavView.MenuItems)
+            //{
+            //    if (nmi is NavigationMenuItem)
+            //    {
+            //        (nmi as NavigationMenuItem).Invoked += Nav_Invoked;
+            //    }
+            //}
         }
 
         private void Nav_Invoked(NavigationMenuItem sender, object args)

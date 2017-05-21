@@ -5249,7 +5249,7 @@
                             </Interactivity:Interaction.Behaviors>
                         </AutoSuggestBox>
                     </StackPanel>
-                    --><!--<Controls:HamburgerMenuItem x:Name="hmbMyMusic" 
+                    <Controls:HamburgerMenuItem x:Name="hmbMyMusic" 
                                                 Content="My Music" 
                                                 Grid.Row="1"
                                                 GroupName="menu"
@@ -5288,7 +5288,7 @@
                                 <Core:InvokeCommandAction Command="{Binding GoToSettingsCommand}" />
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
-                    </Controls:HamburgerMenuItem>--><!--
+                    </Controls:HamburgerMenuItem>
 
                     
                     <Button x:Name="button"
