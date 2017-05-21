@@ -28,7 +28,7 @@ namespace VKatcher.Services
     {
         private const string _host = "https://api.vk.com/method/";
         private const string _authHost = "https://oauth.vk.com/";
-        private const string _apiVersion = "5.62";
+        private const string _apiVersion = "5.64";
 
         #region API Calls
 

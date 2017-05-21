@@ -51,11 +51,10 @@ namespace VKatcherShared.Services
             }
         }
 
-        public static async Task<bool> VKLogin2()
+        public static async Task<bool> VKLoginWeb()
         {
             var q = new QueryString
             {
-                //{"client_id",  "5545387"},
                 {"client_id",  "3697615"},
                 {"client_secret",  "AlVXZFMUqyrnABp8ncuU"},
                 {"scope",  "271390"},
