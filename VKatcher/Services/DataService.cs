@@ -28,7 +28,8 @@ namespace VKatcher.Services
     {
         private const string _host = "https://api.vk.com/method/";
         private const string _authHost = "https://oauth.vk.com/";
-        private const string _apiVersion = "5.63";
+        private const string _apiVersion = "5.64";
+        private const string _userAgent = "KateMobileAndroid/40.4 lite-394 (Android 6.0.1; SDK 23; armeabi-v7a; samsung SM-G900F; en)";
 
         #region API Calls
 
@@ -63,6 +64,8 @@ namespace VKatcher.Services
                 var WallPosts = new ObservableCollection<VKWallPost>();
 
                 HttpClient http = new HttpClient();
+                http.DefaultRequestHeaders.Add("User-Agent", 
+                    _userAgent);
                 var q = new QueryString()
                 {
                     {"owner_id", "-" + groupID },
@@ -201,6 +204,8 @@ namespace VKatcher.Services
         public static async Task<ObservableCollection<VKAudio>> LoadMyAudio()
         {
             HttpClient http = new HttpClient();
+            http.DefaultRequestHeaders.Add("User-Agent", 
+                _userAgent);
             var q = new QueryString()
             {
                 {"count", "100" },

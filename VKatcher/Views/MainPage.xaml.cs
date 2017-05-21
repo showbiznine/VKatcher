@@ -96,7 +96,7 @@ namespace VKatcher.Views
             ApplicationSettingsHelper.SaveSettingsValue("appstate", "Active");
             try
             {
-                await OneDriveService.InitializeAsync();
+                //await OneDriveService.InitializeAsync();
                 var loggedIn = AuthenticationService.CheckLoggedIn("VK", "test");
                 if (loggedIn)
                     (DataContext as MainViewModel).Init();
@@ -230,12 +230,47 @@ namespace VKatcher.Views
             NavView.MenuItems.Add(new NavigationMenuItem()
             { Text = "Communities", Icon = new SymbolIcon(Symbol.Contact2), Tag = "communities" });
             NavView.MenuItems.Add(new NavigationMenuItem()
-            { Text = "Now PLaying", Icon = new SymbolIcon(Symbol.MusicInfo), Tag = "now_playing" });
+            { Text = "Now Playing", Icon = new SymbolIcon(Symbol.MusicInfo), Tag = "now_playing" });
+
+            foreach (var nmi in NavView.MenuItems)
+            {
+                if (nmi is NavigationMenuItem)
+                {
+                    (nmi as NavigationMenuItem).Invoked += Nav_Invoked;
+                }
+            }
+        }
+
+        private void Nav_Invoked(NavigationMenuItem sender, object args)
+        {
+            switch (sender.Tag.ToString())
+            {
+                case "feed":
+                    //myFrame.Navigate(typeof(AppsPage));
+                    break;
+
+                case "my_music":
+                    myFrame.Navigate(typeof(MyMusicPage));
+                    break;
+
+                case "communities":
+                    myFrame.Navigate(typeof(CommunitiesPage));
+                    break;
+
+                case "now_playing":
+                    myFrame.Navigate(typeof(NowPlayingPage));
+                    break;
+            }
         }
 
         public void GoToSettings(NavigationView sender, object args)
         {
             App.ViewModelLocator.Main._navigationService.NavigateTo(typeof(SettingsPage));
+        }
+
+        private void NavView_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

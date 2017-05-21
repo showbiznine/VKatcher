@@ -19,21 +19,23 @@ namespace VKatcherShared.Services
         private const string _authHost = "https://oauth.vk.com/";
         private const string _VKclientID = "3502561";
         private const string _VKclientSecret = "omvP3y2MZmpREFZJDNHd";
+        private const string _userAgent = "KateMobileAndroid/40.4 lite-394 (Android 6.0.1; SDK 23; armeabi-v7a; samsung SM-G900F; en)";
 
         #region VK
 
         public static async Task<bool> VKLogin()
         {
             HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", _userAgent);
             var q = new QueryString
             {
-                {"client_id",  _VKclientID},
-                {"client_secret", _VKclientSecret },
-                {"grant_type", "password" },
+                {"grant_type",  "password"},
+                {"client_id",  "2685278"},
+                {"client_secret",  "lxhD8OD7dMsqtXIm5IUY"},
+                {"scope", "notify, friends, photos, audio, video, pages, wall, groups, messages, notifications, stats" },
                 {"username", "showbiznine@hotmail.com" },
                 {"password", "hgssucks1" },
-                {"scope", "notify, friends, photos, audio, video, docs, notes, pages, status, wall, groups, messages, notifications, stats" },
-                {"v", "5.63" }
+                {"v",  "5.63"},
             };
             var uri = new Uri(_authHost + "token?" + q);
 
@@ -57,14 +59,15 @@ namespace VKatcherShared.Services
         {
             var q = new QueryString
             {
-                {"client_id",  "3803024"},
-                {"scope",  "all"},
-                {"redirect_uri",  ""},
-                {"display",  "wap"},
+                {"grant_type",  "password"},
+                {"client_id",  "2685278"},
+                {"client_secret",  "lxhD8OD7dMsqtXIm5IUY"},
+                {"scope", "notify, friends, photos, audio, video, docs, notes, pages, status, wall, groups, messages, notifications, stats" },
+                {"username", "showbiznine@hotmail.com" },
+                {"password", "hgssucks1" },
                 {"v",  "5.63"},
-                {"response_type",  "token"},
             };
-            string startURI = "https://oauth.vk.com/authorize?" + q;
+            string startURI = "https://oauth.vk.com/token?" + q;
             string endURI = "https://oauth.vk.com/blank.html";
             var result = await WebAuthenticationBroker.AuthenticateAsync
                 (WebAuthenticationOptions.None,

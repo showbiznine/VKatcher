@@ -5210,13 +5210,16 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
+        
         <NavigationView x:Name="NavView" 
                         IsSettingsVisible="True"
                         SettingsInvoked="{x:Bind GoToSettings}"
                         AlwaysShowHeader="False" 
-                        Margin="0,48,0,0">
+                        Margin="0,48,0,0"
+                        Loaded="NavView_Loaded">
             <Frame x:Name="myFrame" />
         </NavigationView>
+        
         <!--<Controls:SwipeableSplitView x:Name="mySplitView"
                                      Margin="0"
                                      MaxOpacity="0.5"
@@ -5246,12 +5249,12 @@
                             </Interactivity:Interaction.Behaviors>
                         </AutoSuggestBox>
                     </StackPanel>
-                    <Controls:HamburgerMenuItem x:Name="hmbMyMusic" 
+                    --><!--<Controls:HamburgerMenuItem x:Name="hmbMyMusic" 
                                                 Content="My Music" 
                                                 Grid.Row="1"
                                                 GroupName="menu"
                                                 Icon="" 
-                                                Style="{StaticResource HamburgerMenuItemStyle1}">
+                                                Style="{StaticResource HamburgerMenuItemStyle}">
                         <Interactivity:Interaction.Behaviors>
                             <Core:EventTriggerBehavior EventName="Checked">
                                 <Core:InvokeCommandAction Command="{Binding GoToMyMusicCommand}" />
@@ -5262,7 +5265,7 @@
                                                  Content="Now Playing" 
                                                  Grid.Row="2" 
                                                 GroupName="menu"
-                                                 Style="{StaticResource HamburgerMenuItemStyle1}"
+                                                 Style="{StaticResource HamburgerMenuItemStyle}"
                                                  Icon="" 
                                                  VerticalContentAlignment="Stretch" 
                                                 Margin="0,12,0,0">
@@ -5276,7 +5279,7 @@
                                                  Content="Settings" 
                                                  Grid.Row="3" 
                                                 GroupName="menu"
-                                                 Style="{StaticResource HamburgerMenuItemStyle1}"
+                                                 Style="{StaticResource HamburgerMenuItemStyle}"
                                                  Icon="" 
                                                  VerticalContentAlignment="Stretch" 
                                                 Margin="0,12,0,0">
@@ -5285,10 +5288,10 @@
                                 <Core:InvokeCommandAction Command="{Binding GoToSettingsCommand}" />
                             </Core:EventTriggerBehavior>
                         </Interactivity:Interaction.Behaviors>
-                    </Controls:HamburgerMenuItem>
+                    </Controls:HamburgerMenuItem>--><!--
 
-                    -->
-        <!--<Button x:Name="button"
+                    
+                    <Button x:Name="button"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Stretch"
                             Margin="0"
@@ -5296,20 +5299,23 @@
                             Command="{Binding GoToSettingsCommand}"
                             Grid.Row="1" Background="Transparent" Visibility="Collapsed" >
                         <Grid/>
-                    </Button>-->
-                    <!--<Button x:Name="button_Copy"
+                    </Button>
+                    <Button x:Name="button_Copy"
                             Content="MY MUSIC"
                             VerticalAlignment="Bottom"
                             HorizontalAlignment="Center"
                             Margin="0,0,0,309"
                             Command="{Binding GoToMyMusicCommand}"
-                            Grid.Row="2" Visibility="Collapsed" />-->
-        <!--
+                            Grid.Row="2" Visibility="Collapsed" />
+        
                 </Grid>
             </Controls:SwipeableSplitView.Pane>
             <Grid>
+                <Frame x:Name="myFrame" />
             </Grid>
         </Controls:SwipeableSplitView>-->
+        
+        
         
         <Grid x:Name="grdPlaybackControls"
               Height="100"
