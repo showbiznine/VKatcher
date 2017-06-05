@@ -81,6 +81,7 @@ namespace VKatcher.ViewModels
 
         private async Task RegisterBackgroundTasks()
         {
+            BackgroundExecutionManager.RemoveAccess();
             var bgStatus = await BackgroundExecutionManager.RequestAccessAsync();
             await Task.Run(() =>
             {

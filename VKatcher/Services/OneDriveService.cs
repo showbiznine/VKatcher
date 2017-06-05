@@ -12,7 +12,7 @@ using VK.WindowsPhone.SDK.API.Model;
 using VKCatcherShared.Models;
 using Windows.Storage;
 
-namespace VKatcherShared.Services
+namespace VKatcher.Services
 {
     public class OneDriveService
     {

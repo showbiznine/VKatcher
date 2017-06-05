@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="Behaviors\ImageAspectRatioBehavior.cs" />
     <Compile Include="Behaviors\VisibilityTransitionBehavior.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="ContentDialogs\RemoteDeviceDialog.xaml.cs">
       <DependentUpon>RemoteDeviceDialog.xaml</DependentUpon>
     </Compile>
@@ -128,11 +129,13 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Models\VKToken.cs" />
     <Compile Include="Services\AppDataService.cs" />
+    <Compile Include="Services\AuthenticationService.cs" />
     <Compile Include="Services\BackgroundTaskService.cs" />
     <Compile Include="Services\DataService.cs" />
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NotificationService.cs" />
+    <Compile Include="Services\OneDriveService.cs" />
     <Compile Include="Services\PlayerService.cs" />
     <Compile Include="Services\RemoteSystemService.cs" />
     <Compile Include="ViewModels\CommunitiesPageViewModel.cs" />

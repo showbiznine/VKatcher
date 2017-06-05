@@ -91,6 +91,7 @@ namespace VKatcher.Views
                     await AuthenticationService.VKLogin();
                     (DataContext as MainViewModel).Init();
                 }
+                await AuthenticationService.RefreshAccessToken();
             }
             catch (Exception ex)
             {

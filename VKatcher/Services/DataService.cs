@@ -26,9 +26,6 @@ namespace VKatcher.Services
 {
     public class DataService
     {
-        private const string _host = "https://api.vk.com/method/";
-        private const string _authHost = "https://oauth.vk.com/";
-        private const string _apiVersion = "5.64";
 
         #region API Calls
 
@@ -41,9 +38,9 @@ namespace VKatcher.Services
                 {"extended", "1" },
                 {"count", "100" },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
-            string request = _host + "groups.get?" + q;
+            string request = Constants.host + "groups.get?" + q;
 
             var res = await http.GetAsync(request);
             var json = await res.Content.ReadAsStringAsync();
@@ -61,6 +58,7 @@ namespace VKatcher.Services
             var WallPosts = new ObservableCollection<VKWallPost>();
 
             HttpClient http = new HttpClient();
+            http.DefaultRequestHeaders.Add("User-Agent", Constants.userAgent);
             var q = new QueryString()
             {
                 {"owner_id", "-" + groupID },
@@ -68,9 +66,9 @@ namespace VKatcher.Services
                 {"offset", offset.ToString() },
                 {"count", count.ToString() },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
-            string request = _host + "wall.get?" + q;
+            string request = Constants.host + "wall.get?" + q;
 
             var res = await http.GetAsync(request);
             var json = await res.Content.ReadAsStringAsync();
@@ -110,9 +108,9 @@ namespace VKatcher.Services
                 {"q", query },
                 {"type", "group" },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
-            string request = _host + "groups.search?" + q;
+            string request = Constants.host + "groups.search?" + q;
 
             var res = await http.GetAsync(request);
             var json = await res.Content.ReadAsStringAsync();
@@ -129,9 +127,9 @@ namespace VKatcher.Services
                 {"q", query },
                 {"auto_complete", "true" },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
-            string request = _host + "audio.search?" + q;
+            string request = Constants.host + "audio.search?" + q;
 
             var res = await http.GetAsync(request);
             var json = await res.Content.ReadAsStringAsync();
@@ -157,9 +155,9 @@ namespace VKatcher.Services
                 {"domain", domain },
                 {"count", count.ToString() },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
-            string request = _host + "wall.search?" + q;
+            string request = Constants.host + "wall.search?" + q;
 
             var res = await http.GetAsync(request);
             var json = await res.Content.ReadAsStringAsync();
@@ -197,9 +195,9 @@ namespace VKatcher.Services
             {
                 {"count", "100" },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
-            string request = _host + "audio.get?" + q;
+            string request = Constants.host + "audio.get?" + q;
 
             var res = await http.GetAsync(request);
             var json = await res.Content.ReadAsStringAsync();
@@ -221,9 +219,9 @@ namespace VKatcher.Services
             {
                 {"audios", ownerid + "_" + id },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
-            string request = _host + "audio.getById?" + q;
+            string request = Constants.host + "audio.getById?" + q;
 
             var res = await http.GetAsync(request);
             var json = await res.Content.ReadAsStringAsync();
@@ -243,9 +241,9 @@ namespace VKatcher.Services
             var q = new QueryString
             {
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
-            var uri = new Uri(_host + "audio.getRecommendations?" + q);
+            var uri = new Uri(Constants.host + "audio.getRecommendations?" + q);
 
             var res = await client.GetAsync(uri);
             var s = await res.Content.ReadAsStringAsync();
@@ -261,10 +259,10 @@ namespace VKatcher.Services
             {
                 {"target_audio", Track.owner_id + "_" + Track.id },
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
-                {"v", _apiVersion }
+                {"v", Constants.apiVersion }
             };
 
-            var uri = new Uri(_host + "audio.getRecommendations?" + q);
+            var uri = new Uri(Constants.host + "audio.getRecommendations?" + q);
 
             var res = await client.GetAsync(uri);
             var s = await res.Content.ReadAsStringAsync();

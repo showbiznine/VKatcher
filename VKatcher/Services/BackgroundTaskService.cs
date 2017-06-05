@@ -91,18 +91,18 @@ namespace VKatcher.Services
                         if (ToDownload[i].duration < 1200)
                         {
                             //Download the file
-                            var file = await ToDownload[i].DownloadTrackB();
+                            ToDownload[i].DownloadTrackBG();
 
                             //Increment track count
                             count++;
                             lastDL = ToDownload[i];
 
                             #region Add track to database
-                            if (file != null)
-                            {
-                                FileService.WriteDownloads(ToDownload[i], file);
-                                #endregion
-                            }
+                            //if (file != null)
+                            //{
+                            //    FileService.WriteDownloads(ToDownload[i], file);
+                            //}
+                            #endregion
                         }
                     }
                     ToDownload.Remove(ToDownload[i]);
