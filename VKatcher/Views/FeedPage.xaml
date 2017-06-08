@@ -1,17 +1,18 @@
-﻿<Page xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<Page x:Class="VKatcher.Views.FeedPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:VKatcher.Views"
+      xmlns:Converters="using:VKatcher.Converters"
+      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+      xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:VKatcher.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-      xmlns:Converters="using:VKatcher.Converters"
-      xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-      xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-      xmlns:Media="using:Microsoft.Xaml.Interactions.Media"
       x:Name="pageRoot"
-      x:Class="VKatcher.Views.FeedPage"
-      mc:Ignorable="d"
-      DataContext="{Binding Feed, Source={StaticResource Locator}}">
+      DataContext="{Binding Feed, Source={StaticResource Locator}}"
+      mc:Ignorable="d" 
+      NavigationCacheMode="Required">
 
     <Page.Resources>
         <Converters:SubscribedColorConverter x:Key="SubscribedColorConverter" />
@@ -20,35 +21,25 @@
         <Converters:FollowedIconConverter x:Key="FollowedIconConverter" />
         <Converters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
         <Storyboard x:Name="ToggleSubscribe">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)"
-                                           Storyboard.TargetName="lblSubscribe">
-                <EasingDoubleKeyFrame KeyTime="0"
-                                      Value="20" />
-                <EasingDoubleKeyFrame KeyTime="0:0:0.167"
-                                      Value="0">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="lblSubscribe" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="20" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.167" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseOut" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
-                <EasingDoubleKeyFrame KeyTime="0:0:0.533"
-                                      Value="0" />
-                <EasingDoubleKeyFrame KeyTime="0:0:0.683"
-                                      Value="-20">
+                <EasingDoubleKeyFrame KeyTime="0:0:0.533" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.683" Value="-20">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <CircleEase EasingMode="EaseIn" />
                     </EasingDoubleKeyFrame.EasingFunction>
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)"
-                                           Storyboard.TargetName="lblSubscribe">
-                <EasingDoubleKeyFrame KeyTime="0"
-                                      Value="0" />
-                <EasingDoubleKeyFrame KeyTime="0:0:0.167"
-                                      Value="1" />
-                <EasingDoubleKeyFrame KeyTime="0:0:0.533"
-                                      Value="1" />
-                <EasingDoubleKeyFrame KeyTime="0:0:0.683"
-                                      Value="0" />
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="lblSubscribe" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.167" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.533" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="0:0:0.683" Value="0" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </Page.Resources>
@@ -66,84 +57,80 @@
                   SelectionMode="None">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
-                    <Setter Property="HorizontalAlignment"
-                            Value="Stretch" />
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="Margin"
-                            Value="0" />
-                    <Setter Property="Padding"
-                            Value="0" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Padding" Value="0" />
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.Header>
                 <toolkit:ScrollHeader x:Name="lstHeader"
+                                      HorizontalContentAlignment="Stretch"
                                       Mode="QuickReturn"
-                                      TargetListViewBase="{x:Bind listView}"
-                                      HorizontalContentAlignment="Stretch">
+                                      TargetListViewBase="{x:Bind listView}">
                     <Grid Width="Auto"
                           Height="100"
-                          Background="{StaticResource Med_Gray}"
-                          Margin="0,0,0,8">
+                          Margin="0,0,0,8"
+                          Background="{StaticResource Med_Gray}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Button x:Name="btnFollow"
+                                Width="Auto"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                BorderThickness="0"
-                                Width="Auto"
-                                Background="#0CFFFFFF">
+                                Background="#0CFFFFFF"
+                                BorderThickness="0">
                             <StackPanel x:Name="stkFollow"
-                                        Orientation="Vertical"
+                                        Padding="4"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Padding="4"
-                                        Background="Transparent">
+                                        Background="Transparent"
+                                        Orientation="Vertical">
                                 <TextBlock x:Name="textBlock"
-                                           TextWrapping="Wrap"
-                                           Text="{Binding _currentGroup.is_member, Converter={StaticResource FollowedIconConverter}}"
+                                           Margin="0,0,0,4"
+                                           HorizontalAlignment="Center"
                                            FontFamily="Segoe MDL2 Assets"
                                            FontSize="36"
-                                           HorizontalAlignment="Center"
-                                           Margin="0,0,0,4" />
+                                           Text="{Binding _currentGroup.is_member, Converter={StaticResource FollowedIconConverter}}"
+                                           TextWrapping="Wrap" />
                                 <TextBlock x:Name="textBlock1"
-                                           TextWrapping="Wrap"
-                                           Text="{Binding _currentGroup.is_member, Converter={StaticResource FollowedStringConverter}}"
-                                           HorizontalAlignment="Center"
                                            Margin="0,8,0,0"
-                                           FontWeight="SemiBold" />
+                                           HorizontalAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding _currentGroup.is_member, Converter={StaticResource FollowedStringConverter}}"
+                                           TextWrapping="Wrap" />
                             </StackPanel>
                         </Button>
                         <Button x:Name="btnSubscribe"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                BorderThickness="0"
                                 Grid.Column="1"
                                 Width="Auto"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
                                 Background="#0CFFFFFF"
+                                BorderThickness="0"
                                 Command="{Binding SubscribeCommand}">
                             <StackPanel x:Name="stkSubscribe"
-                                        Orientation="Vertical"
+                                        Padding="4"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Padding="4"
-                                        Background="Transparent">
+                                        Background="Transparent"
+                                        Orientation="Vertical">
                                 <TextBlock x:Name="textBlock_Copy"
-                                           TextWrapping="Wrap"
-                                           Text="&#xE95A;"
+                                           Margin="0,0,0,4"
+                                           HorizontalAlignment="Center"
                                            FontFamily="Segoe MDL2 Assets"
                                            FontSize="36"
-                                           HorizontalAlignment="Center"
-                                           Margin="0,0,0,4"
-                                           Opacity="{Binding _currentGroup.IsSubscribed,Converter={StaticResource SubscribedColorConverter}}" />
+                                           Opacity="{Binding _currentGroup.IsSubscribed, Converter={StaticResource SubscribedColorConverter}}"
+                                           Text="&#xE95A;"
+                                           TextWrapping="Wrap" />
                                 <TextBlock x:Name="textBlock1_Copy"
-                                           TextWrapping="Wrap"
-                                           Text="{Binding _currentGroup.IsSubscribed, Converter={StaticResource SubscribedStringConverter}}"
-                                           HorizontalAlignment="Center"
                                            Margin="0,8,0,0"
-                                           FontWeight="SemiBold" />
+                                           HorizontalAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding _currentGroup.IsSubscribed, Converter={StaticResource SubscribedStringConverter}}"
+                                           TextWrapping="Wrap" />
                             </StackPanel>
                         </Button>
                     </Grid>
@@ -151,11 +138,11 @@
             </ListView.Header>
         </ListView>
         <ProgressRing x:Name="prgRing"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center"
                       Grid.Row="1"
                       Width="48"
                       Height="48"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
                       IsActive="True"
                       Visibility="{Binding _inCall, Converter={StaticResource BooleanVisibilityConverter}}" />
         <StackPanel Margin="0,0,12,4"
@@ -164,30 +151,30 @@
                     Orientation="Horizontal">
             <TextBlock x:Name="lblSubscribe"
                        HorizontalAlignment="Left"
-                       TextWrapping="Wrap"
-                       Text="{Binding _currentGroup.IsSubscribed, Converter={StaticResource SubscribedStringConverter}}"
                        VerticalAlignment="Center"
-                       d:LayoutOverrides="TopMargin, BottomMargin, LeftPosition, RightPosition"
                        FontWeight="Thin"
-                       TextLineBounds="TrimToBaseline"
                        Opacity="0"
-                       RenderTransformOrigin="0.5,0.5">
+                       RenderTransformOrigin="0.5,0.5"
+                       Text="{Binding _currentGroup.IsSubscribed, Converter={StaticResource SubscribedStringConverter}}"
+                       TextLineBounds="TrimToBaseline"
+                       TextWrapping="Wrap"
+                       d:LayoutOverrides="TopMargin, BottomMargin, LeftPosition, RightPosition">
                 <TextBlock.RenderTransform>
                     <CompositeTransform TranslateY="20" />
                 </TextBlock.RenderTransform>
             </TextBlock>
             <Button x:Name="btnSubscribe2"
-                    Content="&#xE701;"
+                    Padding="8"
+                    HorizontalAlignment="Stretch"
                     VerticalAlignment="Top"
+                    BorderThickness="0"
+                    Command="{Binding SubscribeCommand, Mode=OneWay}"
+                    Content="&#xE701;"
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="20"
-                    BorderThickness="0"
-                    Padding="8"
-                    Style="{StaticResource SmallIconButton}"
-                    HorizontalAlignment="Stretch"
-                    d:LayoutOverrides="LeftMargin, RightMargin"
                     Foreground="{Binding _currentGroup.IsSubscribed, Converter={StaticResource SubscribedColorConverter}}"
-                    Command="{Binding SubscribeCommand, Mode=OneWay}">
+                    Style="{StaticResource SmallIconButton}"
+                    d:LayoutOverrides="LeftMargin, RightMargin">
                 <Button.Background>
                     <SolidColorBrush Color="{ThemeResource SystemAltHighColor}" />
                 </Button.Background>
@@ -198,43 +185,41 @@
                 </Interactivity:Interaction.Behaviors>
             </Button>
         </StackPanel>
-        <Grid x:Name="grdTopBar"
-              Background="{StaticResource Med_Gray}">
+        <Grid x:Name="grdTopBar" Background="{StaticResource Med_Gray}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="64" />
                 <ColumnDefinition />
                 <ColumnDefinition Width="64" />
             </Grid.ColumnDefinitions>
             <Button x:Name="btnHamburger"
-                    Content="&#xE700;"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Background="#00000000"
+                    Command="{Binding ToggleMenuCommand, Mode=OneWay}"
+                    Content="&#xE700;"
                     FontFamily="Segoe MDL2 Assets"
                     FontSize="28"
-                    Foreground="White"
-                    Command="{Binding ToggleMenuCommand, Mode=OneWay}" />
+                    Foreground="White" />
             <TextBlock x:Name="lblGroupName"
+                       Grid.Column="1"
+                       Margin="8,24,0,24"
                        HorizontalAlignment="Left"
-                       TextWrapping="Wrap"
-                       Text="{Binding _currentGroup.name}"
                        VerticalAlignment="Center"
                        FontSize="22"
                        FontWeight="Black"
+                       Foreground="White"
+                       Text="{Binding _currentGroup.name}"
                        TextLineBounds="Tight"
-                       Grid.Column="1"
-                       Margin="8,24,0,24"
-                       Foreground="White" />
-            <Ellipse x:Name="ellGroupImage"
-                     HorizontalAlignment="Center"
-                     Height="48"
-                     VerticalAlignment="Center"
-                     Width="48"
-                     Grid.Column="2">
-                <Ellipse.Fill>
-                    <ImageBrush ImageSource="{Binding _currentGroup.photo_50}"/>
-                </Ellipse.Fill>
-            </Ellipse>
+                       TextWrapping="Wrap" />
+            <toolkit:RoundImageEx x:Name="ellGroupImage"
+                                  Grid.Column="2"
+                                  Width="48"
+                                  Height="48"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Source="{Binding CurrentGroup.photo_50}" 
+                                  ImageExOpened="ellGroupImage_ImageExOpened"
+                                  CornerRadius="999"/>
         </Grid>
     </Grid>
 </Page>

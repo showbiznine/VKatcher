@@ -127,6 +127,7 @@
     <Compile Include="Converters\SubscribedStringConverter.cs" />
     <Compile Include="Converters\TimespanStringConverter.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Models\VKRefreshToken.cs" />
     <Compile Include="Models\VKToken.cs" />
     <Compile Include="Services\AppDataService.cs" />
     <Compile Include="Services\AuthenticationService.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\NotificationService.cs" />
     <Compile Include="Services\OneDriveService.cs" />
+    <Compile Include="Models\OneDriveToken.cs" />
     <Compile Include="Services\PlayerService.cs" />
     <Compile Include="Services\RemoteSystemService.cs" />
     <Compile Include="ViewModels\CommunitiesPageViewModel.cs" />

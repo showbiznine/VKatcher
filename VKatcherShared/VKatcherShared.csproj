@@ -121,7 +121,6 @@
     <Compile Include="Messages\AddToPlaylistMessage.cs" />
     <Compile Include="Models\DIYWallPostModel.cs" />
     <Compile Include="Models\DownloadedTrack.cs" />
-    <Compile Include="Models\OneDriveToken.cs" />
     <Compile Include="Models\OneDriveUploadModel.cs" />
     <Compile Include="Models\Spotify\SpotifyToken.cs" />
     <Compile Include="Models\VKRadio.cs" />

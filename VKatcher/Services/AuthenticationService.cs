@@ -7,7 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using VKatcherShared.Models;
+using VKatcher.Models;
 using Windows.Security.Authentication.Web;
 using Windows.Security.Credentials;
 
@@ -109,15 +109,15 @@ namespace VKatcher.Services
                 { "v", Constants.apiVersion }
             };
 
-            var uri = new Uri(Constants.host + "auth.refreshtoken?" + q);
+            var uri = new Uri(Constants.host + "auth.refreshToken?" + q);
 
             try
             {
                 var res = await client.GetAsync(uri);
                 var s = await res.Content.ReadAsStringAsync();
 
-                var r = JsonConvert.DeserializeObject<VKToken>(s);
-                StoreToken("VK", "test", r.access_token);
+                var r = JsonConvert.DeserializeObject<VKRefreshToken>(s);
+                StoreToken("VK", "test", r.response.token);
                 return true;
             }
             catch (Exception ex)

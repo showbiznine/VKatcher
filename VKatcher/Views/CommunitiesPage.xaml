@@ -2,6 +2,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:VKatcher.Views"
       xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+      xmlns:models="using:VK.WindowsPhone.SDK.API.Model"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:ViewModels="using:VKatcher.ViewModels"
@@ -11,13 +12,13 @@
       x:Name="pageRoot"
       x:Class="VKatcher.Views.CommunitiesPage"
       mc:Ignorable="d"
-      Margin="0">
+      Margin="0" NavigationCacheMode="Required">
 
     <Page.DataContext>
         <ViewModels:CommunitiesPageViewModel />
     </Page.DataContext>
 
-    <Grid Background="{StaticResource Med_Gray}">
+    <Grid Background="#FF444444">
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
@@ -29,18 +30,60 @@
                   SelectionMode="None"
                   Grid.Row="1"
                   Grid.ColumnSpan="2"
-                  Padding="6,16,6,100"
+                  Padding="12,16,12,100"
                   Style="{StaticResource CommunitiesGridStyle}"
                   ItemsSource="{Binding _results}"
-                  ItemTemplate="{StaticResource GroupGridDataTemplate}"
                   SizeChanged="gridView_SizeChanged"
                   ItemClick="gridView_ItemClick"
                   IsItemClickEnabled="True">
+            <GridView.Background>
+                <SolidColorBrush Color="{ThemeResource SystemAltHighColor}"/>
+            </GridView.Background>
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="ItemClick">
                     <Core:InvokeCommandAction Command="{Binding SelectGroupCommand}"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="models:VKGroup">
+                    <UserControl>
+                        <StackPanel HorizontalAlignment="Center"
+                                    VerticalAlignment="Stretch">
+                            <Image x:Name="image"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Stretch"
+                                                  Source="{x:Bind photo_200}">
+                            </Image>
+                            <!--<toolkit:DropShadowPanel OffsetX="2"
+                                                     OffsetY="2"
+                                                     BlurRadius="4"
+                                                     ShadowOpacity="0.4"
+                                                     Color="Black" 
+                                                     HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                                <Grid x:Name="imgGroupPicture"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent">
+
+                                </Grid>
+                            </toolkit:DropShadowPanel>-->
+                            <TextBlock x:Name="textBlock"
+                                       HorizontalAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Text="{x:Bind name}"
+                                       VerticalAlignment="Top"
+                                       Foreground="#FF333333" 
+                                       FontSize="20"
+                                       Padding="24"
+                                       FontWeight="Bold"
+                                       TextAlignment="Center"
+                                       MaxLines="1"
+                                       TextTrimming="Clip"/>
+                        </StackPanel>
+                        
+                    </UserControl>
+                </DataTemplate>
+            </GridView.ItemTemplate>
         </GridView>
         <ProgressRing HorizontalAlignment="Center"
                       VerticalAlignment="Center"

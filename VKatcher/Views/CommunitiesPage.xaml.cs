@@ -47,7 +47,7 @@ namespace VKatcher.Views
                 i = 4;
 
             panel.MaximumRowsOrColumns = i;
-            panel.ItemWidth = panel.ItemHeight = (e.NewSize.Width - 12) / i;
+            panel.ItemWidth = (e.NewSize.Width - 24) / i;
         }
 
         private void gridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -56,7 +56,7 @@ namespace VKatcher.Views
 
             var root = (e.OriginalSource as GridView).ContainerFromItem(e.ClickedItem) as GridViewItem;
             var uc = root.ContentTemplateRoot as UserControl;
-            var image = ((uc.Content as DropShadowPanel).Content as Grid).FindDescendantByName("image");
+            var image = (uc.Content as StackPanel).FindDescendantByName("image");
 
             var cas = ConnectedAnimationService.GetForCurrentView();
             cas.PrepareToAnimate("groupImage", image);

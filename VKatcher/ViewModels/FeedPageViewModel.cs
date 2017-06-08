@@ -39,7 +39,7 @@ namespace VKatcher.ViewModels
     public class FeedPageViewModel : ViewModelBase
     {
         #region Fields
-        public VKGroup _currentGroup { get; set; }
+        public VKGroup CurrentGroup { get; set; }
         public ObservableCollection<VKWallPost> WallPosts { get; set; }
         public int _offset { get; set; }
         public bool _inCall { get; set; }
@@ -73,7 +73,7 @@ namespace VKatcher.ViewModels
         {
             if (IsInDesignMode)
             {
-                _currentGroup = new VKGroup()
+                CurrentGroup = new VKGroup()
                 {
                     name = "Test Group",
                     IsSubscribed = true
@@ -174,7 +174,7 @@ namespace VKatcher.ViewModels
             });
             SubscribeCommand = new RelayCommand(async () =>
             {
-                var sub = await SubscriptionService.SubscribeToGroup(_currentGroup);
+                var sub = await SubscriptionService.SubscribeToGroup(CurrentGroup);
             });
             SongHoldingCommand = new RelayCommand<object>(sender =>
             {
@@ -202,7 +202,7 @@ namespace VKatcher.ViewModels
 
         private void OnTagClick(string tag)
         {
-            App.ViewModelLocator.Search.Search(tag, _currentGroup.screen_name);
+            App.ViewModelLocator.Search.Search(tag, CurrentGroup.screen_name);
             _navigationService.NavigateTo(typeof(SearchPage));
         }
 
@@ -215,7 +215,7 @@ namespace VKatcher.ViewModels
                 {
                     WallPosts.Clear();
                 }
-                foreach (var post in await DataService.LoadWallPosts(_currentGroup.id, offset, count))
+                foreach (var post in await DataService.LoadWallPosts(CurrentGroup.id, offset, count))
                 {
                     WallPosts.Add(post);
                 }

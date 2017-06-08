@@ -28,7 +28,7 @@ namespace VKatcher.Views
     /// </summary>
     public sealed partial class FeedPage : Page
     {
-        private FeedPageViewModel _viewModel;
+        private FeedPageViewModel ViewModel;
 
         public FeedPage()
         {
@@ -44,10 +44,6 @@ namespace VKatcher.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
-            var anim = ConnectedAnimationService.GetForCurrentView().GetAnimation("groupImage");
-            if (anim != null)
-                anim.TryStart(ellGroupImage);
         }
 
         private async Task CheckSubscribed(VKGroup group)
@@ -62,6 +58,13 @@ namespace VKatcher.Views
                 }
             }
             group.IsSubscribed = false;
+        }
+
+        private void ellGroupImage_ImageExOpened(object sender, Microsoft.Toolkit.Uwp.UI.Controls.ImageExOpenedEventArgs e)
+        {
+            var anim = ConnectedAnimationService.GetForCurrentView().GetAnimation("groupImage");
+            if (anim != null)
+                anim.TryStart(ellGroupImage);
         }
     }
 }

@@ -73,7 +73,7 @@ namespace VKatcher.ViewModels
             SelectGroupCommand = new RelayCommand<ItemClickEventArgs>(item =>
             {
                 var g = item.ClickedItem as VKGroup;
-                App.ViewModelLocator.Feed._currentGroup = g;
+                App.ViewModelLocator.Feed.CurrentGroup = g;
                 App.ViewModelLocator.Feed.LoadPosts(0, 30, true);
                 _navigationService.NavigateTo(typeof(FeedPage));
             });
