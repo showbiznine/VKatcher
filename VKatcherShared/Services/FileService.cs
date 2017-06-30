@@ -137,7 +137,7 @@ namespace VKatcherShared.Services
             }
         }
 
-        public static async void ClearToDownload()
+        public static async Task ClearToDownload()
         {
             StorageFile dlFile;
             try

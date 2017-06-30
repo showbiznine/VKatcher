@@ -1,62 +1,59 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:Controls="using:VKatcher.Controls"
-    xmlns:Converters="using:VKatcher.Converters"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:behaviors="using:VKatcher.Behaviors"
-    xmlns:model="using:VK.WindowsPhone.SDK.API.Model"
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Controls="using:VKatcher.Controls"
+                    xmlns:Converters="using:VKatcher.Converters"
+                    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+                    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+                    xmlns:behaviors="using:VKatcher.Behaviors"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    xmlns:model="using:VK.WindowsPhone.SDK.API.Model"
+                    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+                    mc:Ignorable="d">
 
     <Converters:TimespanStringConverter x:Key="TimespanStringConverter" />
     <Converters:PlayingForegroundConverter x:Key="PlayingForegroundConverter" />
     <Converters:BooleanVisibilityConverter x:Key="BooleanVisibilityConverter" />
-    <Converters:TagNameConverter x:Key="TagNameConverter"/>
+    <Converters:TagNameConverter x:Key="TagNameConverter" />
     <Converters:AudioOfflineVisibilityConverter x:Key="AudioOfflineVisibilityConverter" />
     <Converters:AudioTemplateConverter x:Key="AudioTemplateSelector"
-                                       SongListTemplate="{StaticResource SongListTemplate}"
-                                       AudioListTemplate="{StaticResource AudioListTemplate}" />
-    <Converters:ImageHeightConverter x:Key="ImageHeightConverter"/>
+                                       AudioListTemplate="{StaticResource AudioListTemplate}"
+                                       SongListTemplate="{StaticResource SongListTemplate}" />
+    <Converters:ImageHeightConverter x:Key="ImageHeightConverter" />
 
     <DataTemplate x:Key="GroupGridDataTemplate">
         <UserControl>
-            <toolkit:DropShadowPanel OffsetX="2"
-                                        OffsetY="2"
-                                        BlurRadius="4"
-                                        ShadowOpacity="0.4"
-                                        Color="Black">
-            <Grid x:Name="imgGroupPicture"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Background="Transparent">
+            <toolkit:DropShadowPanel BlurRadius="4"
+                                     OffsetX="2"
+                                     OffsetY="2"
+                                     ShadowOpacity="0.4"
+                                     Color="Black">
+                <Grid x:Name="imgGroupPicture"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      Background="Transparent">
                     <Border x:Name="image"
                             Grid.Row="0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             CornerRadius="5,5,0,0">
                         <Border.Background>
-                            <ImageBrush ImageSource="{Binding photo_200}"/>
+                            <ImageBrush ImageSource="{Binding photo_200}" />
                         </Border.Background>
-                        <Image Source="{Binding photo_200}"
-                                Opacity="0"/>
+                        <Image Opacity="0" Source="{Binding photo_200}" />
                     </Border>
-                    <Grid x:Name="grid"
-                            VerticalAlignment="Bottom">
+                    <Grid x:Name="grid" VerticalAlignment="Bottom">
                         <Grid.Background>
                             <SolidColorBrush Color="#99252525" />
                         </Grid.Background>
                         <Controls:BackDrop BlurAmount="3" />
                         <TextBlock x:Name="textBlock"
-                                    HorizontalAlignment="Left"
-                                    TextWrapping="Wrap"
-                                    Text="{Binding name}"
-                                    VerticalAlignment="Top"
-                                    Margin="12,12,0,12"
-                                    Foreground="White" />
+                                   Margin="12,12,0,12"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Foreground="White"
+                                   Text="{Binding name}"
+                                   TextWrapping="Wrap" />
                     </Grid>
                 </Grid>
             </toolkit:DropShadowPanel>
@@ -66,43 +63,13 @@
     <DataTemplate x:Key="PostListTemplate">
         <UserControl Margin="0,0,0,4">
             <Grid>
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup x:Name="Layout">
-                        <VisualState x:Name="Mobile">
-                            <VisualState.Setters>
-                                <Setter Target="lstSongs.(Grid.Row)"
-                                        Value="1" />
-                                <Setter Target="lstSongs.(Grid.Column)"
-                                        Value="0" />
-                                <Setter Target="col2.Width"
-                                        Value="0" />
-                            </VisualState.Setters>
-                            <VisualState.StateTriggers>
-                                <AdaptiveTrigger MinWindowWidth="0" />
-                            </VisualState.StateTriggers>
-                        </VisualState>
-                        <VisualState x:Name="Desktop">
-                            <VisualState.Setters>
-                                <Setter Target="lstSongs.(Grid.Row)"
-                                        Value="0" />
-                                <Setter Target="lstSongs.(Grid.Column)"
-                                        Value="1" />
-                                <Setter Target="col2.Width"
-                                        Value="*" />
-                            </VisualState.Setters>
-                            <VisualState.StateTriggers>
-                                <AdaptiveTrigger MinWindowWidth="700" />
-                            </VisualState.StateTriggers>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>
                 <Grid x:Name="grdParent"
                       Margin="12"
                       Background="{StaticResource Light_Gray}"
                       CornerRadius="4">
-                    <toolkit:DropShadowPanel OffsetX="2.0"
+                    <toolkit:DropShadowPanel BlurRadius="4"
+                                             OffsetX="2.0"
                                              OffsetY="2.0"
-                                             BlurRadius="4"
                                              ShadowOpacity="0.4"
                                              Color="Black">
                         <Grid Background="{StaticResource Light_Gray}">
@@ -110,27 +77,23 @@
                                 <ColumnDefinition x:Name="col1"
                                                   Width="*"
                                                   MaxWidth="500" />
-                                <ColumnDefinition x:Name="col2"
-                                                  Width="Auto" />
+                                <ColumnDefinition x:Name="col2" Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition x:Name="row1"
-                                               Height="Auto" />
-                                <RowDefinition x:Name="row2"
-                                               Height="Auto" />
+                                <RowDefinition x:Name="row1" Height="Auto" />
+                                <RowDefinition x:Name="row2" Height="Auto" />
                             </Grid.RowDefinitions>
-                            <Grid x:Name="grdTop"
-                                  CornerRadius="4">
+                            <Grid x:Name="grdTop" CornerRadius="4">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <toolkit:ImageEx x:Name="postImage"
-                                                 Source="{Binding post_image}"
-                                                 VerticalAlignment="Top"
                                                  Grid.Row="0"
-                                                 Stretch="Fill"
-                                                 IsCacheEnabled="True">
+                                                 VerticalAlignment="Top"
+                                                 IsCacheEnabled="True"
+                                                 Source="{Binding post_image}"
+                                                 Stretch="Fill">
                                     <!--<Interactivity:Interaction.Behaviors>
                                     <behaviors:HeightBehavior Width="{Binding ElementName=grdParent, Path=Width}"
                                                               AspectRatio="{Binding post_image_aspect_ratio}"
@@ -138,12 +101,12 @@
                                 </Interactivity:Interaction.Behaviors>-->
                                 </toolkit:ImageEx>
                                 <StackPanel x:Name="grdPostDetails"
-                                            d:LayoutOverrides="Width, Height"
                                             Grid.Row="1"
-                                            Margin="12,8,0,8">
+                                            Margin="12,8,0,8"
+                                            d:LayoutOverrides="Width, Height">
                                     <toolkit:MarkdownTextBlock x:Name="mtbPostText"
-                                                               Text="{Binding text}"
-                                                               Foreground="White">
+                                                               Foreground="White"
+                                                               Text="{Binding text}">
                                         <Interactivity:Interaction.Behaviors>
                                             <Core:EventTriggerBehavior EventName="LinkClicked">
                                                 <Core:InvokeCommandAction Command="{Binding DataContext.TagClickCommand, ElementName=pageRoot}" />
@@ -153,14 +116,14 @@
                                 </StackPanel>
                             </Grid>
                             <ListView x:Name="lstSongs"
-                                      ItemsSource="{Binding attachments}"
-                                      ScrollViewer.VerticalScrollMode="Disabled"
-                                      ItemContainerStyle="{StaticResource ListViewTextHighlight}"
-                                      ItemTemplateSelector="{StaticResource AudioTemplateSelector}"
                                       Grid.Row="1"
                                       HorizontalAlignment="Stretch"
                                       HorizontalContentAlignment="Stretch"
                                       IsItemClickEnabled="True"
+                                      ItemContainerStyle="{StaticResource ListViewTextHighlight}"
+                                      ItemTemplateSelector="{StaticResource AudioTemplateSelector}"
+                                      ItemsSource="{Binding attachments}"
+                                      ScrollViewer.VerticalScrollMode="Disabled"
                                       SelectionMode="None">
                                 <Interactivity:Interaction.Behaviors>
                                     <Core:EventTriggerBehavior EventName="ItemClick">
@@ -176,43 +139,63 @@
                         </Grid>
                     </toolkit:DropShadowPanel>
                 </Grid>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="Layout">
+                        <VisualState x:Name="Mobile">
+                            <VisualState.Setters>
+                                <Setter Target="lstSongs.(Grid.Row)" Value="1" />
+                                <Setter Target="lstSongs.(Grid.Column)" Value="0" />
+                                <Setter Target="col2.Width" Value="0" />
+                            </VisualState.Setters>
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="0" />
+                            </VisualState.StateTriggers>
+                        </VisualState>
+                        <VisualState x:Name="Desktop">
+                            <VisualState.Setters>
+                                <Setter Target="lstSongs.(Grid.Row)" Value="0" />
+                                <Setter Target="lstSongs.(Grid.Column)" Value="1" />
+                                <Setter Target="col2.Width" Value="*" />
+                            </VisualState.Setters>
+                            <VisualState.StateTriggers>
+                                <AdaptiveTrigger MinWindowWidth="700" />
+                            </VisualState.StateTriggers>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
             </Grid>
         </UserControl>
     </DataTemplate>
 
     <MenuFlyout x:Key="TrackFlyout">
         <MenuFlyoutItem x:Name="flyOneDrive"
-                        Text="Save to OneDrive"
                         Command="{Binding DataContext.UploadToOneDriveCommand, ElementName=pageRoot}"
-                        CommandParameter="{Binding ElementName=grdRoot}"/>
+                        CommandParameter="{Binding ElementName=grdRoot}"
+                        Text="Save to OneDrive" />
         <MenuFlyoutItem x:Name="flyDownload"
-                        Text="Download"
                         Command="{Binding DataContext.DownloadTrackCommand, ElementName=pageRoot}"
                         CommandParameter="{Binding ElementName=grdRoot}"
+                        Text="Download"
                         Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}, ConverterParameter=true}" />
         <MenuFlyoutItem x:Name="flyDelete"
-                        Text="Delete"
                         Command="{Binding DataContext.DeleteDownloadCommand, ElementName=pageRoot}"
                         CommandParameter="{Binding ElementName=grdRoot}"
+                        Text="Delete"
                         Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}}" />
-        <MenuFlyoutItem x:Name="flySavetoAudio"
-                        Text="Save to My Audio" />
+        <MenuFlyoutItem x:Name="flySavetoAudio" Text="Save to My Audio" />
         <MenuFlyoutSeparator />
-        <MenuFlyoutItem x:Name="flyAddToPlaylist"
-                        Text="Add to Now Playing" />
-        <MenuFlyoutItem x:Name="flyPlayNext"
-                        Text="Play next" />
+        <MenuFlyoutItem x:Name="flyAddToPlaylist" Text="Add to Now Playing" />
+        <MenuFlyoutItem x:Name="flyPlayNext" Text="Play next" />
         <MenuFlyoutSeparator />
         <MenuFlyoutItem x:Name="flyCast"
-                        Text="Cast to..."
                         Command="{Binding DataContext.PlayOnRemoteDeviceCommand, ElementName=pageRoot}"
-                        CommandParameter="{Binding ElementName=grdRoot}"/>
+                        CommandParameter="{Binding ElementName=grdRoot}"
+                        Text="Cast to..." />
 
     </MenuFlyout>
 
     <DataTemplate x:Key="TagTemplate">
-        <HyperlinkButton Content="{Binding Converter={StaticResource TagNameConverter}}"
-                         Margin="0,0,8,0">
+        <HyperlinkButton Margin="0,0,8,0" Content="{Binding Converter={StaticResource TagNameConverter}}">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Click">
                     <Core:InvokeCommandAction Command="{Binding DataContext.TagClickCommand, ElementName=pageRoot}" />
@@ -222,169 +205,160 @@
     </DataTemplate>
 
     <DataTemplate x:Key="SongListTemplate">
-        <Grid Margin="12,0,12,0"
-              Holding="SongGrid_Holding"
+        <Grid x:Name="grdRoot"
+              Margin="12,0,12,0"
               HorizontalAlignment="Stretch"
-              x:Name="grdRoot">
+              Holding="SongGrid_Holding">
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem x:Name="flyOneDrive"
-                        Text="Save to OneDrive"
-                        Command="{Binding DataContext.UploadToOneDriveCommand, ElementName=pageRoot}"
-                        CommandParameter="{Binding ElementName=grdRoot}"/>
+                                    Command="{Binding DataContext.UploadToOneDriveCommand, ElementName=pageRoot}"
+                                    CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Save to OneDrive" />
                     <MenuFlyoutItem x:Name="flyDownload"
-                                    Text="Download"
                                     Command="{Binding DataContext.DownloadTrackCommand, ElementName=pageRoot}"
                                     CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Download"
                                     Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}, ConverterParameter=true}" />
                     <MenuFlyoutItem x:Name="flyDelete"
-                                    Text="Delete"
                                     Command="{Binding DataContext.DeleteDownloadCommand, ElementName=pageRoot}"
                                     CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Delete"
                                     Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}}" />
-                    <MenuFlyoutItem x:Name="flySavetoAudio"
-                                    Text="Save to My Audio" />
+                    <MenuFlyoutItem x:Name="flySavetoAudio" Text="Save to My Audio" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem x:Name="flyAddToPlaylist"
-                                    Text="Add to Now Playing"
                                     Command="{Binding DataContext.AddToPlaylistCommand, ElementName=pageRoot}"
-                                    CommandParameter="{Binding ElementName=grdRoot}" />
+                                    CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Add to Now Playing" />
                     <MenuFlyoutItem x:Name="flyPlayNext"
-                                    Text="Play next"
                                     Command="{Binding DataContext.PlayNextCommand, ElementName=pageRoot}"
-                                    CommandParameter="{Binding ElementName=grdRoot}" />
+                                    CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Play next" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem x:Name="flyCast"
-                        Text="Cast to..."
-                        Command="{Binding DataContext.PlayOnRemoteDeviceCommand, ElementName=pageRoot}"
-                        CommandParameter="{Binding ElementName=grdRoot}"/>
+                                    Command="{Binding DataContext.PlayOnRemoteDeviceCommand, ElementName=pageRoot}"
+                                    CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Cast to..." />
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
             <StackPanel>
-                    <TextBlock Text="{Binding audio.title}"
-                               FontSize="24"
-                               FontWeight="Bold"
-                               Margin="0,4,0,0" 
-                               TextTrimming="CharacterEllipsis"
-                               Foreground="{Binding audio.IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"/>
-                    <Grid>
-                        <TextBlock FontSize="20"
-                                   FontWeight="SemiBold"
-                                   Opacity="0.6"
-                                   Margin="0,0,0,4"
-                                   Foreground="{Binding audio.IsPlaying, Converter={StaticResource PlayingForegroundConverter}}">
+                <TextBlock Margin="0,4,0,0"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="{Binding audio.IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                           Text="{Binding audio.title}"
+                           TextTrimming="CharacterEllipsis" />
+                <Grid>
+                    <TextBlock Margin="0,0,0,4"
+                               FontSize="20"
+                               FontWeight="SemiBold"
+                               Foreground="{Binding audio.IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                               Opacity="0.6">
                         <Run Text="·٠" />
                         <Run Text="{Binding audio.artist}" />
-                        </TextBlock>
-                    <StackPanel HorizontalAlignment="Right" 
+                    </TextBlock>
+                    <StackPanel HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
-                        <TextBlock Text=""
+                        <TextBlock Margin="0,0,8,0"
+                                   VerticalAlignment="Center"
                                    FontFamily="Segoe MDL2 Assets"
-                                   VerticalAlignment="Center"
                                    Foreground="{Binding audio.IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
-                                   Visibility="{Binding audio.IsOffline, Converter={StaticResource BooleanVisibilityConverter}}"
-                                   Margin="0,0,8,0"/>
-                        <TextBlock Text="{Binding audio.duration, Converter={StaticResource TimespanStringConverter}}"
+                                   Text=""
+                                   Visibility="{Binding audio.IsOffline, Converter={StaticResource BooleanVisibilityConverter}}" />
+                        <TextBlock HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   HorizontalAlignment="Right"
                                    FontWeight="Light"
-                                   Foreground="{Binding audio.IsPlaying, Converter={StaticResource PlayingForegroundConverter}}" />
+                                   Foreground="{Binding audio.IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                                   Text="{Binding audio.duration, Converter={StaticResource TimespanStringConverter}}" />
                     </StackPanel>
 
-                    </Grid>
-                    <ProgressBar Value="{Binding audio.dlProgress, Mode=OneWay}"
-                                 Background="Transparent" />
-                    <Border BorderThickness="0,0,0,.5"
-                            Margin="12,4,12,4">
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="{StaticResource SystemBaseLowColor}" />
-                        </Border.BorderBrush>
-                    </Border>
-                </StackPanel>
+                </Grid>
+                <ProgressBar Background="Transparent" Value="{Binding audio.dlProgress, Mode=OneWay}" />
+                <Border Margin="12,4,12,4" BorderThickness="0,0,0,.5">
+                    <Border.BorderBrush>
+                        <SolidColorBrush Color="{StaticResource SystemBaseLowColor}" />
+                    </Border.BorderBrush>
+                </Border>
+            </StackPanel>
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Holding">
-                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}"
-                                              CommandParameter="{Binding ElementName=grdRoot}" />
+                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}" CommandParameter="{Binding ElementName=grdRoot}" />
                 </Core:EventTriggerBehavior>
                 <Core:EventTriggerBehavior EventName="RightTapped">
-                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}"
-                                              CommandParameter="{Binding ElementName=grdRoot}" />
+                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}" CommandParameter="{Binding ElementName=grdRoot}" />
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Grid>
     </DataTemplate>
 
     <DataTemplate x:Key="AudioListTemplate">
-        <Grid Margin="12,0,12,0"
-              Holding="SongGrid_Holding"
-              RightTapped="Grid_RightTapped"
+        <Grid x:Name="grdRoot"
+              Margin="12,0,12,0"
               HorizontalAlignment="Stretch"
-              x:Name="grdRoot">
+              Holding="SongGrid_Holding"
+              RightTapped="Grid_RightTapped">
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem x:Name="flyOneDrive"
-                        Text="Save to OneDrive"
-                        Command="{Binding DataContext.UploadToOneDriveCommand, ElementName=pageRoot}"
-                        CommandParameter="{Binding ElementName=grdRoot}"/>
+                                    Command="{Binding DataContext.UploadToOneDriveCommand, ElementName=pageRoot}"
+                                    CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Save to OneDrive" />
                     <MenuFlyoutItem x:Name="flyDownload"
-                                    Text="Download"
                                     Command="{Binding DataContext.DownloadTrackCommand, ElementName=pageRoot}"
                                     CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Download"
                                     Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}, ConverterParameter=true}" />
                     <MenuFlyoutItem x:Name="flyDelete"
-                                    Text="Delete"
                                     Command="{Binding DataContext.DeleteDownloadCommand, ElementName=pageRoot}"
                                     CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Delete"
                                     Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}}" />
                     <MenuFlyoutSeparator />
-                    <MenuFlyoutItem x:Name="flyAddToPlaylist"
-                                    Text="Add to Now Playing" />
-                    <MenuFlyoutItem x:Name="flyPlayNext"
-                                    Text="Play next" />
+                    <MenuFlyoutItem x:Name="flyAddToPlaylist" Text="Add to Now Playing" />
+                    <MenuFlyoutItem x:Name="flyPlayNext" Text="Play next" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem x:Name="flyCast"
-                        Text="Cast to..."
-                        Command="{Binding DataContext.PlayOnRemoteDeviceCommand, ElementName=pageRoot}"
-                        CommandParameter="{Binding ElementName=grdRoot}"/>
+                                    Command="{Binding DataContext.PlayOnRemoteDeviceCommand, ElementName=pageRoot}"
+                                    CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Cast to..." />
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
             <StackPanel>
-                <TextBlock Text="{Binding title}"
+                <TextBlock Margin="0,4,0,0"
                            FontSize="24"
                            FontWeight="Bold"
-                           Margin="0,4,0,0"
-                           TextTrimming="CharacterEllipsis"
-                           Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}" />
+                           Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                           Text="{Binding title}"
+                           TextTrimming="CharacterEllipsis" />
                 <Grid>
-                    <TextBlock FontSize="20"
+                    <TextBlock Margin="0,0,0,4"
+                               FontSize="20"
                                FontWeight="SemiBold"
-                               Opacity="0.6"
-                               Margin="0,0,0,4"
-                               Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}">
+                               Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                               Opacity="0.6">
                         <Run Text="·٠" />
                         <Run Text="{Binding artist}" />
                     </TextBlock>
                     <StackPanel HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
-                        <TextBlock Text=""
+                        <TextBlock Margin="0,0,8,0"
+                                   VerticalAlignment="Center"
                                    FontFamily="Segoe MDL2 Assets"
-                                   VerticalAlignment="Center"
                                    Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
-                                   Visibility="{Binding IsOffline, Converter={StaticResource BooleanVisibilityConverter}}"
-                                   Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding duration, Converter={StaticResource TimespanStringConverter}}"
+                                   Text=""
+                                   Visibility="{Binding IsOffline, Converter={StaticResource BooleanVisibilityConverter}}" />
+                        <TextBlock HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   HorizontalAlignment="Right"
                                    FontWeight="Light"
-                                   Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}" />
+                                   Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                                   Text="{Binding duration, Converter={StaticResource TimespanStringConverter}}" />
                     </StackPanel>
                 </Grid>
-                <ProgressBar Value="{Binding dlProgress, Mode=OneWay}"
-                             Background="Transparent" />
-                <Border BorderThickness="0,0,0,.5"
-                        Margin="12,4,12,4">
+                <ProgressBar Background="Transparent" Value="{Binding dlProgress, Mode=OneWay}" />
+                <Border Margin="12,4,12,4" BorderThickness="0,0,0,.5">
                     <Border.BorderBrush>
                         <SolidColorBrush Color="{StaticResource SystemBaseLowColor}" />
                     </Border.BorderBrush>
@@ -392,12 +366,10 @@
             </StackPanel>
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="RightTapped">
-                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}"
-                                              CommandParameter="{Binding ElementName=grdRoot}" />
+                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}" CommandParameter="{Binding ElementName=grdRoot}" />
                 </Core:EventTriggerBehavior>
                 <Core:EventTriggerBehavior EventName="Holding">
-                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}"
-                                              CommandParameter="{Binding ElementName=grdRoot}" />
+                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}" CommandParameter="{Binding ElementName=grdRoot}" />
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Grid>
@@ -409,34 +381,33 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Margin="0,4"
-                        Orientation="Horizontal"
+            <StackPanel Grid.Row="0"
+                        Margin="0,4"
                         VerticalAlignment="Center"
-                        Grid.Row="0">
+                        Orientation="Horizontal">
                 <Ellipse Width="40"
                          Height="40"
                          VerticalAlignment="Center">
                     <Ellipse.Fill>
-                        <ImageBrush Stretch="Fill"
-                                    ImageSource="{Binding photo_200}" />
+                        <ImageBrush ImageSource="{Binding photo_200}" Stretch="Fill" />
                     </Ellipse.Fill>
                 </Ellipse>
-                <TextBlock Text="{Binding name}"
+                <TextBlock Margin="12,0,0,0"
+                           VerticalAlignment="Center"
                            FontSize="16"
                            FontWeight="SemiBold"
-                           Margin="12,0,0,0"
-                           VerticalAlignment="Center" />
+                           Text="{Binding name}" />
             </StackPanel>
-            <Button FontFamily="Segoe MDL2 Assets"
-                    FontSize="16"
-                    Content="&#xE10A;"
-                    Grid.Column="1"
-                    HorizontalAlignment="Right" 
+            <Button Grid.Column="1"
+                    HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Background="Transparent"
-                    Foreground="#FFF22613"
                     Command="{Binding DataContext.UnsubscribeCommand, ElementName=pageRoot}"
-                    CommandParameter="{Binding}"/>
+                    CommandParameter="{Binding}"
+                    Content="&#xE10A;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="16"
+                    Foreground="#FFF22613" />
         </Grid>
     </DataTemplate>
 
@@ -446,42 +417,42 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <StackPanel Margin="0,4"
-                        Orientation="Horizontal"
+            <StackPanel Grid.Row="0"
+                        Margin="0,4"
                         VerticalAlignment="Center"
-                        Grid.Row="0">
-                <TextBlock Text="{Binding tag}"
+                        Orientation="Horizontal">
+                <TextBlock Margin="12,0,0,0"
+                           VerticalAlignment="Center"
                            FontSize="16"
                            FontWeight="SemiBold"
-                           Margin="12,0,0,0"
-                           VerticalAlignment="Center" >
+                           Text="{Binding tag}">
                     <TextBlock.Inlines>
-                        <Run Text="#"/>
-                        <Run Text="{Binding tag}"/>
-                        <Run Text="@"/>
-                        <Run Text="{Binding domain}"/>
+                        <Run Text="#" />
+                        <Run Text="{Binding tag}" />
+                        <Run Text="@" />
+                        <Run Text="{Binding domain}" />
                     </TextBlock.Inlines>
                 </TextBlock>
             </StackPanel>
-            <Button FontFamily="Segoe MDL2 Assets"
-                    FontSize="16"
-                    Content="&#xE10A;"
-                    Grid.Column="1"
-                    HorizontalAlignment="Right" 
+            <Button Grid.Column="1"
+                    HorizontalAlignment="Right"
                     VerticalAlignment="Stretch"
                     Background="Transparent"
-                    Foreground="#FFF22613"
                     Command="{Binding DataContext.UnsubscribeCommand, ElementName=pageRoot}"
-                    CommandParameter="{Binding}"/>
+                    CommandParameter="{Binding}"
+                    Content="&#xE10A;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="16"
+                    Foreground="#FFF22613" />
         </Grid>
     </DataTemplate>
 
-    <!-- Spotify Templates -->
+    <!--  Spotify Templates  -->
 
     <DataTemplate x:Key="SpotifyPlaylistTemplate">
-        <Grid Margin="0"
-              HorizontalAlignment="Stretch"
-              x:Name="grdRoot">
+        <Grid x:Name="grdRoot"
+              Margin="0"
+              HorizontalAlignment="Stretch">
             <!--<FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem x:Name="flyDownload"
@@ -504,16 +475,16 @@
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>-->
             <StackPanel>
-                <TextBlock Text="{Binding Name}"
+                <TextBlock Margin="0,4,0,0"
                            FontSize="24"
                            FontWeight="Bold"
-                           Margin="0,4,0,0"
+                           Text="{Binding Name}"
                            TextTrimming="CharacterEllipsis" />
                 <Grid>
-                    <TextBlock FontSize="20"
+                    <TextBlock Margin="0,0,0,4"
+                               FontSize="20"
                                FontWeight="SemiBold"
-                               Opacity="0.6"
-                               Margin="0,0,0,4">
+                               Opacity="0.6">
                         <Run Text="{Binding Tracks.Total}" />
                         <Run Text="songs" />
 
@@ -523,31 +494,29 @@
                                 Orientation="Horizontal" />
 
                 </Grid>
-                <Border BorderThickness="0,0,0,.5"
-                        Margin="12,4,12,4">
+                <Border Margin="12,4,12,4" BorderThickness="0,0,0,.5">
                     <Border.BorderBrush>
                         <SolidColorBrush Color="{StaticResource SystemBaseLowColor}" />
                     </Border.BorderBrush>
                 </Border>
             </StackPanel>
-            <Grid HorizontalAlignment="Right"
-                  VerticalAlignment="Center">
+            <Grid HorizontalAlignment="Right" VerticalAlignment="Center">
                 <Ellipse x:Name="ellStatus"
-                         Fill="#FF26A65B"
-                         HorizontalAlignment="Right"
                          Width="36"
-                         VerticalAlignment="Center"
                          Height="36"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Center"
+                         Fill="#FF26A65B"
                          StrokeThickness="0" />
                 <TextBlock x:Name="textBlock"
-                           TextWrapping="Wrap"
-                           Text="&#xE001;"
-                           VerticalAlignment="Center"
-                           d:LayoutOverrides="Width"
                            HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
                            FontFamily="Segoe MDL2 Assets"
+                           FontSize="18"
+                           Text="&#xE001;"
                            TextLineBounds="Tight"
-                           FontSize="18" />
+                           TextWrapping="Wrap"
+                           d:LayoutOverrides="Width" />
             </Grid>
             <!--<Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="RightTapped">
@@ -561,70 +530,65 @@
             </Interactivity:Interaction.Behaviors>-->
         </Grid>
     </DataTemplate>
-    
+
     <DataTemplate x:Key="SpotifyAudioListTemplate">
-        <Grid Margin="12,0,12,0"
-              Holding="SongGrid_Holding"
-              RightTapped="Grid_RightTapped"
+        <Grid x:Name="grdRoot"
+              Margin="12,0,12,0"
               HorizontalAlignment="Stretch"
-              x:Name="grdRoot">
+              Holding="SongGrid_Holding"
+              RightTapped="Grid_RightTapped">
             <FlyoutBase.AttachedFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem x:Name="flyDownload"
-                                    Text="Download"
                                     Command="{Binding DataContext.DownloadTrackCommand, ElementName=pageRoot}"
                                     CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Download"
                                     Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}, ConverterParameter=true}" />
                     <MenuFlyoutItem x:Name="flyDelete"
-                                    Text="Delete"
                                     Command="{Binding DataContext.DeleteDownloadCommand, ElementName=pageRoot}"
                                     CommandParameter="{Binding ElementName=grdRoot}"
+                                    Text="Delete"
                                     Visibility="{Binding Converter={StaticResource AudioOfflineVisibilityConverter}}" />
-                    <MenuFlyoutItem x:Name="flySavetoAudio"
-                                    Text="Save to My Audio" />
+                    <MenuFlyoutItem x:Name="flySavetoAudio" Text="Save to My Audio" />
                     <MenuFlyoutSeparator />
-                    <MenuFlyoutItem x:Name="flyAddToPlaylist"
-                                    Text="Add to Now Playing" />
-                    <MenuFlyoutItem x:Name="flyPlayNext"
-                                    Text="Play next" />
+                    <MenuFlyoutItem x:Name="flyAddToPlaylist" Text="Add to Now Playing" />
+                    <MenuFlyoutItem x:Name="flyPlayNext" Text="Play next" />
                 </MenuFlyout>
             </FlyoutBase.AttachedFlyout>
             <StackPanel>
-                <TextBlock Text="{Binding title}"
+                <TextBlock Margin="0,4,0,0"
                            FontSize="24"
                            FontWeight="Bold"
-                           Margin="0,4,0,0"
-                           TextTrimming="CharacterEllipsis"
-                           Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}" />
+                           Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                           Text="{Binding title}"
+                           TextTrimming="CharacterEllipsis" />
                 <Grid>
-                    <TextBlock FontSize="20"
+                    <TextBlock Margin="0,0,0,4"
+                               FontSize="20"
                                FontWeight="SemiBold"
-                               Opacity="0.6"
-                               Margin="0,0,0,4"
-                               Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}">
+                               Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                               Opacity="0.6">
                         <Run Text="·٠" />
                         <Run Text="{Binding artist}" />
                     </TextBlock>
                     <StackPanel HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
-                        <TextBlock Text=""
+                        <TextBlock Margin="0,0,8,0"
+                                   VerticalAlignment="Center"
                                    FontFamily="Segoe MDL2 Assets"
-                                   VerticalAlignment="Center"
                                    Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
-                                   Visibility="{Binding IsOffline, Converter={StaticResource BooleanVisibilityConverter}}"
-                                   Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding duration, Converter={StaticResource TimespanStringConverter}}"
+                                   Text=""
+                                   Visibility="{Binding IsOffline, Converter={StaticResource BooleanVisibilityConverter}}" />
+                        <TextBlock HorizontalAlignment="Right"
                                    VerticalAlignment="Center"
-                                   HorizontalAlignment="Right"
                                    FontWeight="Light"
-                                   Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}" />
+                                   Foreground="{Binding IsPlaying, Converter={StaticResource PlayingForegroundConverter}}"
+                                   Text="{Binding duration, Converter={StaticResource TimespanStringConverter}}" />
                     </StackPanel>
                 </Grid>
-                <ProgressBar Value="{Binding dlProgress, Mode=OneWay}"
-                             Background="Transparent" />
-                <Border BorderThickness="0,0,0,.5"
-                        Margin="12,4,12,4">
+                <ProgressBar Background="Transparent" Value="{Binding dlProgress, Mode=OneWay}" />
+                <Border Margin="12,4,12,4" BorderThickness="0,0,0,.5">
                     <Border.BorderBrush>
                         <SolidColorBrush Color="{StaticResource SystemBaseLowColor}" />
                     </Border.BorderBrush>
@@ -632,12 +596,10 @@
             </StackPanel>
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="RightTapped">
-                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}"
-                                              CommandParameter="{Binding ElementName=grdRoot}" />
+                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}" CommandParameter="{Binding ElementName=grdRoot}" />
                 </Core:EventTriggerBehavior>
                 <Core:EventTriggerBehavior EventName="Holding">
-                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}"
-                                              CommandParameter="{Binding ElementName=grdRoot}" />
+                    <Core:InvokeCommandAction Command="{Binding DataContext.SongHoldingCommand, ElementName=pageRoot}" CommandParameter="{Binding ElementName=grdRoot}" />
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </Grid>

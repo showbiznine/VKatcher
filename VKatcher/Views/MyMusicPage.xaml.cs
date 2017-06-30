@@ -30,8 +30,6 @@ namespace VKatcher.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            App.ViewModelLocator.MyMusic.LoadMyDownloads();
-            App.ViewModelLocator.MyMusic.LoadMyTracks();
 
             if ((string)e.Parameter == "downloads")
             {

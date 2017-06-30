@@ -66,6 +66,7 @@ namespace VKatcher.ViewModels
         public RelayCommand<ItemClickEventArgs> SongListViewItemClickCommand { get; private set; }
         public RelayCommand<LinkClickedEventArgs> TagClickCommand { get; private set; }
         public RelayCommand<object> SongHoldingCommand { get; private set; }
+        public RelayCommand<Grid> DownloadTrackCommand { get; private set; }
         public RelayCommand<object> SongRightTappedCommand { get; private set; }
         #endregion
 
@@ -167,6 +168,11 @@ namespace VKatcher.ViewModels
             SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(args =>
             {
                 OnSongListItemClick(args);
+            });
+            DownloadTrackCommand = new RelayCommand<Grid>(async args =>
+            {
+                var attachment = args.DataContext as VKAttachment;
+                await DownloadTrack(attachment.audio);
             });
             TagClickCommand = new RelayCommand<LinkClickedEventArgs>(args =>
             {

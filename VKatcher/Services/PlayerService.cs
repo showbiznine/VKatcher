@@ -50,7 +50,7 @@ namespace VKatcher.Services
             CurrentPlaylist.Clear();
             CurrentPlaybackList.Items.Clear();
             foreach (var audio in audios)
-            {
+            {          
                 CurrentPlaylist.Add(audio);
                 var item = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri(audio.url)));
                 var props = item.GetDisplayProperties();

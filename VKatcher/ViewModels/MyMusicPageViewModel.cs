@@ -202,7 +202,7 @@ namespace VKatcher.ViewModels
             }
         }
 
-        public async Task LoadMyDownloads()
+        public async void LoadMyDownloads()
         {
             try
             {
@@ -217,7 +217,7 @@ namespace VKatcher.ViewModels
             }
         }
 
-        private async Task LoadMySuggestedMusicAsync()
+        private async void LoadMySuggestedMusicAsync()
         {
             _inCall = true;
             try
@@ -242,27 +242,31 @@ namespace VKatcher.ViewModels
             _inCall = false;
         }
 
-        public async Task LoadMyTracks()
+        public async void LoadMyTracks()
         {
             _inCall = true;
-            try
+            if (await AuthenticationService.RefreshAccessToken())
             {
-                if (_mySavedTracks == null)
+                try
                 {
-                    _mySavedTracks = new ObservableCollection<VKAudio>();
-                    var temp = await DataService.LoadMyAudio();
-                    foreach (var item in temp)
+                    if (_mySavedTracks == null)
                     {
-                        _mySavedTracks.Add(item);
+                        _mySavedTracks = new ObservableCollection<VKAudio>();
+                        var temp = await DataService.LoadMyAudio();
+                        foreach (var item in temp)
+                        {
+                            if (!string.IsNullOrWhiteSpace(item.url))
+                                _mySavedTracks.Add(item);
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                if (ex is HttpRequestException)
-                    await new MessageDialog("Error connecting to VK").ShowAsync();
-                else
-                    await new MessageDialog("Error loading groups").ShowAsync();
+                catch (Exception ex)
+                {
+                    if (ex is HttpRequestException)
+                        await new MessageDialog("Error connecting to VK").ShowAsync();
+                    else
+                        await new MessageDialog("Error loading groups").ShowAsync();
+                }
             }
             _inCall = false;
         }

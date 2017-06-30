@@ -8,11 +8,13 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="using:VKatcher.Views"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:models="using:VK.WindowsPhone.SDK.API.Model"
       xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+      xmlns:ui="using:Microsoft.Toolkit.Uwp.UI"
       x:Name="pageRoot"
       DataContext="{Binding Feed, Source={StaticResource Locator}}"
-      mc:Ignorable="d" 
-      NavigationCacheMode="Required">
+      NavigationCacheMode="Required"
+      mc:Ignorable="d">
 
     <Page.Resources>
         <Converters:SubscribedColorConverter x:Key="SubscribedColorConverter" />
@@ -51,8 +53,8 @@
         </Grid.RowDefinitions>
         <ListView x:Name="listView"
                   Grid.Row="1"
+                  ui:ListViewBaseExtensions.StretchItemContainerDirection="Horizontal"
                   Background="Transparent"
-                  ItemTemplate="{StaticResource PostListTemplate}"
                   ItemsSource="{Binding WallPosts}"
                   SelectionMode="None">
             <ListView.ItemContainerStyle>
@@ -63,6 +65,108 @@
                     <Setter Property="Padding" Value="0" />
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:VKWallPost">
+                    <UserControl Margin="0,0,0,4">
+                        <Grid>
+                            <Grid x:Name="grdParent"
+                                  Margin="12"
+                                  Background="{StaticResource Light_Gray}"
+                                  CornerRadius="4">
+                                <toolkit:DropShadowPanel BlurRadius="4"
+                                                         OffsetX="2.0"
+                                                         OffsetY="2.0"
+                                                         ShadowOpacity="0.4"
+                                                         Color="Black">
+                                    <Grid Background="{StaticResource Light_Gray}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition x:Name="col1"
+                                                              Width="*"
+                                                              MaxWidth="500" />
+                                            <ColumnDefinition x:Name="col2" Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition x:Name="row1" Height="Auto" />
+                                            <RowDefinition x:Name="row2" Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid x:Name="grdTop" CornerRadius="4">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <toolkit:ImageEx x:Name="postImage"
+                                                             Grid.Row="0"
+                                                             VerticalAlignment="Top"
+                                                             IsCacheEnabled="True"
+                                                             Source="{Binding post_image}"
+                                                             Stretch="Fill" />
+                                            <StackPanel x:Name="grdPostDetails"
+                                                        Grid.Row="1"
+                                                        Margin="12,8,0,8"
+                                                        d:LayoutOverrides="Width, Height">
+                                                <toolkit:MarkdownTextBlock x:Name="mtbPostText"
+                                                                           Foreground="White"
+                                                                           Text="{Binding text}">
+                                                    <Interactivity:Interaction.Behaviors>
+                                                        <Core:EventTriggerBehavior EventName="LinkClicked">
+                                                            <Core:InvokeCommandAction Command="{Binding DataContext.TagClickCommand, ElementName=pageRoot}" />
+                                                        </Core:EventTriggerBehavior>
+                                                    </Interactivity:Interaction.Behaviors>
+                                                </toolkit:MarkdownTextBlock>
+                                            </StackPanel>
+                                        </Grid>
+                                        <ListView x:Name="lstSongs"
+                                                  Grid.Row="1"
+                                                  HorizontalAlignment="Stretch"
+                                                  HorizontalContentAlignment="Stretch"
+                                                  IsItemClickEnabled="True"
+                                                  ItemContainerStyle="{StaticResource ListViewTextHighlight}"
+                                                  ItemTemplateSelector="{StaticResource AudioTemplateSelector}"
+                                                  ItemsSource="{Binding attachments}"
+                                                  ScrollViewer.VerticalScrollMode="Disabled"
+                                                  SelectionMode="None">
+                                            <Interactivity:Interaction.Behaviors>
+                                                <Core:EventTriggerBehavior EventName="ItemClick">
+                                                    <Core:InvokeCommandAction Command="{Binding DataContext.SongListViewItemClickCommand, ElementName=pageRoot}" />
+                                                </Core:EventTriggerBehavior>
+                                            </Interactivity:Interaction.Behaviors>
+                                            <ListView.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel />
+                                                </ItemsPanelTemplate>
+                                            </ListView.ItemsPanel>
+                                        </ListView>
+                                    </Grid>
+                                </toolkit:DropShadowPanel>
+                            </Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="Layout">
+                                    <VisualState x:Name="Mobile">
+                                        <VisualState.Setters>
+                                            <Setter Target="lstSongs.(Grid.Row)" Value="1" />
+                                            <Setter Target="lstSongs.(Grid.Column)" Value="0" />
+                                            <Setter Target="col2.Width" Value="0" />
+                                        </VisualState.Setters>
+                                        <VisualState.StateTriggers>
+                                            <AdaptiveTrigger MinWindowWidth="0" />
+                                        </VisualState.StateTriggers>
+                                    </VisualState>
+                                    <VisualState x:Name="Desktop">
+                                        <VisualState.Setters>
+                                            <Setter Target="lstSongs.(Grid.Row)" Value="0" />
+                                            <Setter Target="lstSongs.(Grid.Column)" Value="1" />
+                                            <Setter Target="col2.Width" Value="*" />
+                                        </VisualState.Setters>
+                                        <VisualState.StateTriggers>
+                                            <AdaptiveTrigger MinWindowWidth="700" />
+                                        </VisualState.StateTriggers>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Grid>
+                    </UserControl>
+                </DataTemplate>
+            </ListView.ItemTemplate>
             <ListView.Header>
                 <toolkit:ScrollHeader x:Name="lstHeader"
                                       HorizontalContentAlignment="Stretch"
@@ -217,9 +321,9 @@
                                   Height="48"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center"
-                                  Source="{Binding CurrentGroup.photo_50}" 
+                                  CornerRadius="999"
                                   ImageExOpened="ellGroupImage_ImageExOpened"
-                                  CornerRadius="999"/>
+                                  Source="{Binding CurrentGroup.photo_50}" />
         </Grid>
     </Grid>
 </Page>

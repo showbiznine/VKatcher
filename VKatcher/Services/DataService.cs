@@ -1,11 +1,11 @@
 ﻿using Microsoft.QueryStringDotNET;
+using Microsoft.Toolkit.Uwp;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VK.WindowsPhone.SDK;
@@ -21,6 +21,7 @@ using Windows.Security.Credentials;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.Web.Http;
 
 namespace VKatcher.Services
 {
@@ -28,6 +29,22 @@ namespace VKatcher.Services
     {
 
         #region API Calls
+
+        #region Generic Methods
+        private static async Task<string> HttpGet(string query)
+        {
+            var request = new HttpHelperRequest(new Uri(query), HttpMethod.Get);
+            request.Headers.Add("User-Agent", Constants.userAgent);
+
+            using (var response = await HttpHelper.Instance.SendRequestAsync(request))
+            {
+                if (response.Success)
+                    return await response.GetTextResultAsync();
+                else
+                    return null;
+            }
+        }
+        #endregion
 
         #region Groups
         public static async Task<ObservableCollection<VKGroup>> LoadMyGroups()
@@ -42,14 +59,8 @@ namespace VKatcher.Services
             };
             string request = Constants.host + "groups.get?" + q;
 
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
-            if (json.Contains("error_code"))
-            {
-                await AuthenticationService.VKLogin();
-                return null;
-            }
-            var r = JsonConvert.DeserializeObject<VKGroupRoot>(json);
+            var r = JsonConvert.DeserializeObject<VKGroupRoot>(await HttpGet(request));
+
             return r.response.items;
         }
 
@@ -70,10 +81,7 @@ namespace VKatcher.Services
             };
             string request = Constants.host + "wall.get?" + q;
 
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
-
-            var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(json);
+            var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(await HttpGet(request));
             var r = ReturnedObject.response.items;
             foreach (var wp in r)
             {
@@ -112,10 +120,7 @@ namespace VKatcher.Services
             };
             string request = Constants.host + "groups.search?" + q;
 
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
-
-            var r = JsonConvert.DeserializeObject<VKGroupRoot>(json);
+            var r = JsonConvert.DeserializeObject<VKGroupRoot>(await HttpGet(request));
             return r.response.items;
         }
 
@@ -131,10 +136,7 @@ namespace VKatcher.Services
             };
             string request = Constants.host + "audio.search?" + q;
 
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
-
-            var ReturnedObject = JsonConvert.DeserializeObject<VKAudioRoot>(json);
+            var ReturnedObject = JsonConvert.DeserializeObject<VKAudioRoot>(await HttpGet(request));
             var r = ReturnedObject.response.items;
             foreach (var track in r)
             {
@@ -159,10 +161,7 @@ namespace VKatcher.Services
             };
             string request = Constants.host + "wall.search?" + q;
 
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
-
-            var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(json);
+            var ReturnedObject = JsonConvert.DeserializeObject<VKWallPostRoot>(await HttpGet(request));
             var r = ReturnedObject.response.items;
             foreach (var wp in r)
             {
@@ -199,10 +198,7 @@ namespace VKatcher.Services
             };
             string request = Constants.host + "audio.get?" + q;
 
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
-
-            var ReturnedObject = JsonConvert.DeserializeObject<VKAudioRoot>(json);
+            var ReturnedObject = JsonConvert.DeserializeObject<VKAudioRoot>(await HttpGet(request));
             var r = ReturnedObject.response.items;
             foreach (var item in r)
             {
@@ -223,10 +219,7 @@ namespace VKatcher.Services
             };
             string request = Constants.host + "audio.getById?" + q;
 
-            var res = await http.GetAsync(request);
-            var json = await res.Content.ReadAsStringAsync();
-
-            var r = JsonConvert.DeserializeObject<VKAudioByIdRoot>(json);
+            var r = JsonConvert.DeserializeObject<VKAudioByIdRoot>(await HttpGet(request));
             //await CheckOffline(r);
             return r.response[0];
         }

@@ -18,6 +18,7 @@ using VKatcher.Views;
 using VKatcherShared.Messages;
 using Windows.ApplicationModel.Background;
 using Windows.Media.Playback;
+using Windows.Networking.BackgroundTransfer;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -79,9 +80,10 @@ namespace VKatcher.ViewModels
             }
         }
 
-        private async Task RegisterBackgroundTasks()
+        private async void RegisterBackgroundTasks()
         {
             BackgroundExecutionManager.RemoveAccess();
+
             var bgStatus = await BackgroundExecutionManager.RequestAccessAsync();
             await Task.Run(() =>
             {

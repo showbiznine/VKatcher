@@ -15,6 +15,8 @@ namespace VKatcher
         public const string VKclientID = "3502561";
         public const string VKclientSecret = "omvP3y2MZmpREFZJDNHd";
         public const string userAgent = "KateMobileAndroid/40.4 lite-394 (Android 6.0.1; SDK 23; armeabi-v7a; samsung SM-G900F; en)";
-        public const string receipt = "fbX0lDj27x0:APA91bETJq3jBdCg7ia7Hfr9eQrXf9fNzjviS2K-kM7dytTqDI5qceDtHSDK1U4s_9T_cvPbBUrvdwBr5qwcyFnYK7E3slhlW8f2_sOKmoj8Ht7m0WeHlEuawRJunvC-0-GIwFlqiiTr";
+        public const string receipt = "fbX0lDj27x0:APA91bERk0DmERywaCAcuQ5xJ-_atl1pIu-K1wmrQiztpuFQwyAqEBSTKi0wjcwV3-wkIudzH5EPxNMsjlGhuFieYx5ZWq5VMdB21MWqCkk3ih8YZKZYrPVNWsMcg6_SJFl6vPTNjat9";
+
+        public const string DownloadList = "DL_List.json";
     }
 }

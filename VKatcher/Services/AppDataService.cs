@@ -15,7 +15,7 @@ namespace VKatcher.Services
         public static StorageFolder LocalFolder { get; private set; }
         public static StorageFolder RoamingFolder { get; private set; }
 
-        public static void GetDataFolders()
+        public static void Setup()
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
             LocalFolder = ApplicationData.Current.LocalFolder;

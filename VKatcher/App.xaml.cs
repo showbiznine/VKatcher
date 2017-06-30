@@ -26,6 +26,7 @@ using Microsoft.QueryStringDotNET;
 using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.AppService;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 
 namespace VKatcher
 {
@@ -56,10 +57,13 @@ namespace VKatcher
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            CheckForRemoteDevices();
+            //CheckForRemoteDevices();
+            AppDataService.Setup();
             PlayerService.SetupPlayer();
-            AppDataService.GetDataFolders();
             Frame rootFrame = Window.Current.Content as Frame;
+
+            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = false;
 
             if (Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
             {
@@ -122,12 +126,12 @@ namespace VKatcher
             }
         }
 
-        private async Task CheckForRemoteDevices()
+        private async void CheckForRemoteDevices()
         {
             await RemoteSystemService.BuildDeviceListAsync();
         }
 
-        private async Task SetupStoreServicesAsync()
+        private async void SetupStoreServicesAsync()
         {
             StoreServicesEngagementManager engagementManager = StoreServicesEngagementManager.GetDefault();
             await engagementManager.RegisterNotificationChannelAsync();
@@ -164,7 +168,7 @@ namespace VKatcher
             if (args.PreviousExecutionState == ApplicationExecutionState.NotRunning)
             {
                 PlayerService.SetupPlayer();
-                AppDataService.GetDataFolders();
+                //AppDataService.GetDataFolders();
             }
 
             if (args.Kind == ActivationKind.Protocol)
@@ -246,6 +250,9 @@ namespace VKatcher
                         break;
                     case "DownloadPostsTask":
                         BackgroundTaskService.DownloadAudios(args.TaskInstance);
+                        break;
+                    case "DownloadPostProcessing":
+                        BackgroundTaskService.ProcessDownloads(args.TaskInstance);
                         break;
                     default:
                         break;

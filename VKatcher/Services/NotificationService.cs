@@ -46,7 +46,7 @@ namespace VKatcher.Services
             ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
-        public static void PopToastTrack(VKAudio track)
+        public static ToastNotification PopToastTrack(VKAudio track)
         {
             string body = "We have a new track for you!";
             string sub = string.Format("Check out {0} by {1}", track.title, track.artist);
@@ -74,7 +74,8 @@ namespace VKatcher.Services
 
             var toast = new ToastNotification(toastContent.GetXml());
             toast.NotificationMirroring = NotificationMirroring.Allowed;
-            ToastNotificationManager.CreateToastNotifier().Show(toast);
+            return toast;
+            //ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
 
         public static void PopToastCommunity(VKGroup group, int count)
