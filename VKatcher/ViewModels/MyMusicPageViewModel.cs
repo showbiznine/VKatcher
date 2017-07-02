@@ -25,12 +25,11 @@ namespace VKatcher.ViewModels
     public class MyMusicPageViewModel : ViewModelBase
     {
         #region Fields
-        private ObservableCollection<VKAudio> _currentPlaylist;
-        public ObservableCollection<VKAudio> _mySavedTracks { get; set; }
-        public ObservableCollection<VKAudio> _myDownloads { get; set; }
-        public ObservableCollection<VKAudio> _mySuggestedMusic { get; set; }
-        public static VKAudio _selectedTrack { get; set; }
-        public bool _inCall { get; set; }
+        public ObservableCollection<VKAudio> MySavedTracks { get; set; }
+        public ObservableCollection<VKAudio> MyDownloads { get; set; }
+        public ObservableCollection<VKAudio> MySuggestedMusic { get; set; }
+        public static VKAudio SelectedTrack { get; set; }
+        public bool InCall { get; set; }
         #endregion
 
         public RelayCommand<ItemClickEventArgs> PlaySongCommand { get; set; }
@@ -46,28 +45,28 @@ namespace VKatcher.ViewModels
             if (IsInDesignMode)
             {
                 #region Design Time Data
-                _myDownloads = new ObservableCollection<VKAudio>();
-                _myDownloads.Add(new VKAudio
+                MyDownloads = new ObservableCollection<VKAudio>();
+                MyDownloads.Add(new VKAudio
                 {
                     title = "Test Track 1",
                     artist = "Artist",
                     duration = 300
                 });
-                _myDownloads.Add(new VKAudio
+                MyDownloads.Add(new VKAudio
                 {
                     title = "Test Track 2",
                     artist = "Artist",
                     duration = 369
                 });
 
-                _mySavedTracks = new ObservableCollection<VKAudio>();
-                _mySavedTracks.Add(new VKAudio
+                MySavedTracks = new ObservableCollection<VKAudio>();
+                MySavedTracks.Add(new VKAudio
                 {
                     title = "Test Track 3",
                     artist = "Artist",
                     duration = 600
                 });
-                _mySavedTracks.Add(new VKAudio
+                MySavedTracks.Add(new VKAudio
                 {
                     title = "Test Track 4",
                     artist = "Artist",
@@ -92,17 +91,17 @@ namespace VKatcher.ViewModels
                 var containsOffline = false;
                 if (e.ClickedItem is VKAudio)
                 {
-                    if (_selectedTrack != null)
+                    if (SelectedTrack != null)
                     {
-                        _selectedTrack.IsPlaying = false;
+                        SelectedTrack.IsPlaying = false;
                     }
-                    _selectedTrack = (e.ClickedItem as VKAudio);
-                    Debug.WriteLine("Clicked " + _selectedTrack.title);
+                    SelectedTrack = (e.ClickedItem as VKAudio);
+                    Debug.WriteLine("Clicked " + SelectedTrack.title);
                     if (App.ViewModelLocator.Main._currentTrack != null)
                     {
                         App.ViewModelLocator.Main._currentTrack.IsPlaying = false;
                     }
-                    _selectedTrack.IsPlaying = true;
+                    SelectedTrack.IsPlaying = true;
 
                     DispatcherHelper.CheckBeginInvokeOnUI(() =>
                     {
@@ -206,7 +205,7 @@ namespace VKatcher.ViewModels
         {
             try
             {
-                _myDownloads = await FileService.GetDownloads();
+                MyDownloads = await FileService.GetDownloads();
             }
             catch (Exception ex)
             {
@@ -219,16 +218,16 @@ namespace VKatcher.ViewModels
 
         private async void LoadMySuggestedMusicAsync()
         {
-            _inCall = true;
+            InCall = true;
             try
             {
-                if (_mySuggestedMusic == null)
+                if (MySuggestedMusic == null)
                 {
-                    _mySuggestedMusic = new ObservableCollection<VKAudio>();
+                    MySuggestedMusic = new ObservableCollection<VKAudio>();
                     var temp = await DataService.GetMyRadio();
                     foreach (var item in temp.response.items)
                     {
-                        _mySuggestedMusic.Add(item);
+                        MySuggestedMusic.Add(item);
                     }
                 }
             }
@@ -239,24 +238,24 @@ namespace VKatcher.ViewModels
                 else
                     await new MessageDialog("Error loading groups").ShowAsync();
             }
-            _inCall = false;
+            InCall = false;
         }
 
         public async void LoadMyTracks()
         {
-            _inCall = true;
+            InCall = true;
             if (await AuthenticationService.RefreshAccessToken())
             {
                 try
                 {
-                    if (_mySavedTracks == null)
+                    if (MySavedTracks == null)
                     {
-                        _mySavedTracks = new ObservableCollection<VKAudio>();
+                        MySavedTracks = new ObservableCollection<VKAudio>();
                         var temp = await DataService.LoadMyAudio();
                         foreach (var item in temp)
                         {
                             if (!string.IsNullOrWhiteSpace(item.url))
-                                _mySavedTracks.Add(item);
+                                MySavedTracks.Add(item);
                         }
                     }
                 }
@@ -268,7 +267,7 @@ namespace VKatcher.ViewModels
                         await new MessageDialog("Error loading groups").ShowAsync();
                 }
             }
-            _inCall = false;
+            InCall = false;
         }
     }
 }

@@ -21,11 +21,8 @@ namespace VKatcher.Services
 {
     public class BackgroundTaskService
     {
-        private static string _followedFile = "followed_groups.json";
-        private static string _downloadedDB = "downloaded_files.json";
         private static BackgroundTaskDeferral _deferral;
         private static AutoResetEvent _ARE;
-        private static int _newTrackCount;
 
         public static ObservableCollection<VKAudio> ToDownload { get; private set; }
         public static ObservableCollection<VKGroup> SubscribedGroups { get; private set; }
@@ -216,9 +213,10 @@ namespace VKatcher.Services
             {
                 dlFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(Constants.DownloadList, CreationCollisionOption.ReplaceExisting);
             }
-            int count = 0;
             foreach (var group in SubscribedGroups)
             {
+                int count = 0;
+
                 #region Get Posts
                 group.to_save = group.to_save == 0 ? 3 : group.to_save;
                 var posts = await DataService.LoadWallPosts(group.id, 0, group.to_save);

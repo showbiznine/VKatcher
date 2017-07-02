@@ -230,18 +230,14 @@ namespace VKatcher.Services
 
         public static async Task<VKRadio> GetMyRadio()
         {
-            HttpClient client = new HttpClient();
             var q = new QueryString
             {
                 {"access_token", await AuthenticationService.GetVKAccessToken() },
                 {"v", Constants.apiVersion }
             };
-            var uri = new Uri(Constants.host + "audio.getRecommendations?" + q);
+            var query = Constants.host + "audio.getRecommendations?" + q;
 
-            var res = await client.GetAsync(uri);
-            var s = await res.Content.ReadAsStringAsync();
-
-            var r = JsonConvert.DeserializeObject<VKRadio>(s);
+            var r = JsonConvert.DeserializeObject<VKRadio>( await HttpGet(query));
             return r;
         }
 

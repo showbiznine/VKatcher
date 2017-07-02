@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using VKatcher.ViewModels;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -22,9 +23,12 @@ namespace VKatcher.Views
     /// </summary>
     public sealed partial class MyMusicPage : Page
     {
+        MyMusicPageViewModel VM;
+
         public MyMusicPage()
         {
             this.InitializeComponent();
+            VM = DataContext as MyMusicPageViewModel;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

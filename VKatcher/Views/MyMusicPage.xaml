@@ -56,9 +56,7 @@
             </Grid>
         </toolkit:DropShadowPanel>
         <store:AdControl Grid.Row="1"
-                         Width="320"
                          Height="50"
-                         HorizontalAlignment="Center"
                          AdUnitId="10865270"
                          ApplicationId="3f83fe91-d6be-434d-a0ae-7351c5a997f1" />
         <Pivot x:Name="pivRoot"
@@ -75,7 +73,7 @@
                               IsItemClickEnabled="True"
                               ItemContainerStyle="{StaticResource ListViewTextHighlight}"
                               ItemTemplate="{StaticResource AudioListTemplate}"
-                              ItemsSource="{Binding _mySavedTracks}"
+                              ItemsSource="{Binding MySavedTracks}"
                               SelectionMode="None">
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection>
@@ -99,7 +97,7 @@
                               IsItemClickEnabled="True"
                               ItemContainerStyle="{StaticResource ListViewTextHighlight}"
                               ItemTemplate="{StaticResource AudioListTemplate}"
-                              ItemsSource="{Binding _myDownloads}"
+                              ItemsSource="{Binding MyDownloads}"
                               SelectionMode="None">
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection>
@@ -123,7 +121,7 @@
                               IsItemClickEnabled="True"
                               ItemContainerStyle="{StaticResource ListViewTextHighlight}"
                               ItemTemplate="{StaticResource AudioListTemplate}"
-                              ItemsSource="{Binding _mySuggestedMusic}"
+                              ItemsSource="{Binding MySuggestedMusic}"
                               SelectionMode="None">
                         <ListView.ItemContainerTransitions>
                             <TransitionCollection>
@@ -139,5 +137,12 @@
                 </Grid>
             </PivotItem>
         </Pivot>
+        <ProgressRing x:Name="ProgressRing"
+                      Grid.Row="2"
+                      Width="64"
+                      Height="64"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      IsActive="{x:Bind VM.InCall, Mode=OneWay}" />
     </Grid>
 </Page>

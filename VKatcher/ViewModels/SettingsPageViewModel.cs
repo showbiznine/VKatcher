@@ -52,29 +52,7 @@ namespace VKatcher.ViewModels
                 IsPlaying = App.ViewModelLocator.Main._isPlaying;
                 Initializesubscriptions();
                 InitializeCommands();
-                InitializeUser();
             }
-        }
-
-        private async Task InitializeUser()
-        {
-            //await Task.Run(() =>
-            //{
-            //    VKRequest.Dispatch<List<VKUser>>(
-            //        new VKRequestParameters(
-            //            "users.get",
-            //            "fields", "photo_200"),
-            //        async (res) =>
-            //        {
-            //            if (res.ResultCode == VKResultCode.Succeeded)
-            //            {
-            //                await VKExecute.ExecuteOnUIThread(() =>
-            //                {
-            //                    MyUser = res.Data[0];
-            //                });
-            //            }
-            //        });
-            //});
         }
 
         private async Task LoadSpotifyPlaylists()

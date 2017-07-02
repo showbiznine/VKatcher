@@ -116,10 +116,11 @@ namespace VKatcherShared.Services
                                        where gr.tag == tag.tag
                                        select gr;
                     subbedTags.Remove(currentTag.ElementAt(0));
+                    tag.IsSubscribed = false;
                 }
                 string newstr = JsonConvert.SerializeObject(subbedTags);
                 File.WriteAllText(file.Path, newstr);
-                return !tag.IsSubscribed;
+                return tag.IsSubscribed;
             }
             catch (Exception ex)
             {
