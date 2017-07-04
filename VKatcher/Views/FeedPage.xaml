@@ -67,8 +67,10 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="models:VKWallPost">
-                    <UserControl Margin="0,0,0,4">
-                        <Grid>
+                    <UserControl Margin="0,0,0,4"
+                                 HorizontalAlignment="Stretch"
+                                 HorizontalContentAlignment="Stretch">
+                        <Grid HorizontalAlignment="Stretch">
                             <Grid x:Name="grdParent"
                                   Margin="12"
                                   Background="{StaticResource Light_Gray}"

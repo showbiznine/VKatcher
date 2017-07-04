@@ -33,6 +33,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using System.Threading;
 
 namespace VKatcher.ViewModels
 {
@@ -40,7 +41,7 @@ namespace VKatcher.ViewModels
     {
         #region Fields
         public VKGroup CurrentGroup { get; set; }
-        public ObservableCollection<VKWallPost> WallPosts { get; set; }
+        public IncrementalLoadingCollection<WallPostCollection,VKWallPost> WallPosts { get; set; }
         public int _offset { get; set; }
         public bool _inCall { get; set; }
         private VKWallPost _heldWallPost;
@@ -83,15 +84,15 @@ namespace VKatcher.ViewModels
             else
             {
                 InitializeCommands();
-                WallPosts = new ObservableCollection<VKWallPost>();
+                WallPosts = new IncrementalLoadingCollection<WallPostCollection, VKWallPost>();
             }
         }
 
         private void InitializeCommands()
         {
             ToggleMenuCommand = new RelayCommand(() => App.ViewModelLocator.Main.IsMenuOpen = !App.ViewModelLocator.Main.IsMenuOpen);
-            LoadPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
-            RefreshPostsCommand = new RelayCommand(() => LoadPosts(_offset, 30, true));
+            LoadPostsCommand = new RelayCommand(async () => await LoadPosts(_offset, 30, true));
+            RefreshPostsCommand = new RelayCommand(async () => await LoadPosts(_offset, 30, true));
             UploadToOneDriveCommand = new RelayCommand<Grid>(grid =>
             {
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
@@ -165,9 +166,9 @@ namespace VKatcher.ViewModels
                 });
             });
 
-            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(args =>
+            SongListViewItemClickCommand = new RelayCommand<ItemClickEventArgs>(async args =>
             {
-                OnSongListItemClick(args);
+                await OnSongListItemClick(args);
             });
             DownloadTrackCommand = new RelayCommand<Grid>(async args =>
             {
@@ -242,7 +243,7 @@ namespace VKatcher.ViewModels
             var file = await track.DownloadTrack();
             if (file != null)
             {
-                FileService.WriteDownloads(track, file);
+                await FileService.WriteDownloads(track, file);
             }
         }
 
@@ -282,6 +283,17 @@ namespace VKatcher.ViewModels
                     await Task.Delay(500); 
                 }
             }
+        }
+    }
+
+    public class WallPostCollection : IIncrementalSource<VKWallPost>
+    {
+        public async Task<IEnumerable<VKWallPost>> GetPagedItemsAsync(int pageIndex, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var res = new List<VKWallPost>();
+            foreach (var item in await DataService.LoadWallPosts(App.ViewModelLocator.Feed.CurrentGroup.id, pageIndex * pageSize, pageSize))
+                res.Add(item);
+            return res;
         }
     }
 }

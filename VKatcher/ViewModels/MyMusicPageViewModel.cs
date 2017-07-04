@@ -134,10 +134,10 @@ namespace VKatcher.ViewModels
             });
             DownloadTrackCommand = new RelayCommand<Grid>(grid =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     var att = grid.DataContext as VKAudio;
-                    DownloadTrack(att);
+                    await DownloadTrack(att);
                 });
             });
             DeleteDownloadCommand = new RelayCommand<Grid>(grid =>
@@ -197,7 +197,7 @@ namespace VKatcher.ViewModels
             var file = await track.DownloadTrack();
             if (file != null)
             {
-                FileService.WriteDownloads(track, file);
+                await FileService.WriteDownloads(track, file);
             }
         }
 

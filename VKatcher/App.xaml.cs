@@ -220,7 +220,7 @@ namespace VKatcher
             DispatcherHelper.Initialize();
         }
 
-        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        protected override async void OnBackgroundActivated(BackgroundActivatedEventArgs args)
         {
             base.OnBackgroundActivated(args);
 
@@ -236,7 +236,7 @@ namespace VKatcher
             {
                 appServiceconnection = details.AppServiceConnection;
                 appServiceconnection.RequestReceived += RemoteSystemService.OnRequestRevievedAsync;
-                appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed; 
+                appServiceconnection.ServiceClosed += AppServiceconnection_ServiceClosed;
             }
 
             var taskName = args.TaskInstance.Task.Name;
@@ -246,17 +246,17 @@ namespace VKatcher
                 switch (taskName)
                 {
                     case "CheckNewPostsTask":
-                        BackgroundTaskService.CheckNewPosts(args.TaskInstance);
+                        await BackgroundTaskService.CheckNewPosts(args.TaskInstance);
                         break;
                     case "DownloadPostsTask":
-                        BackgroundTaskService.DownloadAudios(args.TaskInstance);
+                        await BackgroundTaskService.DownloadAudios(args.TaskInstance);
                         break;
                     case "DownloadPostProcessing":
                         BackgroundTaskService.ProcessDownloads(args.TaskInstance);
                         break;
                     default:
                         break;
-                } 
+                }
             }
         }
 

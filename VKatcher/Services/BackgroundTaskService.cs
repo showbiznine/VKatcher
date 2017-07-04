@@ -104,7 +104,7 @@ namespace VKatcher.Services
 
                             #region Add track to database
                             if (dl != null)
-                                FileService.WriteDownloads(ToDownload[i], dl);
+                                await FileService.WriteDownloads(ToDownload[i], dl);
                             #endregion
                         }
                     }

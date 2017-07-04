@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Toolkit.Uwp;
+using Newtonsoft.Json;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -20,8 +21,7 @@ namespace VKatcherShared.Services
             var dls = new ObservableCollection<VKAudio>();
             try
             {
-                var file = await ApplicationData.Current.LocalFolder.GetFileAsync(_downloadedDB);
-                var str = File.ReadAllText(file.Path);
+                var str = await StorageFileHelper.ReadTextFromLocalFileAsync(_downloadedDB);
                 var temp = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(str);
                 if (temp != null)
                 {
@@ -45,10 +45,10 @@ namespace VKatcherShared.Services
             }
             catch (Exception ex)
             {
-                var file = await ApplicationData.Current.LocalFolder.CreateFileAsync(_downloadedDB);
+                var file = await StorageFileHelper.WriteTextToLocalFileAsync(string.Empty, _downloadedDB, CreationCollisionOption.ReplaceExisting);
                 Debug.WriteLine(ex.Message);
             }
-            WriteDownloads(dls);
+            await WriteDownloads(dls);
             return dls;
         }
 
@@ -58,11 +58,11 @@ namespace VKatcherShared.Services
             await track.DeleteDownloadedTrack();
             var t = dls.First(x => x.id == track.id);
             dls.Remove(t);
-            WriteDownloads(dls);
+            await WriteDownloads(dls);
             Debug.WriteLine("Deleted track");
         }
 
-        public static async void WriteDownloads(ObservableCollection<VKAudio> dls)
+        public static async Task WriteDownloads(ObservableCollection<VKAudio> dls)
         {
             StorageFile dlFile;
             try
@@ -83,22 +83,11 @@ namespace VKatcherShared.Services
             }
         }
 
-        public static async void WriteDownloads(VKAudio track, StorageFile file)
+        public static async Task WriteDownloads(VKAudio track, StorageFile file)
         {
-            StorageFile dlFile;
             try
             {
-                dlFile = await ApplicationData.Current.LocalFolder.GetFileAsync(_downloadedDB);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                dlFile = await ApplicationData.Current.LocalFolder.CreateFileAsync(_downloadedDB);
-                Debug.WriteLine("Created new file");
-            }
-            if (dlFile != null)
-            {
-                var str = File.ReadAllText(dlFile.Path);
+                var str = await StorageFileHelper.ReadTextFromLocalFileAsync(_downloadedDB);
                 var myDLs = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(str);
                 if (myDLs == null)
                 {
@@ -110,8 +99,14 @@ namespace VKatcherShared.Services
                 var tempcol = myDLs;
                 tempcol.Insert(0, track);
                 string newstr = JsonConvert.SerializeObject(tempcol);
-                File.WriteAllText(dlFile.Path, newstr);
+                var dlFile = await StorageFileHelper.WriteTextToLocalFileAsync(newstr, _downloadedDB, CreationCollisionOption.ReplaceExisting);
                 Debug.WriteLine("Wrote to database");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                var dlFile = await StorageFileHelper.WriteTextToLocalFileAsync(string.Empty, _downloadedDB, CreationCollisionOption.ReplaceExisting);
+                Debug.WriteLine("Created new file");
             }
         }
 

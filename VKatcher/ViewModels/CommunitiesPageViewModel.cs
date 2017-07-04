@@ -79,7 +79,7 @@ namespace VKatcher.ViewModels
             });
         }
 
-        private async Task LoadGroups()
+        private async void LoadGroups()
         {
             _inCall = true;
             try

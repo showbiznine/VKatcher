@@ -1,9 +1,8 @@
-﻿<Application
-    x:Class="VKatcher.App"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:VKatcher"
-    xmlns:vm="using:VKatcher.ViewModels">
+﻿<Application x:Class="VKatcher.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:VKatcher"
+             xmlns:vm="using:VKatcher.ViewModels">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -18,16 +17,11 @@
                 <ResourceDictionary Source="/Resources/TextBox_BlockStyles.xaml" />
                 <ResourceDictionary Source="/Resources/RadioButtonStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <vm:ViewModelLocator xmlns:vm="using:VKatcher.ViewModels"
-                                 x:Key="Locator" />
-            <SolidColorBrush x:Key="Med_Gray"
-                             Color="#FF444444" />
-            <SolidColorBrush x:Key="Dark_Gray"
-                             Color="#FF333333" />
-            <SolidColorBrush x:Key="Light_Gray"
-                             Color="#FF555555" />
-            <SolidColorBrush x:Key="MainBlue"
-                             Color="#FF4E5867" />
+            <vm:ViewModelLocator xmlns:vm="using:VKatcher.ViewModels" x:Key="Locator" />
+            <SolidColorBrush x:Key="Med_Gray" Color="#FF444444" />
+            <SolidColorBrush x:Key="Dark_Gray" Color="#FF333333" />
+            <SolidColorBrush x:Key="Light_Gray" Color="#FF555555" />
+            <SolidColorBrush x:Key="MainBlue" Color="#FF4E5867" />
         </ResourceDictionary>
     </Application.Resources>
 

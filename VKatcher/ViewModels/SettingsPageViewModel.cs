@@ -55,14 +55,14 @@ namespace VKatcher.ViewModels
             }
         }
 
-        private async Task LoadSpotifyPlaylists()
-        {
-            //var pl = await SpotifyService.GetUserPlaylists();
-            //foreach (var playlist in pl)
-            //{
-            //    SpotifyPlaylists.Add(playlist);
-            //}
-        }
+        //private async Task LoadSpotifyPlaylists()
+        //{
+        //    var pl = await SpotifyService.GetUserPlaylists();
+        //    foreach (var playlist in pl)
+        //    {
+        //        SpotifyPlaylists.Add(playlist);
+        //    }
+        //}
 
         private void InitializeCommands()
         {
@@ -114,8 +114,7 @@ namespace VKatcher.ViewModels
             });
             ConnectSpotifyCommand = new RelayCommand(async () =>
             {
-                await AuthenticateSpotify();
-                //LoadSpotifyPlaylists();
+                //await AuthenticateSpotify();
             });
             ClearTokenCommand = new RelayCommand(() =>
             {
@@ -128,8 +127,9 @@ namespace VKatcher.ViewModels
             });
         }
 
-        private async Task AuthenticateSpotify()
-        {
+        //private async Task AuthenticateSpotify()
+        //{
+            //var r = await AuthenticationService.AuthenticateSpotify();
             //var res = await SpotifyService.GetAuthCode();
             //if (res)
             //{
@@ -137,9 +137,9 @@ namespace VKatcher.ViewModels
             //}
 
             //IsSpotifyConnected = res;
-        }
+        //}
 
-        public async Task Initializesubscriptions()
+        public async void Initializesubscriptions()
         {
             SubscribedGroups = new ObservableCollection<VKGroup>();
             SubscribedGroups = await SubscriptionService.LoadSubscribedGroups();

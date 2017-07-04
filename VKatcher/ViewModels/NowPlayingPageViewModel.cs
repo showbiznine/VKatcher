@@ -69,10 +69,10 @@ namespace VKatcher.ViewModels
             SkipPreviousCommand = new RelayCommand(() => PlayerService.CurrentPlaybackList.MovePrevious());
             DownloadTrackCommand = new RelayCommand<Grid>(grid =>
             {
-                DispatcherHelper.CheckBeginInvokeOnUI(() =>
+                DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     var a = grid.DataContext as VKAudio;
-                    DownloadTrack(a);
+                    await DownloadTrack(a);
                 });
             });
             DeleteDownloadCommand = new RelayCommand<Grid>(grid =>
@@ -107,7 +107,7 @@ namespace VKatcher.ViewModels
                     //MessageService.SendMessageToBackground(new PlayNextMessage(att));
                 });
             });
-            PlaySongCommand = new RelayCommand<ItemClickEventArgs>(args => OnSongListItemClick(args));
+            PlaySongCommand = new RelayCommand<ItemClickEventArgs>(async args => await OnSongListItemClick(args));
             SongHoldingCommand = new RelayCommand<object>(sender =>
             {
                 DispatcherHelper.CheckBeginInvokeOnUI(() =>
@@ -153,7 +153,7 @@ namespace VKatcher.ViewModels
             var file = await a.DownloadTrack();
             if (file != null)
             {
-                FileService.WriteDownloads(a, file);
+                await FileService.WriteDownloads(a, file);
             }
         }
 

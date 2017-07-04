@@ -109,7 +109,7 @@ namespace VKatcher.Services
                 { "v", Constants.apiVersion }
             };
 
-            var uri = new Uri(Constants.host + "auth.refreshToken?" + q);
+            var uri = new Uri(Constants.vkHost + "auth.refreshToken?" + q);
 
             try
             {
@@ -195,6 +195,52 @@ namespace VKatcher.Services
         #endregion
 
         #region Spotify
+        public static async Task<bool> AuthenticateSpotify()
+        {
+            var q = new QueryString
+            {
+                {"client_id", Constants.spotifyClientId },
+                {"response_type", "code" },
+                {"redirect_uri", "http://bing.com" },
+                {"scope", "playlist-modify-private playlist-modify-public"},
+            };
+
+            string startURI = Constants.spotifyAuthHost + q;
+            string endURI = "http://bing.com/";
+            var result = await WebAuthenticationBroker.AuthenticateAsync
+                (WebAuthenticationOptions.None,
+                new Uri(startURI),
+                new Uri(endURI));
+            if (result.ResponseStatus == WebAuthenticationStatus.Success)
+            {
+                var res = result.ResponseData.ToString();
+                var split = QueryString.Parse(res.Split('?')[1]);
+                var code = split["code"];
+
+                //StoreToken("Spotify", "test", tok);
+                return true;
+            }
+            else
+                return false;
+        }
+
+        public static async Task<string> GetSpotifyAccessToken()
+        {
+            var vault = new PasswordVault();
+            try
+            {
+                var tok = vault.Retrieve("Spotify", "test");
+                return tok.Password;
+            }
+            catch (Exception)
+            {
+                var success = await AuthenticateSpotify();
+                if (success)
+                    return vault.Retrieve("Spotify", "test").Password;
+                else
+                    return null;
+            }
+        }
 
         #endregion
 
