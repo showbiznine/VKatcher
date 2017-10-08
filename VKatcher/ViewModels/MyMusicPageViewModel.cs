@@ -137,7 +137,9 @@ namespace VKatcher.ViewModels
                 DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     var att = grid.DataContext as VKAudio;
-                    await DownloadTrack(att);
+                    var file = await att.DownloadTrack();
+                    var r = await OneDriveService.UploadFile(file, att.title + " - " + att.artist);
+                    await (new MessageDialog(string.Format("Uploaded {0} by {1} to OneDrive", att.title, att.artist))).ShowAsync();
                 });
             });
             DeleteDownloadCommand = new RelayCommand<Grid>(grid =>

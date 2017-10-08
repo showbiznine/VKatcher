@@ -22,10 +22,10 @@ namespace VKatcherShared.Services
             try
             {
                 var str = await StorageFileHelper.ReadTextFromLocalFileAsync(_downloadedDB);
-                var temp = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(str);
-                if (temp != null)
+                var json = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(str);
+                if (json != null)
                 {
-                    foreach (var item in temp)
+                    foreach (var item in json)
                     {
                         StorageFile f = null;
                         try
@@ -85,10 +85,11 @@ namespace VKatcherShared.Services
 
         public static async Task WriteDownloads(VKAudio track, StorageFile file)
         {
+            var myDLs = new ObservableCollection<VKAudio>();
             try
             {
                 var str = await StorageFileHelper.ReadTextFromLocalFileAsync(_downloadedDB);
-                var myDLs = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(str);
+                myDLs = JsonConvert.DeserializeObject<ObservableCollection<VKAudio>>(str);
                 if (myDLs == null)
                 {
                     myDLs = new ObservableCollection<VKAudio>();
@@ -96,16 +97,16 @@ namespace VKatcherShared.Services
 
                 track.url = file.Path;
 
-                var tempcol = myDLs;
-                tempcol.Insert(0, track);
-                string newstr = JsonConvert.SerializeObject(tempcol);
+                myDLs.Insert(0, track);
+                string newstr = JsonConvert.SerializeObject(myDLs);
                 var dlFile = await StorageFileHelper.WriteTextToLocalFileAsync(newstr, _downloadedDB, CreationCollisionOption.ReplaceExisting);
                 Debug.WriteLine("Wrote to database");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                var dlFile = await StorageFileHelper.WriteTextToLocalFileAsync(string.Empty, _downloadedDB, CreationCollisionOption.ReplaceExisting);
+                string newstr = JsonConvert.SerializeObject(myDLs);
+                var dlFile = await StorageFileHelper.WriteTextToLocalFileAsync(newstr, _downloadedDB, CreationCollisionOption.ReplaceExisting);
                 Debug.WriteLine("Created new file");
             }
         }

@@ -88,7 +88,6 @@ namespace VKatcher.Services
                     if (t != null)
                     {
                         Debug.WriteLine("Download already exists");
-                        max++;
                     }
                     else
                     {
@@ -111,7 +110,7 @@ namespace VKatcher.Services
                     ToDownload.Remove(ToDownload[i]);
                 }
                 var newList = JsonConvert.SerializeObject(ToDownload);
-                var newFile = await StorageFileHelper.WriteTextToFileAsync(AppDataService.LocalFolder, newList, Constants.DownloadList, CreationCollisionOption.ReplaceExisting);
+                var newFile = await StorageFileHelper.WriteTextToLocalFileAsync(newList, Constants.DownloadList, CreationCollisionOption.ReplaceExisting);
 
                 if (count > 1)
                     return count;
@@ -149,8 +148,7 @@ namespace VKatcher.Services
             SubscribedTags = new ObservableCollection<VKTag>();
             await CheckSubscribedGroups();
             await CheckSubscribedTags();
-            await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
-            Debug.WriteLine("Check Posts Task complete");
+            Debug.WriteLine("Check Posts Task complete. Tracks to download: " + ToDownload.Count);
             _deferral.Complete();
         }
 
@@ -193,10 +191,12 @@ namespace VKatcher.Services
                     //Set the last post ID
                     tag.LastSavedId = posts[0].id;
                 }
+                await SubscriptionService.WriteSubscribedTags(SubscribedTags);
                 Debug.WriteLine("The latest post was ID# " + posts[0].id);
                 #endregion
             }
-            File.WriteAllText(dlFile.Path, JsonConvert.SerializeObject(ToDownload));
+            var newText = JsonConvert.SerializeObject(ToDownload);
+            await StorageFileHelper.WriteTextToFileAsync(ApplicationData.Current.LocalFolder, newText, Constants.DownloadList, CreationCollisionOption.ReplaceExisting);
         }
 
         private static async Task CheckSubscribedGroups()
@@ -243,6 +243,7 @@ namespace VKatcher.Services
                     //Set the last post ID
                     group.last_id = posts[0].id;
                 }
+                await SubscriptionService.WriteSubscribedGroups(SubscribedGroups);
                 Debug.WriteLine("The latest post was ID# " + posts[0].id);
                 if (count > 0)
                     NotificationService.PopToastCommunity(group, count);

@@ -116,10 +116,11 @@ namespace VKatcher.ViewModels
             {
                 //await AuthenticateSpotify();
             });
-            ClearTokenCommand = new RelayCommand(() =>
+            ClearTokenCommand = new RelayCommand(async () =>
             {
                 var localSettings = ApplicationData.Current.LocalSettings;
                 localSettings.Values["token"] = null;
+                var res = await AuthenticationService.VKLogin();
             });
             ClearToDownloadCommand = new RelayCommand(() =>
             {

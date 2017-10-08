@@ -100,7 +100,7 @@ namespace VKatcher.ViewModels
                     var att = grid.DataContext as VKAttachment;
                     var t = await att.audio.DownloadTrack();
                     var r = await OneDriveService.UploadFile(t, att.audio.title + " - " + att.audio.artist);
-                    //var rec = await DataService.GetRadioByTrack(att.audio);
+                    await (new MessageDialog(string.Format("Uploaded {0} by {1} to OneDrive", att.audio.title, att.audio.artist))).ShowAsync();
                 });
             });
             DeleteDownloadCommand = new RelayCommand<Grid>(grid =>

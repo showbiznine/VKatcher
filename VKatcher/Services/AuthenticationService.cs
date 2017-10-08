@@ -28,7 +28,7 @@ namespace VKatcher.Services
                 {"client_secret",  "lxhD8OD7dMsqtXIm5IUY"},
                 {"scope", "notify, friends, photos, audio, video, pages, wall, groups, messages, notifications, stats" },
                 {"username", "showbiznine@hotmail.com" },
-                {"password", "hgssucks1" },
+                {"password", "maguroman123" },
                 {"v",  Constants.apiVersion},
             };
             var uri = new Uri(Constants.authHost + "token?" + q);
