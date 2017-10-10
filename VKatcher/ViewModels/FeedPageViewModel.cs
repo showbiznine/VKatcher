@@ -98,8 +98,7 @@ namespace VKatcher.ViewModels
                 GalaSoft.MvvmLight.Threading.DispatcherHelper.CheckBeginInvokeOnUI(async () =>
                 {
                     var att = grid.DataContext as VKAttachment;
-                    var t = await att.audio.DownloadTrack();
-                    var r = await OneDriveService.UploadFile(t, att.audio.title + " - " + att.audio.artist);
+                    await OneDriveService.SaveToOneDrive(att.audio);
                     await (new MessageDialog(string.Format("Uploaded {0} by {1} to OneDrive", att.audio.title, att.audio.artist))).ShowAsync();
                 });
             });

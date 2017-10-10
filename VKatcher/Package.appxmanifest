@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap uap3 mp">
-  <Identity Name="2783ShowbizInc.VKatcher" Publisher="CN=F49E0BBC-ED60-4621-AD64-4F77977D5015" Version="0.8.5.0" />
+  <Identity Name="2783ShowbizInc.VKatcher" Publisher="CN=Tej" Version="0.8.13.0" />
   <mp:PhoneIdentity PhoneProductId="a9eb24d9-5b8d-4bed-9357-3f74af55c319" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>VKatcher</DisplayName>
