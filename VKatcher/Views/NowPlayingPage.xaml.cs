@@ -49,7 +49,7 @@ namespace VKatcher.Views
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var vm = DataContext as NowPlayingPageViewModel;
+            var vm = DataContext as NowPlayingViewModel;
             base.OnNavigatedTo(e);
             //if (e.Parameter is List<object>)
             //{

@@ -33,11 +33,11 @@ namespace VKatcher.ViewModels
 
             SimpleIoc.Default.Register<MainViewModel>(true);
             SimpleIoc.Default.Register<CommunitiesPageViewModel>();
-            SimpleIoc.Default.Register<FeedPageViewModel>();
-            SimpleIoc.Default.Register<SettingsPageViewModel>();
-            SimpleIoc.Default.Register<SearchPageViewModel>();
-            SimpleIoc.Default.Register<MyMusicPageViewModel>();
-            SimpleIoc.Default.Register<NowPlayingPageViewModel>();
+            SimpleIoc.Default.Register<FeedViewModel>();
+            SimpleIoc.Default.Register<SettingsViewModel>();
+            SimpleIoc.Default.Register<SearchViewModel>();
+            SimpleIoc.Default.Register<MyMusicViewModel>();
+            SimpleIoc.Default.Register<NowPlayingViewModel>();
         }
 
         #region ViewModels
@@ -45,29 +45,29 @@ namespace VKatcher.ViewModels
         {
             get { return ServiceLocator.Current.GetInstance<MainViewModel>();}
         }
-        public FeedPageViewModel Feed
+        public FeedViewModel Feed
         {
-            get { return ServiceLocator.Current.GetInstance<FeedPageViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<FeedViewModel>(); }
         }
         public CommunitiesPageViewModel Communities
         {
             get { return ServiceLocator.Current.GetInstance<CommunitiesPageViewModel>(); }
         }
-        public SettingsPageViewModel Settings
+        public SettingsViewModel Settings
         {
-            get { return ServiceLocator.Current.GetInstance<SettingsPageViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<SettingsViewModel>(); }
         }
-        public SearchPageViewModel Search
+        public SearchViewModel Search
         {
-            get { return ServiceLocator.Current.GetInstance<SearchPageViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<SearchViewModel>(); }
         }
-        public MyMusicPageViewModel MyMusic
+        public MyMusicViewModel MyMusic
         {
-            get { return ServiceLocator.Current.GetInstance<MyMusicPageViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<MyMusicViewModel>(); }
         }
-        public NowPlayingPageViewModel NowPlaying
+        public NowPlayingViewModel NowPlaying
         {
-            get { return ServiceLocator.Current.GetInstance<NowPlayingPageViewModel>(); }
+            get { return ServiceLocator.Current.GetInstance<NowPlayingViewModel>(); }
         }
         #endregion
 

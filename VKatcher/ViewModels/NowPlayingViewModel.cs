@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace VKatcher.ViewModels
 {
-    public class NowPlayingPageViewModel : ViewModelBase
+    public class NowPlayingViewModel : ViewModelBase
     {
         #region Fields
         public VKAudio _currentTrack { get; set; }
@@ -46,7 +46,7 @@ namespace VKatcher.ViewModels
         public RelayCommand SliderUpCommand { get; set; }
         #endregion
 
-        public NowPlayingPageViewModel()
+        public NowPlayingViewModel()
         {
             if (IsInDesignMode)
             {

@@ -28,7 +28,7 @@ namespace VKatcher.Views
     /// </summary>
     public sealed partial class FeedPage : Page
     {
-        private FeedPageViewModel VM;
+        private FeedViewModel VM;
 
         public FeedPage()
         {

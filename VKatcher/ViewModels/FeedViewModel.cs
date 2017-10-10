@@ -37,7 +37,7 @@ using System.Threading;
 
 namespace VKatcher.ViewModels
 {
-    public class FeedPageViewModel : ViewModelBase
+    public class FeedViewModel : ViewModelBase
     {
         #region Fields
         public VKGroup CurrentGroup { get; set; }
@@ -71,7 +71,7 @@ namespace VKatcher.ViewModels
         public RelayCommand<object> SongRightTappedCommand { get; private set; }
         #endregion
 
-        public FeedPageViewModel()
+        public FeedViewModel()
         {
             if (IsInDesignMode)
             {

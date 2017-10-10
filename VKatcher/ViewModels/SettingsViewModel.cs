@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace VKatcher.ViewModels
 {
-    public class SettingsPageViewModel : ViewModelBase
+    public class SettingsViewModel : ViewModelBase
     {
         public ObservableCollection<VKGroup> SubscribedGroups { get; set; }
         public ObservableCollection<VKTag> SubscribedTags { get; set; }
@@ -35,7 +35,7 @@ namespace VKatcher.ViewModels
         public RelayCommand ClearTokenCommand { get; set; }
         public RelayCommand ClearToDownloadCommand { get; set; }
 
-        public SettingsPageViewModel()
+        public SettingsViewModel()
         {
             if (IsInDesignMode)
             {

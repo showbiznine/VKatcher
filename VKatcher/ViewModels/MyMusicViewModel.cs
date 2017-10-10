@@ -22,7 +22,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 
 namespace VKatcher.ViewModels
 {
-    public class MyMusicPageViewModel : ViewModelBase
+    public class MyMusicViewModel : ViewModelBase
     {
         #region Fields
         public ObservableCollection<VKAudio> MySavedTracks { get; set; }
@@ -40,7 +40,7 @@ namespace VKatcher.ViewModels
         public RelayCommand<object> SongRightTappedCommand { get; private set; }
         public RelayCommand<Grid> PlayOnRemoteDeviceCommand { get; private set; }
 
-        public MyMusicPageViewModel()
+        public MyMusicViewModel()
         {
             if (IsInDesignMode)
             {

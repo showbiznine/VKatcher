@@ -23,12 +23,12 @@ namespace VKatcher.Views
     /// </summary>
     public sealed partial class MyMusicPage : Page
     {
-        MyMusicPageViewModel VM;
+        MyMusicViewModel VM;
 
         public MyMusicPage()
         {
             this.InitializeComponent();
-            VM = DataContext as MyMusicPageViewModel;
+            VM = DataContext as MyMusicViewModel;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

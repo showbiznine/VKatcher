@@ -23,7 +23,7 @@ using VKatcherShared.Services;
 
 namespace VKatcher.ViewModels
 {
-    public class SearchPageViewModel : ViewModelBase
+    public class SearchViewModel : ViewModelBase
     {
         #region Commands
         public RelayCommand<Visibility> SearchCommand { get; set; }
@@ -50,7 +50,7 @@ namespace VKatcher.ViewModels
         public INavigationService _navigationService { get { return ServiceLocator.Current.GetInstance<INavigationService>(); } }
         #endregion
 
-        public SearchPageViewModel()
+        public SearchViewModel()
         {
             if (IsInDesignMode)
             {

@@ -139,11 +139,11 @@
     <Compile Include="Services\PlayerService.cs" />
     <Compile Include="Services\RemoteSystemService.cs" />
     <Compile Include="ViewModels\CommunitiesPageViewModel.cs" />
-    <Compile Include="ViewModels\FeedPageViewModel.cs" />
-    <Compile Include="ViewModels\MyMusicPageViewModel.cs" />
-    <Compile Include="ViewModels\NowPlayingPageViewModel.cs" />
-    <Compile Include="ViewModels\SearchPageViewModel.cs" />
-    <Compile Include="ViewModels\SettingsPageViewModel.cs" />
+    <Compile Include="ViewModels\FeedViewModel.cs" />
+    <Compile Include="ViewModels\MyMusicViewModel.cs" />
+    <Compile Include="ViewModels\NowPlayingViewModel.cs" />
+    <Compile Include="ViewModels\SearchViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\CommunitiesPage.xaml.cs">
       <DependentUpon>CommunitiesPage.xaml</DependentUpon>
     </Compile>
